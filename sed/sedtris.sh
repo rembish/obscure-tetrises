@@ -3,7 +3,7 @@
 #
 # Run it locally:      ./sedtris.sh
 # Or straight from the web:
-#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/sedtris.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/sed/sedtris.sh | bash
 #
 # The launcher reads the keyboard, sends a tick to sed once a second
 # (that is gravity), and adds a little hidden random input so the pieces
@@ -12,7 +12,7 @@
 # Based on playsed.sh by Aurelio Marinho Jargas
 # http://sed.sf.net/grabbag/scripts/playsed.sh.txt
 
-SEDTRIS_URL="${SEDTRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master}"
+SEDTRIS_URL="${SEDTRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master/sed}"
 
 # --- POSIX part: when started by plain sh (e.g. `curl ... | sh`), hand over to bash.
 if [ -z "${BASH_VERSION:-}" ]; then
