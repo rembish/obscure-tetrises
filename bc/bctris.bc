@@ -1,0 +1,202 @@
+/*
+ * bctris.bc - a falling-block puzzle game written in bc, the arbitrary-precision calculator.
+ *
+ *   BC_LINE_LENGTH=0 bc -q bctris.bc
+ *
+ * stdin: the seed, then one event number per line (0 tick, 1 left, 2 right,
+ * 3 rotate, 4 soft drop, 5 hard drop, 9 quit). stdout: ANSI frames.
+ * Rules: ../SPEC.md.
+ *
+ * bc keeps everything in numbers and arrays; strings exist only as literals
+ * in print statements. The escape sequences below contain raw ESC bytes,
+ * because bc's print has no escape for ESC.
+ */
+scale = 0
+
+/* rotation masks m[piece*4 + rot], colours k[], line-clear scores q[], kicks d[] */
+m[0] = 240; m[1] = 17476; m[2] = 3840; m[3] = 8738
+m[4] = 102; m[5] = 102; m[6] = 102; m[7] = 102
+m[8] = 114; m[9] = 610; m[10] = 624; m[11] = 562
+m[12] = 54; m[13] = 1122; m[14] = 864; m[15] = 561
+m[16] = 99; m[17] = 612; m[18] = 1584; m[19] = 306
+m[20] = 113; m[21] = 550; m[22] = 1136; m[23] = 802
+m[24] = 116; m[25] = 1570; m[26] = 368; m[27] = 547
+k[0] = 51; k[1] = 226; k[2] = 135; k[3] = 46; k[4] = 196; k[5] = 33; k[6] = 208
+q[0] = 0; q[1] = 40; q[2] = 100; q[3] = 300; q[4] = 1200
+d[0] = 0; d[1] = -1; d[2] = 1; d[3] = -2; d[4] = 2
+
+/* Park-Miller: s = s * 16807 mod (2^31 - 1); the piece is s mod 7 */
+define draw() {
+  s = (s * 16807) % 2147483647
+  return (s % 7)
+}
+
+define level() {
+  return (lines / 10 + 1)
+}
+
+/* is bit i of mask set? */
+define bit(mask, i) {
+  return ((mask / 2 ^ i) % 2)
+}
+
+/* does the current piece fit at (px, py) with rotation pr? */
+define fits(px, py, pr) {
+  auto i, mm, bx, by
+  mm = m[c * 4 + pr]
+  for (i = 0; i < 16; i++) {
+    if (bit(mm, i)) {
+      bx = px + i % 4
+      by = py + i / 4
+      if (bx < 0 || bx > 9 || by < 0 || by > 19) return (0)
+      if (b[by * 10 + bx] != 0) return (0)
+    }
+  }
+  return (1)
+}
+
+define void spawn() {
+  x = 3; y = 0; r = 0; t = 0
+  if (fits(x, y, r) == 0) over = 1
+}
+
+/* write v into the current piece's cells */
+define void paint(v) {
+  auto i, mm
+  mm = m[c * 4 + r]
+  for (i = 0; i < 16; i++) {
+    if (bit(mm, i)) b[(y + i / 4) * 10 + x + i % 4] = v
+  }
+}
+
+define void lock() {
+  auto i, j, src, dst, cnt, cleared
+  paint(c + 1)
+  dst = 19
+  for (src = 19; src >= 0; src--) {
+    cnt = 0
+    for (j = 0; j < 10; j++) {
+      if (b[src * 10 + j] != 0) cnt = cnt + 1
+    }
+    if (cnt < 10) {
+      for (j = 0; j < 10; j++) b[dst * 10 + j] = b[src * 10 + j]
+      dst = dst - 1
+    }
+  }
+  cleared = dst + 1
+  for (i = 0; i < cleared * 10; i++) b[i] = 0
+  score = score + q[cleared] * level()
+  lines = lines + cleared
+  c = n
+  n = draw()
+  spawn()
+}
+
+define void stepdown() {
+  if (fits(x, y + 1, r)) { y = y + 1; } else { lock(); }
+}
+
+define void rotate() {
+  auto i, nr
+  nr = (r + 1) % 4
+  for (i = 0; i < 5; i++) {
+    if (fits(x + d[i], y, nr)) {
+      x = x + d[i]
+      r = nr
+      break
+    }
+  }
+}
+
+define void harddrop() {
+  while (fits(x, y + 1, r)) y = y + 1
+  lock()
+}
+
+/* ---- rendering ------------------------------------------------------------- */
+
+define void cell(v) {
+  if (v == 0) { print "[38;5;237m ·[m"; } else { print "[38;5;", k[v - 1], "m██[m"; }
+}
+
+define void key(row) {
+  print "   [1m"
+  if (row == 14) print "← a[m  [38;5;244mmove left"
+  if (row == 15) print "→ d[m  [38;5;244mmove right"
+  if (row == 16) print "↑ w[m  [38;5;244mrotate"
+  if (row == 17) print "↓ s[m  [38;5;244msoft drop"
+  if (row == 18) print "␣ z[m  [38;5;244mhard drop"
+  if (row == 19) print "  q[m  [38;5;244mquit"
+  print "[m"
+}
+
+define void panel(row) {
+  auto j, mm
+  if (row == 0) print "   [38;5;60m╭──[m [38;5;244mnext[m [38;5;60m──────╮[m"
+  if (row == 1 || row == 6) print "   [38;5;60m│[m              [38;5;60m│[m"
+  if (row >= 2 && row <= 5) {
+    mm = m[n * 4]
+    print "   [38;5;60m│[m   "
+    for (j = 0; j < 4; j++) {
+      if (bit(mm, (row - 2) * 4 + j)) { print "[38;5;", k[n], "m██[m"; } else { print "  "; }
+    }
+    print "   [38;5;60m│[m"
+  }
+  if (row == 7) print "   [38;5;60m╰──────────────╯[m"
+  if (row == 9) print "   [38;5;244mscore[m"
+  if (row == 10) print "   [1m", score, "[m"
+  if (row == 11) print "   [38;5;244mlevel[m [1m", level(), "[m  [38;5;244mlines[m [1m", lines, "[m"
+  if (row == 13) print "   [38;5;244mcontrols[m"
+  if (row >= 14) key(row)
+}
+
+define void render() {
+  auto row, j
+  if (over == 0) paint(c + 1)
+  print "[H  [1;38;5;75mB C T R I S[m[K\n"
+  print " [38;5;60m╔════════════════════╗[m[K\n"
+  for (row = 0; row < 20; row++) {
+    print " [38;5;60m║[m"
+    if (over && row == 9) {
+      print "[1;7m     GAME  OVER     [m"
+    } else {
+      for (j = 0; j < 10; j++) cell(b[row * 10 + j])
+    }
+    print "[38;5;60m║[m"
+    panel(row)
+    print "[K\n"
+  }
+  print " [38;5;60m╚════════════════════╝[m[K\n[J"
+  if (over == 0) paint(0)
+}
+
+/* ---- main loop ------------------------------------------------------------- */
+
+s = read()
+for (i = 0; i < 200; i++) b[i] = 0
+score = 0; lines = 0; over = 0
+c = draw()
+n = draw()
+spawn()
+render()
+
+while (1) {
+  ev = read()
+  if (ev == 9) break
+  e = 1
+  if (ev == 0) {
+    t = t + 1
+    if (t + level() >= 11) { t = 0; stepdown(); } else { e = 0; }
+  }
+  if (ev == 1) { if (fits(x - 1, y, r)) x = x - 1; }
+  if (ev == 2) { if (fits(x + 1, y, r)) x = x + 1; }
+  if (ev == 3) rotate()
+  if (ev == 4) stepdown()
+  if (ev == 5) harddrop()
+  if (ev < 0 || ev > 5) e = 0
+  if (e) {
+    render()
+    if (over) break
+  }
+}
+halt

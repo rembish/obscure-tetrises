@@ -16,6 +16,7 @@ trap 'rm -rf "$work"' EXIT
 ENGINES=(
   "jq|J Q T R I S|jq -nrj -f $root/jq/jqtris.jq"
   "dc|D C T R I S|DC_LINE_LENGTH=0 dc $root/dc/dctris.dc"
+  "bc|B C T R I S|BC_LINE_LENGTH=0 bc -q $root/bc/bctris.bc"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
