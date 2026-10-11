@@ -95,7 +95,8 @@ def main():
     mode, seed = sys.argv[1], int(sys.argv[2])
     n = int(sys.argv[3]) if len(sys.argv) > 3 else (300 if mode == "bot" else 4000)
     s, ev = (bot if mode == "bot" else fuzz)(seed, n)
-    sys.stdout.write(f"{s}\n" + "".join(f"{e}\n" for e in ev))
+    # end with a quit event and a few ticks the engine must not act on
+    sys.stdout.write(f"{s}\n" + "".join(f"{e}\n" for e in ev + [9, 0, 5, 0]))
 
 
 if __name__ == "__main__":

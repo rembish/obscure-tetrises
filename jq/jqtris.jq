@@ -3,7 +3,7 @@
 #   jq -nrj --unbuffered -f jqtris.jq
 #
 # stdin: the seed on the first line, then one event number per line
-# (0 tick, 1 left, 2 right, 3 rotate, 4 soft drop, 5 hard drop).
+# (0 tick, 1 left, 2 right, 3 rotate, 4 soft drop, 5 hard drop, 9 quit).
 # stdout: ANSI frames. The rules and the exact output are in ../SPEC.md.
 #
 # The whole game is one `foreach inputs`: the state object goes in, an event
@@ -121,5 +121,5 @@ def bit($m; $i): mod(($m / pow(2; $i) | floor); 2) == 1;
   | ($start | render(title)),
     (label $done
      | foreach inputs as $e ($start;
-         if .over then break $done else step($e) end;
+         if .over or $e == 9 then break $done else step($e) end;
          if .emit then render(title) else empty end))

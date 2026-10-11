@@ -153,6 +153,8 @@ def main():
         line = line.strip()
         if not line:
             continue
+        if int(line) == 9:
+            break
         if g.event(int(line)):
             out.write(g.render(title))
             if g.over:

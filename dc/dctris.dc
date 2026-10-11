@@ -3,7 +3,7 @@
 #   dc dctris.dc
 #
 # stdin: the seed, then one event number per line (0 tick, 1 left, 2 right,
-# 3 rotate, 4 soft drop, 5 hard drop). stdout: ANSI frames. Rules: ../SPEC.md.
+# 3 rotate, 4 soft drop, 5 hard drop, 9 quit). stdout: ANSI frames. Rules: ../SPEC.md.
 #
 # dc has a stack, registers with one-character names, arrays attached to the
 # registers, strings that can be executed as macros, and conditionals that
@@ -139,7 +139,7 @@
 # ---- main loop ----------------------------------------------------------------
 # `?` reads one line. A sentinel (-1) underneath tells EOF apart from input.
 [q]sQ
-[_1? d_1=Q r s_ sz 0se lz0=0 lz1=1 lz2=2 lz3=3 lz4=4 lz5=5 le1=Z lo1=Q lWx]sW
+[_1? d_1=Q r s_ sz lz9=Q 0se lz0=0 lz1=1 lz2=2 lz3=3 lz4=4 lz5=5 le1=Z lo1=Q lWx]sW
 
 _1? d_1=Q r s_ ss
 0sS 0sL 0so 19sb 0sj l{x

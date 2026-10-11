@@ -22,9 +22,11 @@ its input, for example, and `bc` reads it with `read()`).
 | `3` | rotate clockwise | `w`, ↑ |
 | `4` | soft drop (one row down) | `s`, ↓, Enter |
 | `5` | hard drop | `z`, Space |
+| `9` | quit: stop at once, printing nothing | `q` |
 
-Quitting (`q`, Ctrl-C) is the launcher's job. The engine just stops when its
-input ends or the game is over.
+The engine also stops when the game is over or its input ends. The explicit
+`9` exists because some tools can't detect end of input: GNU bc's `read()`
+spins forever at EOF.
 
 ## Random numbers
 

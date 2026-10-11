@@ -36,7 +36,7 @@ fetch() {
   fi
 }
 
-# Keys -> event numbers (0 tick, 1 left, 2 right, 3 rotate, 4 soft drop, 5 hard drop).
+# Keys -> event numbers (0 tick, 1 left, 2 right, 3 rotate, 4 soft drop, 5 hard drop, 9 quit).
 input_loop() {
   local IFS= key rest now t0="" code
   echo "${SEED:-$(( (RANDOM << 15 | RANDOM) % 2147483646 + 1 ))}"
@@ -54,7 +54,7 @@ input_loop() {
         w|W|$'\e[A'|$'\eOA') code=3 ;;
         s|S|$'\e[B'|$'\eOB'|'') code=4 ;;
         z|Z|' ') code=5 ;;
-        q|Q) return 0 ;;
+        q|Q) echo 9; return 0 ;;
       esac
       [[ -n $code ]] && echo "$code"
     elif [[ -z $t0 ]]; then
