@@ -1,0 +1,147 @@
+# dctris.dc - a falling-block puzzle game written in dc, the Unix desk calculator.
+#
+#   dc dctris.dc
+#
+# stdin: the seed, then one event number per line (0 tick, 1 left, 2 right,
+# 3 rotate, 4 soft drop, 5 hard drop). stdout: ANSI frames. Rules: ../SPEC.md.
+#
+# dc has a stack, registers with one-character names, arrays attached to the
+# registers, strings that can be executed as macros, and conditionals that
+# run a register as a macro: `P Q >m` runs m when P < Q, and `P Q <m` runs it
+# when P > Q. (The operand order is the opposite of how it reads.) Loops are
+# macros that call themselves.
+#
+# Registers
+#   data      s seed  c piece  n next  x y r position/rotation  t ticks
+#             S score  L lines  o game over  e frame due  z event
+#   temps     u v w  fits(x, y, rotation) -> k     q mask  i bit  a b row/col
+#             h flag/count/value  j counter  d rotate done
+#   arrays    B board[200]  M masks[piece*4+rot]  C colours  T line scores
+#             G side-panel macros by row  N next-piece cell printers
+#   macros    see the definitions below; event handlers are registers 0-5.
+
+# ---- tables -----------------------------------------------------------------
+240 0:M 17476 1:M 3840 2:M 8738 3:M
+102 4:M 102 5:M 102 6:M 102 7:M
+114 8:M 610 9:M 624 10:M 562 11:M
+54 12:M 1122 13:M 864 14:M 561 15:M
+99 16:M 612 17:M 1584 18:M 306 19:M
+113 20:M 550 21:M 1136 22:M 802 23:M
+116 24:M 1570 25:M 368 26:M 547 27:M
+51 0:C 226 1:C 135 2:C 46 3:C 196 4:C 33 5:C 208 6:C
+0 0:T 40 1:T 100 2:T 300 3:T 1200 4:T
+
+# ---- printing helpers ---------------------------------------------------------
+# A '[' can't appear unbalanced inside a dc string, so ESC [ is printed as bytes.
+[27P91P]s^
+[l^x[m]P]sR
+[l^x[38;5;60m]P]s<
+[l^x[38;5;244m]P]s>
+[l^x[1m]P]s/
+[l^x[K]P10P]s-
+[l^x[38;5;237m]P[ ·]PlRx]s"
+[l^x[38;5;]Plh1-;Cn[m██]PlRx]s`
+
+# ---- core -------------------------------------------------------------------
+# D: Park-Miller step; the new piece goes to n.
+[ls16807*2147483647%dss7%sn]sD
+# V: push the level.
+[lL10/1+]sV
+
+# F: does piece c fit at (u, v) with rotation w? Result in k.
+[0sk]sY
+[0sh0sk]sX
+[lb10*la+;B0!=Y]sI
+[li4%lu+sa li4/lv+sb 1sh la0>X la9<X lb0>X lb19<X lh1=I]sg
+[lq2%1=g lq2/sq li1+si lq0<f]sf
+[lc4*lw+;Msq 0si 1sk lfx]sF
+
+# N: spawn; game over (o=1) if it doesn't fit.
+[1so]sP
+[3sx0sy0sr0st lxsu lysv lrsw lFx lk0=P]sN
+
+# H: paint the falling piece into the board with value h.
+[lh li4/ly+10* li4%lx++ :B]sA
+[lq2%1=A lq2/sq li1+si lq0<U]sU
+[lc4*lr+;Msq 0si lUx]sH
+
+# K: lock. Paint, compact rows bottom-up (a reads, b writes), zero-fill the top,
+# score, then bring in the next piece.
+[lh1+sh]sp
+[la10*lj+;B0!=p lj1+dsj10>m]sm
+[la10*lj+;B lb10*lj+:B lj1+dsj10>E]sE
+[0sj lEx lb1-sb]s)
+[0sh0sj lmx lh10>) la1-sa la0!>(]s(
+[0lj:B lj1+dsj lb1+10*>{]s{
+[0sj l{x]s}
+[lc1+sh lHx 19sa19sb l(x lb0!>} lb1+;TlVx*lS+sS lLlb1++sL lnsc lDx lNx]sK
+
+# J: step down, or lock.
+[ly1+sy]s,
+[lxsu ly1+sv lrsw lFx lk1=, lk0=K]sJ
+
+# ---- event handlers 0-5 -------------------------------------------------------------
+[0st lJx 1se]s%
+[lt1+st lt lVx+ 11!>%]s0
+[lx1-sx]s$
+[lx1-su lysv lrsw lFx lk1=$ 1se]s1
+[lx1+sx]s&
+[lx1+su lysv lrsw lFx lk1=& 1se]s2
+# rotate: try offsets 0, -1, +1, -2, +2 until one fits
+[lxlj+sx lwsr 1sd]s@
+[lxlj+su lysv lFx lk1=@]s|
+[sj ld0=|]s~
+[lr1+4%sw 0sd 0l~x _1l~x 1l~x _2l~x 2l~x 1se]s3
+[lJx 1se]s4
+[ly1+sy l*x]s+
+[lxsu ly1+sv lrsw lFx lk1=+]s*
+[l*x lKx 1se]s5
+
+# ---- rendering ----------------------------------------------------------------
+[[  ]P] 0:N
+[ln1+sh l`x] 1:N
+[ln4*;M 2la2-4*lj+^/2% ;Nx lj1+dsj4>']s'
+
+[[   ]Pl<x[╭──]PlRx[ ]Pl>x[next]PlRx[ ]Pl<x[──────╮]PlRx] 0:G
+[[   ]Pl<x[│]PlRx[              ]Pl<x[│]PlRx] 1:G
+[[   ]Pl<x[│]PlRx[   ]P0sjl'x[   ]Pl<x[│]PlRx] 2:G
+[[   ]Pl<x[│]PlRx[   ]P0sjl'x[   ]Pl<x[│]PlRx] 3:G
+[[   ]Pl<x[│]PlRx[   ]P0sjl'x[   ]Pl<x[│]PlRx] 4:G
+[[   ]Pl<x[│]PlRx[   ]P0sjl'x[   ]Pl<x[│]PlRx] 5:G
+[[   ]Pl<x[│]PlRx[              ]Pl<x[│]PlRx] 6:G
+[[   ]Pl<x[╰──────────────╯]PlRx] 7:G
+[] 8:G
+[[   ]Pl>x[score]PlRx] 9:G
+[[   ]Pl/xlSnlRx] 10:G
+[[   ]Pl>x[level]PlRx[ ]Pl/xlVxnlRx[  ]Pl>x[lines]PlRx[ ]Pl/xlLnlRx] 11:G
+[] 12:G
+[[   ]Pl>x[controls]PlRx] 13:G
+[[   ]Pl/x[← a]PlRx[  ]Pl>x[move left]PlRx] 14:G
+[[   ]Pl/x[→ d]PlRx[  ]Pl>x[move right]PlRx] 15:G
+[[   ]Pl/x[↑ w]PlRx[  ]Pl>x[rotate]PlRx] 16:G
+[[   ]Pl/x[↓ s]PlRx[  ]Pl>x[soft drop]PlRx] 17:G
+[[   ]Pl/x[␣ z]PlRx[  ]Pl>x[hard drop]PlRx] 18:G
+[[   ]Pl/x[  q]PlRx[  ]Pl>x[quit]PlRx] 19:G
+
+# one board row: cells, or the banner on row 9 when the game is over
+[la10*lj+;Bsh lh0=" lh0!=` lj1+dsj10>l]sl
+[0sjllx]s6
+[l^x[1;7m]P[     GAME  OVER     ]PlRx]s9
+[[ ]Pl<x[║]PlRx la100*lo+901=9 la100*lo+901!=6 l<x[║]PlRx la;Gx l-x la1+dsa20>O]sO
+[lc1+shlHx]s7
+[0shlHx]s8
+[lo0=7 l^x[H]P [  ]Pl^x[1;38;5;75m]P[D C T R I S]PlRx l-x
+ [ ]Pl<x[╔════════════════════╗]PlRx l-x
+ 0salOx
+ [ ]Pl<x[╚════════════════════╝]PlRx l-x
+ l^x[J]P lo0=8]sZ
+
+# ---- main loop ----------------------------------------------------------------
+# `?` reads one line. A sentinel (-1) underneath tells EOF apart from input.
+[q]sQ
+[_1? d_1=Q r s_ sz 0se lz0=0 lz1=1 lz2=2 lz3=3 lz4=4 lz5=5 le1=Z lo1=Q lWx]sW
+
+_1? d_1=Q r s_ ss
+0sS 0sL 0so 19sb 0sj l{x
+lDx lnsc lDx lNx lZx
+lWx

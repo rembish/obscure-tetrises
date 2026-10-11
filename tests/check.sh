@@ -15,6 +15,7 @@ trap 'rm -rf "$work"' EXIT
 # name|title|command (reads events on stdin, writes frames to stdout)
 ENGINES=(
   "jq|J Q T R I S|jq -nrj -f $root/jq/jqtris.jq"
+  "dc|D C T R I S|DC_LINE_LENGTH=0 dc $root/dc/dctris.dc"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")

@@ -9,6 +9,7 @@ and the colour terminal frame.
 |---|---|---|
 | [**sedtris**](sed/) | `sed`, the stream editor (the original, 2008) | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/sed/sedtris.sh \| bash` |
 | [**jqtris**](jq/) | `jq`, the JSON processor | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/jq/jqtris.sh \| bash` |
+| [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/dc/dctris.sh \| bash` |
 
 Every launcher also works with `| sh` (it hands itself over to bash), and from a clone:
 
