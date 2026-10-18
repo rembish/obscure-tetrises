@@ -9,7 +9,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/bc/bctris.sh
 ./bc/bctris.sh
 ```
 
-Needs GNU bc (1.07 or newer) and bash 4+.
+Needs GNU bc, which provides `void` functions, `halt` and `read()`, and bash 4+. Tested with GNU bc 1.07.1.
 
 ## How it works
 

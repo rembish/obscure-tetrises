@@ -88,7 +88,7 @@ followed by `ESC[K\n`, then `ESC[J`. (GNU make can't print without a trailing
 newline, so maketris prints one extra `\n` after its very last `ESC[J`. That is the
 only allowed deviation.)
 
-- **Line 0:** two spaces, then `ESC[1;38;5;75m` + the title (`J Q T R I S`) + `ESC[m`.
+- **Line 0:** two spaces, then `ESC[1;38;5;75m` + the engine's spaced-out title (`J Q T R I S`, `D C T R I S`, …) + `ESC[m`.
 - **Line 1:** a space, then `B("╔" + 20×"═" + "╗")`.
 - **Lines 2–21 (board rows 0–19):** a space, `B("║")`, ten cells, `B("║")`, and that row's side-panel text.
   - An empty cell is `ESC[38;5;237m ·ESC[m`.

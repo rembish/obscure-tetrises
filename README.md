@@ -47,6 +47,7 @@ tests/check.sh jq       # just one
 ## Requirements
 
 - bash 4+ for the launchers (sedtris works with older bash too)
+- GNU versions of the tools. Everything is tested on Linux only; stock macOS has a non-GNU `dc` and a `make` too old for maketris
 - the tool itself: `sed`, `jq`, …
 - a UTF-8 terminal with 256 colours
 - `curl` or `wget` for the run-from-the-web mode

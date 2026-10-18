@@ -9,7 +9,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/dc/dctris.sh
 ./dc/dctris.sh
 ```
 
-Needs GNU dc (it ships with GNU bc) and bash 4+.
+Needs GNU dc (it ships with GNU bc) and bash 4+. Tested with GNU dc 1.4.1.
 
 ## How it works
 

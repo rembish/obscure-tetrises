@@ -9,7 +9,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/m4/m4tris.sh
 ./m4/m4tris.sh
 ```
 
-Needs GNU m4 and bash 4+.
+Needs GNU m4 and bash 4+. Tested with GNU m4 1.4.19.
 
 ## How it works
 

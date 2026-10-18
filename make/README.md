@@ -8,7 +8,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/make/maketri
 ./make/maketris.sh
 ```
 
-Needs GNU make 4.2+ (for `$(file <…)`) and bash 4+.
+Needs GNU make with `$(file <…)` (added in 4.2) and bash 4+. Tested with GNU make 4.3. macOS ships make 3.81, which is too old; `brew install make` gives you `gmake`.
 
 ## How it works
 

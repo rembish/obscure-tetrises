@@ -8,7 +8,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/jq/jqtris.sh
 ./jq/jqtris.sh
 ```
 
-Needs jq (1.6 or newer) and bash 4+.
+Needs jq and bash 4+. Tested with jq 1.7.
 
 ## How it works
 
