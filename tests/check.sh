@@ -12,12 +12,14 @@ root=$(dirname "$here")
 work=$(mktemp -d "${TMPDIR:-/tmp}/tris-check.XXXXXX")
 trap 'rm -rf "$work"' EXIT
 
-# name|title|command (reads events on stdin, writes frames to stdout)
+# name|title|command (reads events on stdin, writes frames to stdout)|options
+# option "nl": the engine can't avoid one extra newline at the very end (make's $(info))
 ENGINES=(
   "jq|J Q T R I S|jq -nrj -f $root/jq/jqtris.jq"
   "dc|D C T R I S|DC_LINE_LENGTH=0 dc $root/dc/dctris.dc"
   "bc|B C T R I S|BC_LINE_LENGTH=0 bc -q $root/bc/bctris.bc"
   "m4|M 4 T R I S|sed 's/.*/E(&)/' | m4 $root/m4/m4tris.m4 -"
+  "make|M A K E T R I S|$root/make/maketris.sh --pipe|nl"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
@@ -29,13 +31,16 @@ for i in "${!STREAMS[@]}"; do
 done
 
 for spec in "${ENGINES[@]}"; do
-  IFS='|' read -r name title cmd <<<"$spec"
+  IFS='|' read -r name title cmd opts <<<"$spec"
   if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $name "* ]]; then continue; fi
   for i in "${!STREAMS[@]}"; do
     python3 "$here/reference.py" "$title" < "$work/ev$i" > "$work/ref$i"
     start=$(date +%s%N)
     bash -c "$cmd" < "$work/ev$i" > "$work/out$i" 2> "$work/err$i"
     ms=$(( ($(date +%s%N) - start) / 1000000 ))
+    if [[ ${opts:-} == nl && $(tail -c1 "$work/out$i" | od -An -c | tr -d ' ') == '\n' ]]; then
+      truncate -s -1 "$work/out$i"
+    fi
     frames=$(grep -c $'\e\[H' "$work/ref$i")
     if cmp -s "$work/ref$i" "$work/out$i"; then
       printf 'ok    %-5s %-16s %5d frames %6d ms\n' "$name" "${STREAMS[$i]}" "$frames" "$ms"

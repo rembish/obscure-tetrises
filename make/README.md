@@ -1,0 +1,48 @@
+# maketris
+
+A falling-block puzzle game written in [GNU make](https://www.gnu.org/software/make/).
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/make/maketris.sh | bash
+# or, from a clone:
+./make/maketris.sh
+```
+
+Needs GNU make 4.2+ (for `$(file <…)`) and bash 4+.
+
+## How it works
+
+make has no loops, no arithmetic, no input and no mutable state, apart from what
+you can build out of string functions and its own rebuild logic.
+
+- **The game loop is make restarting itself.** The whole game state is an
+  included makefile. Its rule rewrites the file and then runs `true`, so make
+  sees that one of its makefiles was rebuilt and re-executes itself with the
+  new state. This is the "remaking makefiles" feature, used as a loop. Each event is one restart.
+  `true` is the only command make ever runs; its only job is to make the rule
+  count as having done something. A recipe made only of `$(file)` calls counts as no recipe.
+- **Input.** `$(file <name)` reads a file to its end, so the launcher gives every
+  event its own named pipe. Pass *N* reads `events.N` (make counts its own
+  restarts in `MAKE_RESTARTS`), and the launcher creates the next pipe before it
+  writes the current one. When one pipe was shared, the next write could land
+  in the previous read and get lost.
+- **Numbers.** Small numbers are unary: `x x x` is 3. `$(words)` turns them back into
+  digits, and `$(word 11,$(T) $(LV))` is the test "ticks + level ≥ 11". The piece
+  column is stored with an offset of 5, because unary numbers can't be negative.
+- **The score** is a real decimal string. It is split into digits with `$(subst)`
+  and added digit by digit with carries; each digit sum is done in unary.
+- **Random numbers.** The Park–Miller step runs on 31-element lists of bits.
+  Multiplying by 16807 means adding seven shifted copies, and the modulus uses
+  2³¹ ≡ 1 (mod 2³¹−1): the high bits are added back onto the low ones. `mod 7` uses
+  2ⁱ mod 7 = 1, 2, 4, 1, 2, 4, …. The decimal seed becomes bits by long division by 2.
+- **One deviation from the spec:** `$(info)` always ends its output with a newline.
+  So each frame begins by printing the previous frame's trailing `ESC[J`, and the
+  very last `ESC[J` is followed by one extra newline. The test harness allows
+  exactly that byte.
+
+Everything else is shared with the other engines in this repo; see [`../SPEC.md`](../SPEC.md).
+To run the engine on its own, use the launcher's pipe mode:
+
+```sh
+(echo 42; yes 0 | head -50; echo 5; echo 9) | ./maketris.sh --pipe
+```

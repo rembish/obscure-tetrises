@@ -84,7 +84,9 @@ game-over frame and exits.
 
 `B(s)` below is `ESC[38;5;60m` + `s` + `ESC[m` (border colour), and `D(s)` is
 `ESC[38;5;244m` + `s` + `ESC[m` (dim). The frame is `ESC[H`, then 23 lines each
-followed by `ESC[K\n`, then `ESC[J`.
+followed by `ESC[K\n`, then `ESC[J`. (GNU make can't print without a trailing
+newline, so maketris prints one extra `\n` after its very last `ESC[J`. That is the
+only allowed deviation.)
 
 - **Line 0:** two spaces, then `ESC[1;38;5;75m` + the title (`J Q T R I S`) + `ESC[m`.
 - **Line 1:** a space, then `B("╔" + 20×"═" + "╗")`.
