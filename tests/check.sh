@@ -22,6 +22,7 @@ ENGINES=(
   "jq|J Q T R I S||jq -nrj -f $root/jq/jqtris.jq"
   "m4|M 4 T R I S||sed 's/.*/E(&)/' | m4 $root/m4/m4tris.m4 -"
   "make|M A K E T R I S|nl|$root/make/maketris.sh --pipe"
+  "sendmail|S E N D M A I L T R I S||$root/sendmail/sendmailtris.sh --pipe"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
@@ -45,10 +46,10 @@ for spec in "${ENGINES[@]}"; do
     fi
     frames=$(grep -c $'\e\[H' "$work/ref$i")
     if cmp -s "$work/ref$i" "$work/out$i"; then
-      printf 'ok    %-5s %-16s %5d frames %6d ms\n' "$name" "${STREAMS[$i]}" "$frames" "$ms"
+      printf 'ok    %-8s %-16s %5d frames %6d ms\n' "$name" "${STREAMS[$i]}" "$frames" "$ms"
     else
       fail=1
-      printf 'FAIL  %-5s %-16s\n' "$name" "${STREAMS[$i]}"
+      printf 'FAIL  %-8s %-16s\n' "$name" "${STREAMS[$i]}"
       cmp "$work/ref$i" "$work/out$i" | head -1
       head -c 300 "$work/err$i"
     fi

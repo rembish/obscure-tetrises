@@ -86,7 +86,9 @@ game-over frame and exits.
 `ESC[38;5;244m` + `s` + `ESC[m` (dim). The frame is `ESC[H`, then 23 lines each
 followed by `ESC[K\n`, then `ESC[J`. (GNU make can't print without a trailing
 newline, so maketris prints one extra `\n` after its very last `ESC[J`. That is the
-only allowed deviation.)
+only byte-level deviation.) sendmail can't print ESC or UTF-8 at all, so
+sendmailtris returns the frame as glyph tokens and its launcher decodes them with a
+fixed table; the decoded bytes follow this format exactly.
 
 - **Line 0:** two spaces, then `ESC[1;38;5;75m` + the engine's spaced-out title (`J Q T R I S`, `D C T R I S`, …) + `ESC[m`.
 - **Line 1:** a space, then `B("╔" + 20×"═" + "╗")`.

@@ -1,0 +1,318 @@
+# sendmailtris.cf - a falling-block puzzle game written in sendmail.cf rewriting rules.
+#
+#   sendmail -C sendmailtris.cf -bt
+#
+# Address test mode (-bt) reads lines such as "Game 3" and runs ruleset Game
+# on them. Each event (../SPEC.md: 0 tick, 1 left, 2 right, 3 rotate, 4 soft
+# drop, 5 hard drop, 9 quit; the first line carries the seed) returns one
+# frame as a line of glyph tokens:  Game returns: hh tt nl tp nl lb e e ...
+# sendmail can't print ESC or UTF-8 bytes (it drops control characters and
+# shows 8-bit bytes as M-x), so the launcher turns each glyph token into its
+# string with a fixed table. Every decision about what to draw, where, and in
+# what order is made here.
+#
+# State lives in macros, written with the `macro` map and read with $&{name}.
+# Arithmetic uses the `arith` map. Rulesets can't jump backwards, so every loop
+# is one rule that keeps matching. sendmail allows at most 100 repetitions
+# per rule and nesting 50 deep, so every loop here walks at most 20 rows.
+#
+# Board: macros {r0}..{r19}, ten tokens each: e (empty) or a piece letter
+# i o t s z j l. Pieces are kept as letters too: {cur}, {nxt}.
+# Position {x} {y} {r}, ticks {t}, {score}, {lines}, {over}, {fin}.
+
+V10
+Kput macro
+Kcalc arith
+C{Kick} 0 -1 1 -2 2
+
+# Cells: 'letter rotation' -> dx dy for the four cells (decoded from the masks in SPEC.md)
+SCells
+Ri 0 $*		$@ 0 1 1 1 2 1 3 1 $1
+Ri 1 $*		$@ 2 0 2 1 2 2 2 3 $1
+Ri 2 $*		$@ 0 2 1 2 2 2 3 2 $1
+Ri 3 $*		$@ 1 0 1 1 1 2 1 3 $1
+Ro 0 $*		$@ 1 0 2 0 1 1 2 1 $1
+Ro 1 $*		$@ 1 0 2 0 1 1 2 1 $1
+Ro 2 $*		$@ 1 0 2 0 1 1 2 1 $1
+Ro 3 $*		$@ 1 0 2 0 1 1 2 1 $1
+Rt 0 $*		$@ 1 0 0 1 1 1 2 1 $1
+Rt 1 $*		$@ 1 0 1 1 2 1 1 2 $1
+Rt 2 $*		$@ 0 1 1 1 2 1 1 2 $1
+Rt 3 $*		$@ 1 0 0 1 1 1 1 2 $1
+Rs 0 $*		$@ 1 0 2 0 0 1 1 1 $1
+Rs 1 $*		$@ 1 0 1 1 2 1 2 2 $1
+Rs 2 $*		$@ 1 1 2 1 0 2 1 2 $1
+Rs 3 $*		$@ 0 0 0 1 1 1 1 2 $1
+Rz 0 $*		$@ 0 0 1 0 1 1 2 1 $1
+Rz 1 $*		$@ 2 0 1 1 2 1 1 2 $1
+Rz 2 $*		$@ 0 1 1 1 1 2 2 2 $1
+Rz 3 $*		$@ 1 0 0 1 1 1 0 2 $1
+Rj 0 $*		$@ 0 0 0 1 1 1 2 1 $1
+Rj 1 $*		$@ 1 0 2 0 1 1 1 2 $1
+Rj 2 $*		$@ 0 1 1 1 2 1 2 2 $1
+Rj 3 $*		$@ 1 0 1 1 0 2 1 2 $1
+Rl 0 $*		$@ 2 0 0 1 1 1 2 1 $1
+Rl 1 $*		$@ 1 0 1 1 1 2 2 2 $1
+Rl 2 $*		$@ 0 1 1 1 2 1 0 2 $1
+Rl 3 $*		$@ 0 0 1 0 1 1 1 2 $1
+
+# Letter: piece number from the random-number generator -> letter
+SLetter
+R0		$@ i
+R1		$@ o
+R2		$@ t
+R3		$@ s
+R4		$@ z
+R5		$@ j
+R6		$@ l
+
+# Nextrows: the next-piece preview, four rows of four cells (ns = empty)
+SNextrows
+Ri		$@ ns ns ns ns / i i i i / ns ns ns ns / ns ns ns ns /
+Ro		$@ ns o o ns / ns o o ns / ns ns ns ns / ns ns ns ns /
+Rt		$@ ns t ns ns / t t t ns / ns ns ns ns / ns ns ns ns /
+Rs		$@ ns s s ns / s s ns ns / ns ns ns ns / ns ns ns ns /
+Rz		$@ z z ns ns / ns z z ns / ns ns ns ns / ns ns ns ns /
+Rj		$@ j ns ns ns / j j j ns / ns ns ns ns / ns ns ns ns /
+Rl		$@ ns ns l ns / l l l ns / ns ns ns ns / ns ns ns ns /
+
+# Pts: rows cleared -> base points
+SPts
+R0		$@ 0
+R1		$@ 40
+R2		$@ 100
+R3		$@ 300
+R4		$@ 1200
+
+# Get: 'bx by < board >' -> the token at (bx, by). Drops whole rows (shortest
+# match up to the next /), then single tokens.
+SGet
+R$- $- < $* >		$: col $1 row $2 $(calc l $@ 0 $@ $2 $) < $3 >
+Rcol $- row $- TRUE < $* / $* >		col $1 row $(calc - $@ $2 $@ 1 $) $(calc l $@ 1 $@ $2 $) < $4 >
+Rcol $- row $- FALSE < $* >		$: col $1 $(calc l $@ 0 $@ $1 $) < $3 >
+Rcol $- TRUE < $- $* >		col $(calc - $@ $1 $@ 1 $) $(calc l $@ 1 $@ $1 $) < $3 >
+Rcol $- FALSE < $- $* >		$@ $2
+
+# Setcell: 'bx by v < board >' -> the board with (bx, by) set to v. Rows and
+# tokens that have been passed move to the left of the | marker.
+SSetcell
+R$- $- $- < $* >		$: set $1 $2 $3 $(calc l $@ 0 $@ $2 $) < | $4 >
+Rset $- $- $- TRUE < $* | $* / $* >		set $1 $(calc - $@ $2 $@ 1 $) $3 $(calc l $@ 1 $@ $2 $) < $4 $5 / | $6 >
+Rset $- $- $- FALSE < $* | $* >		$: setc $1 $3 $(calc l $@ 0 $@ $1 $) < $4 | $5 >
+Rsetc $- $- TRUE < $* | $- $* >		setc $(calc - $@ $1 $@ 1 $) $2 $(calc l $@ 1 $@ $1 $) < $3 $4 | $5 >
+Rsetc $- $- FALSE < $* | $- $* >		$@ $3 $2 $5
+
+# Coords: 'x y r | rest' -> the four absolute cells of the current piece, then '| rest'
+SCoords
+R$- $- $- | $*		$: $1 $2 < $>Cells $&{cur} $3 > | $4
+R$- $- < $- $- $* > $*		$1 $2 < $5 > $(calc + $@ $1 $@ $3 $) $(calc + $@ $2 $@ $4 $) $6		one cell per pass
+R$- $- < > $* | $*		$@ $3 | $4
+
+# Free: 'bx by' -> ok if the square is on the board and empty, else no
+SFree
+R$- $-		$: $1 $2 $(calc l $@ $1 $@ 0 $) $(calc l $@ 9 $@ $1 $) $(calc l $@ $2 $@ 0 $) $(calc l $@ 19 $@ $2 $)
+R$- $- $* TRUE $*		$@ no
+R$- $- $*		$: $>Get $1 $2 < $&{r0} / $&{r1} / $&{r2} / $&{r3} / $&{r4} / $&{r5} / $&{r6} / $&{r7} / $&{r8} / $&{r9} / $&{r10} / $&{r11} / $&{r12} / $&{r13} / $&{r14} / $&{r15} / $&{r16} / $&{r17} / $&{r18} / $&{r19} / >
+Re		$@ ok
+R$*		$@ no
+
+# Fits: 'x y r' -> yes if the current piece fits there, else no
+SFits
+R$- $- $-		$: check $>Coords $1 $2 $3 |
+Rcheck $- $- $* | $*		check $3 | $4 $>Free $1 $2		one cell per pass
+Rcheck | $* no $*		$@ no
+Rcheck | $*		$@ yes
+
+# Paint: 'v bx1 by1 ... | board' -> board with those four cells set to v
+SPaint
+R$- $- $- $* | $*		$1 $4 | $>Setcell $2 $3 $1 < $5 >		one cell per pass
+R$- | $*		$@ $2
+
+# Full: one row -> x if it is full, else the row followed by /
+SFull
+R$* e $*		$@ $1 e $2 /
+R$*		$@ x
+
+# Compact: 'board' -> 'n | board' with full rows removed and n empty rows added on top
+SCompact
+R$*		$: | $1 |
+R| $* / $* | $*		| $2 | $3 $>Full $1		check one row per pass
+R| $* | $* x $*		| $1 x | $2 $3		collect the x markers
+R| x x x x | $*		$: 4 | x x x x | $1
+R| x x x | $*		$: 3 | x x x | $1
+R| x x | $*		$: 2 | x x | $1
+R| x | $*		$: 1 | x | $1
+R| | $*		$: 0 | | $1
+R$- | x $* | $*		$1 | $2 | e e e e e e e e e e / $3		one empty row per cleared row
+R$- | | $*		$@ $1 | $2
+
+# Draw: Park-Miller step, s = s * 16807 mod (2^31 - 1); the next piece is s mod 7
+SDraw
+R$*		$: $(calc * $@ $&{s} $@ 16807 $)
+R$-		$: $(calc % $@ $1 $@ 2147483647 $)
+R$-		$: $(put {s} $@ $1 $) $>Letter $(calc % $@ $1 $@ 7 $)
+R$-		$@ $(put {nxt} $@ $1 $)
+
+SSpawn
+R$*		$: $(put {x} $@ 3 $) $(put {y} $@ 0 $) $(put {r} $@ 0 $) $(put {t} $@ 0 $) $>Fits 3 0 0
+Rno		$@ $(put {over} $@ 1 $) $(put {fin} $@ fin $)
+R$*		$@
+
+# Score: rows cleared -> adds base points times the level (computed before the new rows count)
+SScore
+R0		$@
+R$-		$: $>Pts $1
+R$-		$: $1 $(calc / $@ $&{lines} $@ 10 $)
+R$- $-		$: $1 $(calc + $@ $2 $@ 1 $)
+R$- $-		$: $(calc * $@ $1 $@ $2 $)
+R$-		$: $(calc + $@ $1 $@ $&{score} $)
+R$-		$@ $(put {score} $@ $1 $)
+
+# Lock: paint the piece in, clear rows, store the board, score, next piece
+SLock
+R$*		$: $>Paint $&{cur} $>Coords $&{x} $&{y} $&{r} | $&{r0} / $&{r1} / $&{r2} / $&{r3} / $&{r4} / $&{r5} / $&{r6} / $&{r7} / $&{r8} / $&{r9} / $&{r10} / $&{r11} / $&{r12} / $&{r13} / $&{r14} / $&{r15} / $&{r16} / $&{r17} / $&{r18} / $&{r19} /
+R$*		$: $>Compact $1
+R$- | $*		$: rows $2 | $1
+Rrows $* / $*		$: rows $(put {r0} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r1} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r2} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r3} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r4} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r5} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r6} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r7} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r8} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r9} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r10} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r11} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r12} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r13} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r14} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r15} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r16} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r17} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r18} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r19} $@ $1 $) $2
+Rrows | $-		$: $1 $>Score $1
+R$-		$: $(calc + $@ $&{lines} $@ $1 $)
+R$-		$: $(put {lines} $@ $1 $) $(put {cur} $@ $&{nxt} $) $>Draw
+R$*		$@ $>Spawn
+
+SDown
+R$*		$: $>Fits $&{x} $(calc + $@ $&{y} $@ 1 $) $&{r}
+Rno		$@ $>Lock
+Ryes		$: $(calc + $@ $&{y} $@ 1 $)
+R$-		$@ $(put {y} $@ $1 $)
+
+# Shift: dx -> moves the piece sideways if it fits
+SShift
+R$-		$: $(calc + $@ $&{x} $@ $1 $)
+R$-		$: $1 $>Fits $1 $&{y} $&{r}
+R$- yes		$@ $(put {x} $@ $1 $)
+R$*		$@
+
+# Rotate: try rotation r+1 at offsets 0, -1, +1, -2, +2 and take the first that fits
+SRotate
+R$*		$: $(calc + $@ $&{r} $@ 1 $)
+R$-		$: try $(calc % $@ $1 $@ 4 $) $&{x} | 0 -1 1 -2 2
+Rtry $- $- | $={Kick} $*		try $1 $2 | $4 res $(calc + $@ $2 $@ $3 $) $>Fits $(calc + $@ $2 $@ $3 $) $&{y} $1		one offset per pass
+Rtry $- $- | $* res $- yes $*		$@ $(put {x} $@ $4 $) $(put {r} $@ $1 $)
+R$*		$@
+
+SDrop
+R$*		$: hd $&{y} $>Fits $&{x} $(calc + $@ $&{y} $@ 1 $) $&{r}
+Rhd $- yes		hd $(calc + $@ $1 $@ 1 $) $>Fits $&{x} $(calc + $@ $1 $@ 2 $) $&{r}		one row per pass
+Rhd $- no		$@ $(put {y} $@ $1 $) $>Lock
+
+# Tick: gravity every max(1, 11 - level) ticks, i.e. when t + lines/10 >= 10
+STick
+R$*		$: $(calc + $@ $&{t} $@ 1 $)
+R$-		$: $(put {t} $@ $1 $) $1 $(calc / $@ $&{lines} $@ 10 $)
+R$- $-		$: $(calc + $@ $1 $@ $2 $)
+R$-		$: $(calc l $@ $1 $@ 10 $)
+RTRUE		$@ none
+RFALSE		$@ $(put {t} $@ 0 $) $>Down
+
+# Render: store the view (board plus falling piece) in {v0}..{v19}, the preview
+# in {n0}..{n3} and the level in {lv}, then return the frame as glyph tokens.
+SRender
+R$*		$: < $&{over} > $&{r0} / $&{r1} / $&{r2} / $&{r3} / $&{r4} / $&{r5} / $&{r6} / $&{r7} / $&{r8} / $&{r9} / $&{r10} / $&{r11} / $&{r12} / $&{r13} / $&{r14} / $&{r15} / $&{r16} / $&{r17} / $&{r18} / $&{r19} /
+R< 1 > $*		$: view $1
+R< > $*		$: view $>Paint $&{cur} $>Coords $&{x} $&{y} $&{r} | $1
+Rview $* / $*		$: view $(put {v0} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v1} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v2} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v3} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v4} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v5} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v6} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v7} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v8} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v9} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v10} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v11} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v12} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v13} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v14} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v15} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v16} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v17} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v18} $@ $1 $) $2
+Rview $* / $*		$: view $(put {v19} $@ $1 $) $2
+Rview		$: < $&{over} >
+R< 1 >		$: $(put {v9} $@ go $)
+R$*		$: next $>Nextrows $&{nxt}
+Rnext $* / $*		$: next $(put {n0} $@ $1 $) $2
+Rnext $* / $*		$: next $(put {n1} $@ $1 $) $2
+Rnext $* / $*		$: next $(put {n2} $@ $1 $) $2
+Rnext $* / $*		$: next $(put {n3} $@ $1 $) $2
+Rnext		$: $(calc / $@ $&{lines} $@ 10 $)
+R$-		$: $(calc + $@ $1 $@ 1 $)
+R$-		$: $(put {lv} $@ $1 $)
+R$*		$@ hh tt nl tp nl lb $&{v0} rb pn nl lb $&{v1} rb pb nl lb $&{v2} rb na $&{n0} nz nl lb $&{v3} rb na $&{n1} nz nl lb $&{v4} rb na $&{n2} nz nl lb $&{v5} rb na $&{n3} nz nl lb $&{v6} rb pb nl lb $&{v7} rb pz nl lb $&{v8} rb nl lb $&{v9} rb ps nl lb $&{v10} rb sc $&{score} re nl lb $&{v11} rb lv $&{lv} lm $&{lines} re nl lb $&{v12} rb nl lb $&{v13} rb pc nl lb $&{v14} rb k1 nl lb $&{v15} rb k2 nl lb $&{v16} rb k3 nl lb $&{v17} rb k4 nl lb $&{v18} rb k5 nl lb $&{v19} rb k6 nl bt nl cj $&{fin}
+
+# Init: 'seed' -> empty board, first two pieces, first frame
+SInit
+R$-		$: $(put {s} $@ $1 $) $(put {score} $@ 0 $) $(put {lines} $@ 0 $) $(put {over} $@ $) $(put {fin} $@ $) rows e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / 
+Rrows $* / $*		$: rows $(put {r0} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r1} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r2} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r3} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r4} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r5} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r6} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r7} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r8} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r9} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r10} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r11} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r12} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r13} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r14} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r15} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r16} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r17} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r18} $@ $1 $) $2
+Rrows $* / $*		$: rows $(put {r19} $@ $1 $) $2
+Rrows		$: $>Draw
+R$*		$: $(put {cur} $@ $&{nxt} $) $>Draw
+R$*		$: $>Spawn
+R$*		$@ $(put {started} $@ 1 $) $>Render
+
+# Game: the entry point, one event per input line
+SGame
+R$-		$: $1 < $&{started} >
+R$- < >		$@ $>Init $1
+R$- < $* >		$: $1 < $&{over} >
+R$- < 1 >		$@		after game over: nothing more
+R$- < $* >		$: $1
+R9		$@ quit
+R0		$: $>Tick
+Rnone		$@		a tick that moved nothing: no frame
+R1		$: $>Shift -1
+R2		$: $>Shift 1
+R3		$: $>Rotate
+R4		$: $>Down
+R5		$: $>Drop
+R$-		$@		unknown event
+R$*		$@ $>Render
