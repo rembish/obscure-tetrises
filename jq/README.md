@@ -3,7 +3,7 @@
 A falling-block puzzle game written in [jq](https://jqlang.org), the JSON processor.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/jq/jqtris.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq/jqtris.sh | bash
 # or, from a clone:
 ./jq/jqtris.sh
 ```

@@ -2,7 +2,7 @@
 # jqtris.sh - launcher for jqtris, a falling-block puzzle game written in jq.
 #
 #   ./jqtris.sh
-#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/jq/jqtris.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq/jqtris.sh | bash
 #
 # The launcher turns keys into event numbers and sends a tick every 100 ms.
 # Gravity, randomness, scoring and drawing all happen in the engine (see ../SPEC.md).
@@ -11,7 +11,7 @@
 GAME=jqtris
 ENGINE=jqtris.jq
 NEEDS=jq
-BASE_URL="${JQTRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master/jq}"
+BASE_URL="${JQTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq}"
 run_engine() { jq -nrj --unbuffered -f "$1"; }
 # -----------------------------------------------------------------------------
 

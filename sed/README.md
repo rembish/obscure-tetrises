@@ -37,7 +37,7 @@ In the terminal every piece type has its own colour.
 Straight from the web, no install:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/sed/sedtris.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed/sedtris.sh | bash
 ```
 
 `| sh` works too, as long as bash is installed (the launcher hands itself over to bash).
@@ -50,8 +50,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/sed/sedtris.
 Or clone the repository and run it locally:
 
 ```sh
-git clone https://github.com/rembish/sedtris.git
-cd sedtris
+git clone https://github.com/rembish/obscure-tetrises.git
+cd obscure-tetrises
 ./sed/sedtris.sh
 ```
 

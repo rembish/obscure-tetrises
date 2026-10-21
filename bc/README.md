@@ -4,7 +4,7 @@ A falling-block puzzle game written in [bc](https://www.gnu.org/software/bc/), t
 arbitrary-precision calculator language.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/bc/bctris.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/bctris.sh | bash
 # or, from a clone:
 ./bc/bctris.sh
 ```

@@ -3,7 +3,7 @@
 A falling-block puzzle game written in [GNU make](https://www.gnu.org/software/make/).
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/make/maketris.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/make/maketris.sh | bash
 # or, from a clone:
 ./make/maketris.sh
 ```

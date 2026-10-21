@@ -4,7 +4,7 @@ A falling-block puzzle game written in [m4](https://www.gnu.org/software/m4/), t
 macro processor that sits underneath autoconf and sendmail's configuration.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/m4/m4tris.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4/m4tris.sh | bash
 # or, from a clone:
 ./m4/m4tris.sh
 ```

@@ -2,7 +2,7 @@
 # bctris.sh - launcher for bctris, a falling-block puzzle game written in bc.
 #
 #   ./bctris.sh
-#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/bc/bctris.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/bctris.sh | bash
 #
 # The launcher turns keys into event numbers and sends a tick every 100 ms.
 # Gravity, randomness, scoring and drawing all happen in the engine (see ../SPEC.md).
@@ -11,7 +11,7 @@
 GAME=bctris
 ENGINE=bctris.bc
 NEEDS=bc
-BASE_URL="${BCTRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master/bc}"
+BASE_URL="${BCTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc}"
 run_engine() { BC_LINE_LENGTH=0 bc -q "$1"; }
 # -----------------------------------------------------------------------------
 

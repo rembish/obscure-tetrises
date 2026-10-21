@@ -4,7 +4,7 @@ A falling-block puzzle game written in [dc](https://en.wikipedia.org/wiki/Dc_(co
 the reverse-Polish desk calculator from 1970s Bell Labs Unix.
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/dc/dctris.sh | bash
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc/dctris.sh | bash
 # or, from a clone:
 ./dc/dctris.sh
 ```

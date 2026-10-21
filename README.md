@@ -7,18 +7,18 @@ and the colour terminal frame.
 
 | Game | Written in | Play |
 |---|---|---|
-| [**bctris**](bc/) | `bc`, the arbitrary-precision calculator language | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/bc/bctris.sh \| bash` |
-| [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/dc/dctris.sh \| bash` |
-| [**jqtris**](jq/) | `jq`, the JSON processor | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/jq/jqtris.sh \| bash` |
-| [**m4tris**](m4/) | `m4`, the macro processor | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/m4/m4tris.sh \| bash` |
-| [**maketris**](make/) | GNU `make` | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/make/maketris.sh \| bash` |
-| [**sedtris**](sed/) | `sed`, the stream editor (the original, 2008) | `curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/sed/sedtris.sh \| bash` |
+| [**bctris**](bc/) | `bc`, the arbitrary-precision calculator language | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/bctris.sh \| bash` |
+| [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc/dctris.sh \| bash` |
+| [**jqtris**](jq/) | `jq`, the JSON processor | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq/jqtris.sh \| bash` |
+| [**m4tris**](m4/) | `m4`, the macro processor | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4/m4tris.sh \| bash` |
+| [**maketris**](make/) | GNU `make` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/make/maketris.sh \| bash` |
+| [**sedtris**](sed/) | `sed`, the stream editor (the original, 2008) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed/sedtris.sh \| bash` |
 
 Every launcher also works with `| sh` (it hands itself over to bash), and from a clone:
 
 ```sh
-git clone https://github.com/rembish/sedtris.git
-cd sedtris
+git clone https://github.com/rembish/obscure-tetrises.git
+cd obscure-tetrises
 ./bc/bctris.sh        # or ./dc/dctris.sh, ./jq/jqtris.sh, ...
 ```
 

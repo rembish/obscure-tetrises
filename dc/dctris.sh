@@ -2,7 +2,7 @@
 # dctris.sh - launcher for dctris, a falling-block puzzle game written in dc.
 #
 #   ./dctris.sh
-#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/dc/dctris.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc/dctris.sh | bash
 #
 # The launcher turns keys into event numbers and sends a tick every 100 ms.
 # Gravity, randomness, scoring and drawing all happen in the engine (see ../SPEC.md).
@@ -11,7 +11,7 @@
 GAME=dctris
 ENGINE=dctris.dc
 NEEDS=dc
-BASE_URL="${DCTRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master/dc}"
+BASE_URL="${DCTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc}"
 run_engine() { DC_LINE_LENGTH=0 dc "$1"; }
 # -----------------------------------------------------------------------------
 

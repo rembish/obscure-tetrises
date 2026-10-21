@@ -2,7 +2,7 @@
 # m4tris.sh - launcher for m4tris, a falling-block puzzle game written in m4.
 #
 #   ./m4tris.sh
-#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/m4/m4tris.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4/m4tris.sh | bash
 #
 # The launcher turns keys into event numbers and sends a tick every 100 ms.
 # Gravity, randomness, scoring and drawing all happen in the engine (see ../SPEC.md).
@@ -11,7 +11,7 @@
 GAME=m4tris
 ENGINE=m4tris.m4
 NEEDS=m4
-BASE_URL="${M4TRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master/m4}"
+BASE_URL="${M4TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4}"
 # m4 only reacts to macro calls, so each event line N is passed on as E(N).
 run_engine() {
   local line

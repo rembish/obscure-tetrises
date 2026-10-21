@@ -2,7 +2,7 @@
 # maketris.sh - launcher for maketris, a falling-block puzzle game written in GNU make.
 #
 #   ./maketris.sh
-#   curl -fsSL https://raw.githubusercontent.com/rembish/sedtris/master/make/maketris.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/make/maketris.sh | bash
 #
 #   ./maketris.sh --pipe    events on stdin, frames on stdout (used by tests/check.sh)
 #
@@ -13,7 +13,7 @@
 GAME=maketris
 ENGINE=maketris.mk
 NEEDS=make
-BASE_URL="${MAKETRIS_URL:-https://raw.githubusercontent.com/rembish/sedtris/master/make}"
+BASE_URL="${MAKETRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/make}"
 # make can only read input with $(file <name), which reads to end of file. So
 # every event gets its own named pipe: pass N of make reads events.N, and the
 # next pipe is created before the current one is written, so make always finds it.
