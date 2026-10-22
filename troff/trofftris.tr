@@ -1,0 +1,328 @@
+.\" trofftris.tr - a falling-block puzzle game written in troff, the typesetter behind man(1).
+.\"
+.\"   troff -z -Ww trofftris.tr 2>&1 >/dev/null
+.\"
+.\" stdin: requests ".GO <seed>", then ".GO <event>" (../SPEC.md: 0 tick, 1 left,
+.\" 2 right, 3 rotate, 4 soft drop, 5 hard drop, 9 quit), each followed by a
+.\" blank line, because .rd reads input up to a blank line. stderr: the frames.
+.\"
+.\" troff can only print printable ASCII: every output request (.tm, .write)
+.\" works in copy mode and drops raw control or 8-bit bytes. So frames are
+.\" written with C-style escapes (\033[1m, \u2588; \x20 for a space that would
+.\" otherwise be trailing and get stripped), and the launcher prints each
+.\" line with printf '%b'. Number registers hold the state, string registers
+.\" build the lines, and .while drives the loops.
+.\"
+.\" Note: ".nr reg -1" means "decrement", so every value that is an interpolation
+.\" (and might be negative) is wrapped in parentheses.
+.\"
+.\" Registers: s seed, cur/nxt piece, x y r position, t ticks, score, lines,
+.\" over, started, b0..b199 the board (0 empty, else piece + 1).
+.\"
+.\" ---- tables ---------------------------------------------------------------
+.nr pw0 1
+.nr i 1
+.while \n[i]<16 \{\
+.  nr pj (\n[i]-1)
+.  nr pw\n[i] (\n[pw\n[pj]]*2)
+.  nr i +1
+.\}
+.nr m0 240
+.nr m1 17476
+.nr m2 3840
+.nr m3 8738
+.nr m4 102
+.nr m5 102
+.nr m6 102
+.nr m7 102
+.nr m8 114
+.nr m9 610
+.nr m10 624
+.nr m11 562
+.nr m12 54
+.nr m13 1122
+.nr m14 864
+.nr m15 561
+.nr m16 99
+.nr m17 612
+.nr m18 1584
+.nr m19 306
+.nr m20 113
+.nr m21 550
+.nr m22 1136
+.nr m23 802
+.nr m24 116
+.nr m25 1570
+.nr m26 368
+.nr m27 547
+.nr col0 51
+.nr col1 226
+.nr col2 135
+.nr col3 46
+.nr col4 196
+.nr col5 33
+.nr col6 208
+.nr pts0 0
+.nr pts1 40
+.nr pts2 100
+.nr pts3 300
+.nr pts4 1200
+.nr kick0 0
+.nr kick1 (-1)
+.nr kick2 1
+.nr kick3 (-2)
+.nr kick4 2
+.\" ---- output pieces (C-style escapes, printed by the launcher with printf %b)
+.ds E \\033[
+.ds R \\033[m
+.ds K \\033[K
+.ds B \\033[38;5;60m
+.ds D \\033[38;5;244m
+.ds W \\033[1m
+.ds c0 \\033[38;5;237m \\u00b7\\033[m
+.nr i 0
+.while \n[i]<7 \{\
+.  nr pj (\n[i]+1)
+.  ds c\n[pj] \\033[38;5;\n[col\n[i]]m\\u2588\\u2588\\033[m
+.  nr i +1
+.\}
+.ds hb \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
+.ds side \*B\\u2551\*R
+.ds p0 "   \*B\\u256d\\u2500\\u2500\*R \*Dnext\*R \*B\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u256e\*R
+.ds p1 "   \*B\\u2502\*R              \*B\\u2502\*R
+.ds p6 "\*[p1]
+.ds p7 "   \*B\\u2570\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u256f\*R
+.ds p9 "   \*Dscore\*R
+.ds p13 "   \*Dcontrols\*R
+.ds p14 "   \*W\\u2190 a\*R  \*Dmove left\*R
+.ds p15 "   \*W\\u2192 d\*R  \*Dmove right\*R
+.ds p16 "   \*W\\u2191 w\*R  \*Drotate\*R
+.ds p17 "   \*W\\u2193 s\*R  \*Dsoft drop\*R
+.ds p18 "   \*W\\u2423 z\*R  \*Dhard drop\*R
+.ds p19 "   \*W  q\*R  \*Dquit\*R
+.\" ---- random numbers: Park-Miller with Schrage's trick (registers are 32-bit)
+.de RAND
+.nr hi (\\n[s]/127773)
+.nr lo (\\n[s]%127773)
+.nr s (16807*\\n[lo])-(2836*\\n[hi])
+.if \\n[s]<0 .nr s +2147483647
+.nr nxt (\\n[s]%7)
+..
+.\" ---- FITS x y rot: sets register ok to 1 if the current piece fits there
+.de FITS
+.nr ok 1
+.nr fi (\\n[cur]*4)+\\$3
+.nr fm (\\n[m\\n[fi]])
+.nr fb 0
+.while \\n[fb]<16 \{\
+.  if (\\n[fm]/\\n[pw\\n[fb]])%2 \{\
+.    nr fx (\\$1+(\\n[fb]%4))
+.    nr fy (\\$2+(\\n[fb]/4))
+.    ie (\\n[fx]<0):(\\n[fx]>9):(\\n[fy]<0):(\\n[fy]>19) .nr ok 0
+.    el \{\
+.      nr fk (\\n[fy]*10)+\\n[fx]
+.      if \\n[b\\n[fk]] .nr ok 0
+.    \}
+.  \}
+.  nr fb +1
+.\}
+..
+.\" ---- PAINT v: write v into the current piece's cells
+.de PAINT
+.nr fi (\\n[cur]*4)+\\n[r]
+.nr fm (\\n[m\\n[fi]])
+.nr fb 0
+.while \\n[fb]<16 \{\
+.  if (\\n[fm]/\\n[pw\\n[fb]])%2 \{\
+.    nr fk ((\\n[y]+(\\n[fb]/4))*10)+\\n[x]+(\\n[fb]%4)
+.    nr b\\n[fk] (\\$1)
+.  \}
+.  nr fb +1
+.\}
+..
+.de SPAWN
+.nr x 3
+.nr y 0
+.nr r 0
+.nr t 0
+.FITS 3 0 0
+.if !\\n[ok] .nr over 1
+..
+.\" ---- LOCK: paint, drop full rows (copy kept rows down to dst), score, next piece
+.de LOCK
+.nr pv (\\n[cur]+1)
+.PAINT \\n[pv]
+.nr dst 19
+.nr src 19
+.while \\n[src]>=0 \{\
+.  nr cnt 0
+.  nr j 0
+.  while \\n[j]<10 \{\
+.    nr k (\\n[src]*10)+\\n[j]
+.    if \\n[b\\n[k]] .nr cnt +1
+.    nr j +1
+.  \}
+.  if \\n[cnt]<10 \{\
+.    nr j 0
+.    while \\n[j]<10 \{\
+.      nr k (\\n[src]*10)+\\n[j]
+.      nr kd (\\n[dst]*10)+\\n[j]
+.      nr b\\n[kd] (\\n[b\\n[k]])
+.      nr j +1
+.    \}
+.    nr dst -1
+.  \}
+.  nr src -1
+.\}
+.nr cl (\\n[dst]+1)
+.nr k 0
+.while \\n[k]<(\\n[cl]*10) \{\
+.  nr b\\n[k] 0
+.  nr k +1
+.\}
+.nr lv (\\n[lines]/10)+1
+.nr score +(\\n[pts\\n[cl]]*\\n[lv])
+.nr lines +\\n[cl]
+.nr cur (\\n[nxt])
+.RAND
+.SPAWN
+..
+.de DOWN
+.nr ny (\\n[y]+1)
+.FITS \\n[x] \\n[ny] \\n[r]
+.ie \\n[ok] .nr y (\\n[ny])
+.el .LOCK
+..
+.de SHIFT
+.nr nx (\\n[x]+\\$1)
+.FITS \\n[nx] \\n[y] \\n[r]
+.if \\n[ok] .nr x (\\n[nx])
+..
+.de ROTATE
+.nr nr (\\n[r]+1)%4
+.nr q 0
+.while \\n[q]<5 \{\
+.  nr nx (\\n[x]+\\n[kick\\n[q]])
+.  FITS \\n[nx] \\n[y] \\n[nr]
+.  if \\n[ok] \{\
+.    nr x (\\n[nx])
+.    nr r (\\n[nr])
+.    break
+.  \}
+.  nr q +1
+.\}
+..
+.de DROP
+.while 1 \{\
+.  nr ny (\\n[y]+1)
+.  FITS \\n[x] \\n[ny] \\n[r]
+.  if !\\n[ok] .break
+.  nr y (\\n[ny])
+.\}
+.LOCK
+..
+.\" gravity every max(1, 11 - level) ticks, i.e. when t + lines/10 >= 10
+.de TICK
+.nr t +1
+.nr emit 0
+.if (\\n[t]+(\\n[lines]/10))>=10 \{\
+.  nr t 0
+.  nr emit 1
+.  DOWN
+.\}
+..
+.\" ---- RENDER: one frame, one .tm1 per line
+.de NEXTROW
+.ds ln "   \\*B\\u2502\\*R\\x20\\x20\\x20
+.nr fi (\\n[nxt]*4)
+.nr fm (\\n[m\\n[fi]])
+.nr pv (\\n[nxt]+1)
+.nr q 0
+.while \\n[q]<4 \{\
+.  nr fb (\\$1*4)+\\n[q]
+.  ie (\\n[fm]/\\n[pw\\n[fb]])%2 .as ln "\\*[c\\n[pv]]
+.  el .as ln "\\x20\\x20
+.  nr q +1
+.\}
+.as ln "   \\*B\\u2502\\*R
+..
+.de RENDER
+.if !\\n[over] \{\
+.  nr pv (\\n[cur]+1)
+.  PAINT \\n[pv]
+.\}
+.tm1 "\\*EH  \\*E1;38;5;75mT R O F F T R I S\\*R\\*K
+.tm1 " \\*B\\u2554\\*[hb]\\u2557\\*R\\*K
+.nr row 0
+.while \\n[row]<20 \{\
+.  ds line " \\*[side]
+.  ie \\n[over]&(\\n[row]=9) .as line "\\*E1;7m     GAME  OVER     \\*R
+.  el \{\
+.    nr j 0
+.    while \\n[j]<10 \{\
+.      nr k (\\n[row]*10)+\\n[j]
+.      as line "\\*[c\\n[b\\n[k]]]
+.      nr j +1
+.    \}
+.  \}
+.  as line "\\*[side]
+.  ie (\\n[row]>=2)&(\\n[row]<=5) \{\
+.    nr nq (\\n[row]-2)
+.    NEXTROW \\n[nq]
+.    as line "\\*[ln]
+.  \}
+.  el .ie \\n[row]=10 .as line "   \\*W\\n[score]\\*R
+.  el .ie \\n[row]=11 \{\
+.    nr lv (\\n[lines]/10)+1
+.    as line "   \\*Dlevel\\*R \\*W\\n[lv]\\*R  \\*Dlines\\*R \\*W\\n[lines]\\*R
+.  \}
+.  el .if d p\\n[row] .as line "\\*[p\\n[row]]
+.  tm1 "\\*[line]\\*K
+.  nr row +1
+.\}
+.tm1 " \\*B\\u255a\\*[hb]\\u255d\\*R\\*K
+.tmc "\\*EJ
+.if !\\n[over] .PAINT 0
+..
+.\" ---- events: .GO <seed> first, then .GO <event> per line
+.de INIT
+.nr s (\\$1)
+.nr k 0
+.while \\n[k]<200 \{\
+.  nr b\\n[k] 0
+.  nr k +1
+.\}
+.nr score 0
+.nr lines 0
+.nr over 0
+.RAND
+.nr cur (\\n[nxt])
+.RAND
+.SPAWN
+.nr started 1
+.RENDER
+..
+.de EV
+.if '\\$1'9' .ex
+.nr emit 1
+.ie '\\$1'0' .TICK
+.el .ie '\\$1'1' .SHIFT -1
+.el .ie '\\$1'2' .SHIFT 1
+.el .ie '\\$1'3' .ROTATE
+.el .ie '\\$1'4' .DOWN
+.el .ie '\\$1'5' .DROP
+.el .nr emit 0
+.if \\n[emit] \{\
+.  RENDER
+.  if \\n[over] .ex
+.\}
+..
+.\" (macros and strings share one namespace in troff, so this can't be called E)
+.de GO
+.ie \\n[started] .EV \\$1
+.el .INIT \\$1
+..
+.nr started 0
+.while 1 \{\
+.  rd
+.\}

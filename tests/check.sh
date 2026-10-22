@@ -23,6 +23,7 @@ ENGINES=(
   "m4|M 4 T R I S||sed 's/.*/E(&)/' | m4 $root/m4/m4tris.m4 -"
   "make|M A K E T R I S|nl|$root/make/maketris.sh --pipe"
   "sendmail|S E N D M A I L T R I S||$root/sendmail/sendmailtris.sh --pipe"
+  "troff|T R O F F T R I S||$root/troff/trofftris.sh --pipe"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
