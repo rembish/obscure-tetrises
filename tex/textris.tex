@@ -1,0 +1,172 @@
+% textris.tex - a falling-block puzzle game written in plain TeX.
+%
+%   max_print_line=100000 tex -8bit -interaction=batchmode textris.tex
+%
+% stdin: the seed, then one event number per line (../SPEC.md: 0 tick, 1 left,
+% 2 right, 3 rotate, 4 soft drop, 5 hard drop, 9 quit). stdout: ANSI frames,
+% written with \immediate\write16. -8bit lets ESC and UTF-8 bytes through raw,
+% and a huge max_print_line stops TeX from breaking long lines.
+%
+% TeX starts in \batchmode, so nothing but its banner line reaches the terminal,
+% then switches to \scrollmode for the game and back to \batchmode before \end.
+% \write16 always ends a line, so every frame starts by printing the previous
+% frame's ESC[J, and the very last ESC[J is followed by the newline TeX prints
+% when it exits.
+%
+% Knuth's TeX only: \count registers, \advance/\multiply/\divide, \ifnum and
+% \ifcase. Loops are macros that call themselves as their last token. The board
+% is 200 macros \b0 ... \b199, made with \csname.
+\scrollmode
+\catcode`\^^[=12
+{\catcode`\ =12\gdef\S{ }}% a space that \write prints as is
+\newcount\s \newcount\cur \newcount\nxt \newcount\X \newcount\Y \newcount\R
+\newcount\T \newcount\score \newcount\lines \newcount\gover \newcount\started
+\newcount\printed \newcount\emit
+\newcount\px \newcount\py \newcount\pr \newcount\ok \newcount\fm \newcount\fb
+\newcount\fx \newcount\fy \newcount\idx \newcount\tmp \newcount\tmpb \newcount\pv
+\newcount\src \newcount\dst \newcount\cnt \newcount\jj \newcount\kk \newcount\cl
+\newcount\lv \newcount\nx \newcount\ny \newcount\nr \newcount\q \newcount\row
+\newcount\hi \newcount\lo
+% ---- tables ------------------------------------------------------------------
+\def\defn#1#2{\expandafter\def\csname#1\endcsname{#2}}
+\defn{m0}{240}\defn{m1}{17476}\defn{m2}{3840}\defn{m3}{8738}
+\defn{m4}{102}\defn{m5}{102}\defn{m6}{102}\defn{m7}{102}
+\defn{m8}{114}\defn{m9}{610}\defn{m10}{624}\defn{m11}{562}
+\defn{m12}{54}\defn{m13}{1122}\defn{m14}{864}\defn{m15}{561}
+\defn{m16}{99}\defn{m17}{612}\defn{m18}{1584}\defn{m19}{306}
+\defn{m20}{113}\defn{m21}{550}\defn{m22}{1136}\defn{m23}{802}
+\defn{m24}{116}\defn{m25}{1570}\defn{m26}{368}\defn{m27}{547}
+\defn{pw0}{1}\defn{pw1}{2}\defn{pw2}{4}\defn{pw3}{8}\defn{pw4}{16}\defn{pw5}{32}
+\defn{pw6}{64}\defn{pw7}{128}\defn{pw8}{256}\defn{pw9}{512}\defn{pw10}{1024}
+\defn{pw11}{2048}\defn{pw12}{4096}\defn{pw13}{8192}\defn{pw14}{16384}\defn{pw15}{32768}
+\defn{pts0}{0}\defn{pts1}{40}\defn{pts2}{100}\defn{pts3}{300}\defn{pts4}{1200}
+\defn{kick0}{0}\defn{kick1}{-1}\defn{kick2}{1}\defn{kick3}{-2}\defn{kick4}{2}
+\def\val#1#2{\csname#1\number#2\endcsname}% \val{b}\idx -> contents of \b<idx>
+\def\setb#1#2{\expandafter\xdef\csname b\number#1\endcsname{\number#2}}
+% ---- output pieces --------------------------------------------------------------
+\def\E{^^[[}
+\def\Rs{^^[[m}
+\def\K{^^[[K}
+\def\B{^^[[38;5;60m}
+\def\D{^^[[38;5;244m}
+\def\W{^^[[1m}
+\defn{c0}{\E38;5;237m\S·\Rs}
+\defn{c1}{\E38;5;51m██\Rs}
+\defn{c2}{\E38;5;226m██\Rs}
+\defn{c3}{\E38;5;135m██\Rs}
+\defn{c4}{\E38;5;46m██\Rs}
+\defn{c5}{\E38;5;196m██\Rs}
+\defn{c6}{\E38;5;33m██\Rs}
+\defn{c7}{\E38;5;208m██\Rs}
+\def\sss{\S\S\S}
+\def\side{\B║\Rs}
+\defn{p0}{\sss\B╭──\Rs\S\D next\Rs\S\B──────╮\Rs}
+\defn{p1}{\sss\B│\Rs\sss\sss\sss\sss\S\S\B│\Rs}
+\defn{p6}{\sss\B│\Rs\sss\sss\sss\sss\S\S\B│\Rs}
+\defn{p7}{\sss\B╰──────────────╯\Rs}
+\defn{p9}{\sss\D score\Rs}
+\defn{p13}{\sss\D controls\Rs}
+\defn{p14}{\sss\W←\S a\Rs\S\S\D move\S left\Rs}
+\defn{p15}{\sss\W→\S d\Rs\S\S\D move\S right\Rs}
+\defn{p16}{\sss\W↑\S w\Rs\S\S\D rotate\Rs}
+\defn{p17}{\sss\W↓\S s\Rs\S\S\D soft\S drop\Rs}
+\defn{p18}{\sss\W␣\S z\Rs\S\S\D hard\S drop\Rs}
+\defn{p19}{\sss\W\S\S q\Rs\S\S\D quit\Rs}
+\def\out#1{\immediate\write16{#1}}
+% ---- arithmetic helpers -------------------------------------------------------------
+% \modto\a\b\c : \a := \b mod \c (all counts or numbers, \b >= 0)
+\def\modto#1#2#3{#1=#2\relax \tmpb=#2\relax \divide\tmpb by#3\relax
+  \multiply\tmpb by#3\relax \advance#1 by-\tmpb}
+% Park-Miller with Schrage's trick: \count registers are 32-bit
+\def\rand{\hi=\s \divide\hi by127773 \modto\lo\s{127773}%
+  \s=\lo \multiply\s by16807 \tmp=\hi \multiply\tmp by2836 \advance\s by-\tmp
+  \ifnum\s<0 \advance\s by2147483647 \fi
+  \modto\nxt\s7}
+% ---- fits: \px \py \pr -> \ok -----------------------------------------------------
+\def\fitscell{\modto\fx\fb4\advance\fx by\px
+  \fy=\fb \divide\fy by4 \advance\fy by\py
+  \ifnum\fx<0 \ok=0 \fi \ifnum\fx>9 \ok=0 \fi
+  \ifnum\fy<0 \ok=0 \fi \ifnum\fy>19 \ok=0 \fi
+  \ifnum\ok=1 \idx=\fy \multiply\idx by10 \advance\idx by\fx
+    \ifnum\val b\idx>0 \ok=0 \fi\fi}
+\def\fitsloop{\ifnum\fb<16 \tmp=\fm \divide\tmp by\val{pw}\fb\relax
+  \ifodd\tmp \fitscell\fi \advance\fb by1 \expandafter\fitsloop\fi}
+\def\fits{\ok=1 \fb=0 \idx=\cur \multiply\idx by4 \advance\idx by\pr
+  \fm=\val m\idx\relax \fitsloop}
+% ---- paint: write \pv into the current piece's cells ------------------------------------
+\def\paintcell{\modto\fx\fb4\advance\fx by\X
+  \fy=\fb \divide\fy by4 \advance\fy by\Y
+  \idx=\fy \multiply\idx by10 \advance\idx by\fx \setb\idx\pv}
+\def\paintloop{\ifnum\fb<16 \tmp=\fm \divide\tmp by\val{pw}\fb\relax
+  \ifodd\tmp \paintcell\fi \advance\fb by1 \expandafter\paintloop\fi}
+\def\paint{\fb=0 \idx=\cur \multiply\idx by4 \advance\idx by\R
+  \fm=\val m\idx\relax \paintloop}
+\def\spawn{\X=3 \Y=0 \R=0 \T=0 \px=3 \py=0 \pr=0 \fits \ifnum\ok=0 \gover=1 \fi}
+% ---- lock: paint, drop full rows (copy kept rows down to \dst), score, next ------------
+\def\countloop{\ifnum\jj<10 \idx=\src \multiply\idx by10 \advance\idx by\jj
+  \ifnum\val b\idx>0 \advance\cnt by1 \fi \advance\jj by1 \expandafter\countloop\fi}
+\def\copyloop{\ifnum\jj<10 \idx=\src \multiply\idx by10 \advance\idx by\jj
+  \kk=\dst \multiply\kk by10 \advance\kk by\jj \tmp=\val b\idx\relax \setb\kk\tmp
+  \advance\jj by1 \expandafter\copyloop\fi}
+\def\rowloop{\ifnum\src>-1 \cnt=0 \jj=0 \countloop
+  \ifnum\cnt<10 \jj=0 \copyloop \advance\dst by-1 \fi
+  \advance\src by-1 \expandafter\rowloop\fi}
+\def\zeroloop{\ifnum\kk<\tmp \setb\kk0 \advance\kk by1 \expandafter\zeroloop\fi}
+\def\lock{\pv=\cur \advance\pv by1 \paint
+  \src=19 \dst=19 \rowloop
+  \cl=\dst \advance\cl by1 \kk=0 \tmp=\cl \multiply\tmp by10 \zeroloop
+  \lv=\lines \divide\lv by10 \advance\lv by1
+  \tmp=\val{pts}\cl\relax \multiply\tmp by\lv \advance\score by\tmp
+  \advance\lines by\cl \cur=\nxt \rand \spawn}
+% ---- moves -----------------------------------------------------------------------------
+\def\down{\px=\X \py=\Y \advance\py by1 \pr=\R \fits
+  \ifnum\ok=1 \advance\Y by1 \else\lock\fi}
+\def\shift#1{\px=\X \advance\px by#1 \py=\Y \pr=\R \fits
+  \ifnum\ok=1 \X=\px \fi}
+\def\kickloop{\ifnum\q<5 \px=\X \advance\px by\val{kick}\q\relax \py=\Y \pr=\nr \fits
+  \ifnum\ok=1 \X=\px \R=\nr \q=5 \fi \advance\q by1 \expandafter\kickloop\fi}
+\def\rotate{\nr=\R \advance\nr by1 \ifnum\nr=4 \nr=0 \fi \q=0 \kickloop}
+\def\droploop{\px=\X \py=\Y \advance\py by1 \pr=\R \fits
+  \ifnum\ok=1 \advance\Y by1 \expandafter\droploop\fi}
+\def\drop{\droploop\lock}
+% gravity every max(1, 11 - level) ticks, i.e. when t + lines/10 >= 10
+\def\tick{\advance\T by1 \tmp=\lines \divide\tmp by10 \advance\tmp by\T
+  \ifnum\tmp<10 \emit=0 \else \T=0 \down\fi}
+% ---- render ------------------------------------------------------------------------------
+\def\app#1{\xdef\Line{\Line#1}}
+\def\cellsloop{\ifnum\jj<10 \idx=\row \multiply\idx by10 \advance\idx by\jj
+  \tmp=\val b\idx\relax \app{\val c\tmp}\advance\jj by1 \expandafter\cellsloop\fi}
+\def\nextloop{\ifnum\jj<4 \fb=\row \advance\fb by-2 \multiply\fb by4 \advance\fb by\jj
+  \tmp=\fm \divide\tmp by\val{pw}\fb\relax
+  \ifodd\tmp \app{\val c\pv}\else\app{\S\S}\fi \advance\jj by1 \expandafter\nextloop\fi}
+\def\panel{%
+  \ifnum\row<2 \else\ifnum\row>5 \else
+    \app{\sss\B│\Rs\sss}\idx=\nxt \multiply\idx by4 \fm=\val m\idx\relax
+    \pv=\nxt \advance\pv by1 \jj=0 \nextloop \app{\sss\B│\Rs}\fi\fi
+  \ifnum\row=10 \app{\sss\W\number\score\Rs}\fi
+  \ifnum\row=11 \lv=\lines \divide\lv by10 \advance\lv by1
+    \app{\sss\D level\Rs\S\W\number\lv\Rs\S\S\D lines\Rs\S\W\number\lines\Rs}\fi
+  \expandafter\ifx\csname p\number\row\endcsname\relax\else\app{\val p\row}\fi}
+\def\rowsloop{\ifnum\row<20 \gdef\Line{\S}\app{\side}%
+  \ifnum\gover=1 \ifnum\row=9 \app{\E1;7m\sss\S\S GAME\S\S OVER\sss\S\S\Rs}\else
+    \jj=0 \cellsloop\fi\else \jj=0 \cellsloop\fi
+  \app{\side}\panel \out{\Line\K}\advance\row by1 \expandafter\rowsloop\fi}
+\def\render{\ifnum\gover=0 \pv=\cur \advance\pv by1 \paint\fi
+  \ifnum\printed=1 \def\pre{\E J}\else\def\pre{}\fi
+  \out{\pre\E H\S\S\E1;38;5;75mT\S E\S X\S T\S R\S I\S S\Rs\K}%
+  \out{\S\B╔════════════════════╗\Rs\K}%
+  \row=0 \rowsloop
+  \out{\S\B╚════════════════════╝\Rs\K}%
+  \printed=1
+  \ifnum\gover=0 \pv=0 \paint\fi}
+% ---- events --------------------------------------------------------------------------------
+\def\finish{\message{\E J}\batchmode\end}
+\def\zeroboard{\ifnum\kk<200 \setb\kk0 \advance\kk by1 \expandafter\zeroboard\fi}
+\def\init{\s=\ev \kk=0 \zeroboard \score=0 \lines=0 \gover=0
+  \rand \cur=\nxt \rand \spawn \started=1 \render}
+\def\event{\emit=1
+  \ifcase\ev \tick\or \shift{-1}\or \shift1\or \rotate\or \down\or \drop\else \emit=0 \fi
+  \ifnum\emit=1 \render \ifnum\gover=1 \finish\fi\fi}
+\def\step{\ifnum\started=0 \init\else\ifnum\ev=9 \finish\else\event\fi\fi}
+\def\go{{\endlinechar=-1 \global\read-1 to\ev}\step\go}
+\go

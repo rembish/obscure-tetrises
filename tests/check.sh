@@ -15,7 +15,7 @@ trap 'rm -rf "$work"' EXIT
 # name|title|options|command
 # The command reads events on stdin and writes frames to stdout. It comes last,
 # so it may contain pipes. Option "nl": the engine can't avoid one extra newline
-# at the very end (make's $(info)).
+# at the very end (make's $(info), and TeX's newline on exit).
 ENGINES=(
   "bc|B C T R I S||BC_LINE_LENGTH=0 bc -q $root/bc/bctris.bc"
   "dc|D C T R I S||DC_LINE_LENGTH=0 dc $root/dc/dctris.dc"
@@ -23,6 +23,7 @@ ENGINES=(
   "m4|M 4 T R I S||sed 's/.*/E(&)/' | m4 $root/m4/m4tris.m4 -"
   "make|M A K E T R I S|nl|$root/make/maketris.sh --pipe"
   "sendmail|S E N D M A I L T R I S||$root/sendmail/sendmailtris.sh --pipe"
+  "tex|T E X T R I S|nl|$root/tex/textris.sh --pipe"
   "troff|T R O F F T R I S||$root/troff/trofftris.sh --pipe"
 )
 

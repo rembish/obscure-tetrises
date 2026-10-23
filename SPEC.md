@@ -85,8 +85,8 @@ game-over frame and exits.
 `B(s)` below is `ESC[38;5;60m` + `s` + `ESC[m` (border colour), and `D(s)` is
 `ESC[38;5;244m` + `s` + `ESC[m` (dim). The frame is `ESC[H`, then 23 lines each
 followed by `ESC[K\n`, then `ESC[J`. (GNU make can't print without a trailing
-newline, so maketris prints one extra `\n` after its very last `ESC[J`. That is the
-only byte-level deviation.) sendmail can't print ESC or UTF-8 at all, so
+newline, and TeX prints one when it exits, so maketris and textris print one extra `\n`
+after their very last `ESC[J`. That is the only byte-level deviation.) sendmail can't print ESC or UTF-8 at all, so
 sendmailtris returns the frame as glyph tokens and its launcher decodes them with a
 fixed table; the decoded bytes follow this format exactly.
 
