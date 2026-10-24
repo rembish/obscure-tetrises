@@ -15,11 +15,12 @@ trap 'rm -rf "$work"' EXIT
 # name|title|options|command
 # The command reads events on stdin and writes frames to stdout. It comes last,
 # so it may contain pipes. Option "nl": the engine can't avoid one extra newline
-# at the very end (make's $(info), and TeX's newline on exit).
+# at the very end (make's $(info), TeX's newline on exit, gnuplot's print).
 ENGINES=(
   "bc|B C T R I S||BC_LINE_LENGTH=0 bc -q $root/bc/bctris.bc"
   "cmake|C M A K E T R I S||$root/cmake/cmaketris.sh --pipe"
   "dc|D C T R I S||DC_LINE_LENGTH=0 dc $root/dc/dctris.dc"
+  "gnuplot|G N U P L O T T R I S|nl|$root/gnuplot/gnuplottris.sh --pipe"
   "jq|J Q T R I S||jq -nrj -f $root/jq/jqtris.jq"
   "m4|M 4 T R I S||sed 's/.*/E(&)/' | m4 $root/m4/m4tris.m4 -"
   "make|M A K E T R I S|nl|$root/make/maketris.sh --pipe"
