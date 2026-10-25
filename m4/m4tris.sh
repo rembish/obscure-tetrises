@@ -88,6 +88,7 @@ main() {
     dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   fi
   engine="$dir/$ENGINE"
+  [[ -n ${ENGINE_FILE:-} ]] && engine=$ENGINE_FILE   # e.g. the .min version
   if [[ -z $dir || ! -f $engine ]]; then
     tmp=$(mktemp -d "${TMPDIR:-/tmp}/$GAME.XXXXXX") || return 1
     engine="$tmp/$ENGINE"
