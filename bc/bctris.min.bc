@@ -1,0 +1,40 @@
+scale=0
+m[0]=240;m[1]=17476;m[2]=3840;m[3]=8738;m[4]=102;m[5]=102;m[6]=102;m[7]=102;m[8]=114;m[9]=610;m[10]=624;m[11]=562;m[12]=54;m[13]=1122;m[14]=864;m[15]=561;m[16]=99;m[17]=612;m[18]=1584;m[19]=306;m[20]=113;m[21]=550;m[22]=1136;m[23]=802;m[24]=116;m[25]=1570;m[26]=368;m[27]=547
+k[0]=51;k[1]=226;k[2]=135;k[3]=46;k[4]=196;k[5]=33;k[6]=208;q[1]=40;q[2]=100;q[3]=300;q[4]=1200;d[1]=-1;d[2]=1;d[3]=-2;d[4]=2
+define r(){s=s*16807%2147483647;return(s%7)}
+define l(){return(o/10+1)}
+define t(a,i){return(a/2^i%2)}
+define f(x,y,r){auto i,a,b;for(i=0;i<16;i++)if(t(m[c*4+r],i)){a=x+i%4;b=y+i/4;if(a<0||a>9||b<0||b>19)return(0);if(z[b*10+a])return(0)};return(1)}
+define void n(){x=3;y=0;h=0;t=0;if(!f(3,0,0))g=1}
+define void p(v){auto i;for(i=0;i<16;i++)if(t(m[c*4+h],i))z[(y+i/4)*10+x+i%4]=v}
+define void k(){auto i,j,u,w,e;p(c+1);w=19;for(u=19;u>=0;u--){e=0;for(j=0;j<10;j++)if(z[u*10+j])e=e+1;if(e<10){for(j=0;j<10;j++)z[w*10+j]=z[u*10+j];w=w-1}};e=w+1;for(i=0;i<e*10;i++)z[i]=0;a=a+q[e]*l();o=o+e;c=v;v=r();n()}
+define void u(){if(f(x,y+1,h)){y=y+1}else k()}
+define void w(){auto i,e;e=(h+1)%4;for(i=0;i<5;i++)if(f(x+d[i],y,e)){x=x+d[i];h=e;break}}
+define void b(){print "[38;5;60m"}
+define void e(){print "[m"}
+define void c(v){print "[38;5;",k[v],"m██";e()}
+define void j(){print "   ";b();print "│";e()}
+define void i(){j();print "              ";b();print "│";e()}
+define void q(a){print "   [1m";if(a==14)print "← a";if(a==15)print "→ d";if(a==16)print "↑ w";if(a==17)print "↓ s";if(a==18)print "␣ z";if(a==19)print "  q";print "[m  [38;5;244m";if(a==14)print "move left";if(a==15)print "move right";if(a==16)print "rotate";if(a==17)print "soft drop";if(a==18)print "hard drop";if(a==19)print "quit";e()}
+define void d(){auto r,j;if(!g)p(c+1);print "[H  [1;38;5;75mB C T R I S[m[K\n ";b();print "╔════════════════════╗";e();print "[K\n";for(r=0;r<20;r++){print " ";b();print "║";e();if(g&&r==9){print "[1;7m     GAME  OVER     ";e()}else for(j=0;j<10;j++)if(z[r*10+j]){c(z[r*10+j]-1)}else{print "[38;5;237m ·";e()};b();print "║";e()
+if(r==0){print "   ";b();print "╭──";e();print " [38;5;244mnext";e();print " ";b();print "──────╮";e()}
+if(r==1||r==6)i()
+if(r>1&&r<6){j();print "   ";for(j=0;j<4;j++)if(t(m[v*4],(r-2)*4+j)){c(v)}else print "  ";print "   ";b();print "│";e()}
+if(r==7){print "   ";b();print "╰──────────────╯";e()}
+if(r==9){print "   [38;5;244mscore";e()}
+if(r==10){print "   [1m",a;e()}
+if(r==11){print "   [38;5;244mlevel";e();print " [1m",l();e();print "  [38;5;244mlines";e();print " [1m",o;e()}
+if(r==13){print "   [38;5;244mcontrols";e()}
+if(r>13)q(r)
+print "[K\n"};print " ";b();print "╚════════════════════╝";e();print "[K\n[J";if(!g)p(0)}
+s=read();c=r();v=r();n();d()
+while(1){e=read();if(e==9)break;m=1
+if(e==0){t=t+1;if(t+o/10>=10){t=0;u()}else m=0}
+if(e==1)if(f(x-1,y,h))x=x-1
+if(e==2)if(f(x+1,y,h))x=x+1
+if(e==3)w()
+if(e==4)u()
+if(e==5){while(f(x,y+1,h))y=y+1;k()}
+if(e<0||e>5)m=0
+if(m){d();if(g)break}}
+halt
