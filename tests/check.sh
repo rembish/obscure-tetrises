@@ -4,6 +4,7 @@
 #   tests/check.sh            all engines
 #   tests/check.sh jq dc      just these
 #   tests/check.sh --min ...  the same, with each engine's golfed .min file
+#                             (and sed/sedtris.min.sed against sed/sedtris.sed)
 #
 # Each engine gets the same event streams: a few line-clearing bot games and a
 # few random fuzz runs. The engine must print exactly what the reference prints.
@@ -66,4 +67,23 @@ for spec in "${ENGINES[@]}"; do
     fi
   done
 done
+# sedtris has its own rules, so its golfed version is checked against the original
+# sedtris.sed instead: the same random key streams must give the same bytes.
+if (( min )) && { (( ${#want[@]} == 0 )) || [[ " ${want[*]} " == *" sed "* ]]; }; then
+  for seed in 1 2 3 4 5; do
+    python3 -c "
+import random
+r = random.Random($seed)
+keys = ['w', 'a', 'd', 's', 'z', ' ', '', '', '', '1', '\x1b[A', '\x1b[D', '\x1b[C', '\x1b[B', 'x']
+print('\n'.join(r.choice(keys) for _ in range(3000)))" > "$work/sed$seed"
+    LC_ALL=C sed -nf "$root/sed/sedtris.sed" < "$work/sed$seed" > "$work/sedref$seed"
+    LC_ALL=C sed -nf "$root/sed/sedtris.min.sed" < "$work/sed$seed" > "$work/sedout$seed"
+    frames=$(grep -c $'\e\[H' "$work/sedref$seed")
+    if cmp -s "$work/sedref$seed" "$work/sedout$seed"; then
+      printf 'ok    %-12s %-16s %5d frames\n' sed.min "random $seed" "$frames"
+    else
+      fail=1; printf 'FAIL  %-12s %-16s\n' sed.min "random $seed"
+    fi
+  done
+fi
 exit $fail

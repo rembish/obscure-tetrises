@@ -81,6 +81,7 @@ main() {
     dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   fi
   script="$dir/sedtris.sed"
+  [[ -n ${ENGINE_FILE:-} ]] && script=$ENGINE_FILE   # e.g. sedtris.min.sed
   if [[ -z $dir || ! -f $script ]]; then
     tmp=$(mktemp -d "${TMPDIR:-/tmp}/sedtris.XXXXXX") || return 1
     script="$tmp/sedtris.sed"
