@@ -1,297 +1,191 @@
-.nr G0 1
-.nr i 1
-.while \ni<16 \{\
-.nr N (\ni-1)
-.nr G\ni (\n[G\nN]*2)
-.nr i +1
-.\}
-.nr m0 240
-.nr m1 17476
-.nr m2 3840
-.nr m3 8738
-.nr m4 102
-.nr m5 102
-.nr m6 102
-.nr m7 102
-.nr m8 114
-.nr m9 610
-.nr m10 624
-.nr m11 562
-.nr m12 54
-.nr m13 1122
-.nr m14 864
-.nr m15 561
-.nr m16 99
-.nr m17 612
-.nr m18 1584
-.nr m19 306
-.nr m20 113
-.nr m21 550
-.nr m22 1136
-.nr m23 802
-.nr m24 116
-.nr m25 1570
-.nr m26 368
-.nr m27 547
-.nr f0 51
-.nr f1 226
-.nr f2 135
-.nr f3 46
-.nr f4 196
-.nr f5 33
-.nr f6 208
-.nr p0 0
-.nr p1 40
-.nr p2 100
-.nr p3 300
-.nr p4 1200
-.nr g0 0
-.nr g1 (-1)
-.nr g2 1
-.nr g3 (-2)
-.nr g4 2
 .ds E \\033[
-.ds R \\033[m
-.ds K \\033[K
-.ds B \\033[38;5;60m
-.ds D \\033[38;5;244m
-.ds W \\033[1m
-.ds c0 \\033[38;5;237m \\u00b7\\033[m
-.nr i 0
-.while \ni<7 \{\
-.nr N (\ni+1)
-.ds c\nN \\033[38;5;\n[f\ni]m\\u2588\\u2588\\033[m
-.nr i +1
-.\}
-.ds h \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550
+.ds R \*Em
+.ds K \*EK
+.ds T \*E38;5;
+.ds B \*T60m
+.ds D \*T244m
+.ds W \*E1m
+.ds V \*B\\u2502\*R
+.ds Z \\u2500\\u2500
 .ds v \*B\\u2551\*R
-.ds p0 "   \*B\\u256d\\u2500\\u2500\*R \*Dnext\*R \*B\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u256e\*R
-.ds p1 "   \*B\\u2502\*R              \*B\\u2502\*R
-.ds p6 "\*[p1]
-.ds p7 "   \*B\\u2570\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u256f\*R
-.ds p9 "   \*Dscore\*R
-.ds p13 "   \*Dcontrols\*R
-.ds p14 "   \*W\\u2190 a\*R  \*Dmove left\*R
-.ds p15 "   \*W\\u2192 d\*R  \*Dmove right\*R
-.ds p16 "   \*W\\u2191 w\*R  \*Drotate\*R
-.ds p17 "   \*W\\u2193 s\*R  \*Dsoft drop\*R
-.ds p18 "   \*W\\u2423 z\*R  \*Dhard drop\*R
-.ds p19 "   \*W  q\*R  \*Dquit\*R
+.ds h \\u2550\\u2550
+.ds h \*h\*h\*h\*h\*h
+.as h \*h
+.de X
+.nr m\\ni \\$1
+.ds c\\ni \\*T\\$1m\\u2588\\u2588\\*R
+.nr i +1
+.shift
+.if \\n[.$] .X \\$@
+..
+.X 240 102 114 54 99 113 116 17476 102 610 1122 612 550 1570 3840 102 624 864 1584 1136 368 8738 102 562 561 306 802 547 0 0 0 40 100 300 1200 51 226 135 46 196 33 208
+.ds c0 \*T237m \\u00b7\*R
+.ds p0 \*B\\u256d\*Z\*R \*Dnext\*R \*B\*Z\*Z\*Z\\u256e\*R
+.ds p1 \*V              \*V
+.ds p6 \*[p1]
+.ds p7 \*B\\u2570\*Z\*Z\*Z\*Z\*Z\*Z\*Z\\u256f\*R
+.ds p9 \*Dscore\*R
+.ds p13 \*Dcontrols\*R
+.de Y
+.ds p\\$1 \\*W\\$2\\*R  \\*D\\$3\\*R
+..
+.Y 14 "\\u2190 a" "move left"
+.Y 15 "\\u2192 d" "move right"
+.Y 16 "\\u2191 w" rotate
+.Y 17 "\\u2193 s" "soft drop"
+.Y 18 "\\u2423 z" "hard drop"
+.Y 19 "  q" quit
 .de A
-.nr O (\\ns/127773)
-.nr Q (\\ns%127773)
-.nr s (16807*\\nQ)-(2836*\\nO)
+.nr s \\ns%127773*16807-(\\ns/127773*2836)
 .if \\ns<0 .nr s +2147483647
-.nr v (\\ns%7)
+.nr v \\ns%7
 ..
 .de C
 .nr u 1
-.nr B (\\no*4)+\\$3
-.nr C (\\n[m\\nB])
+.nr B \\$3*7+\\no
+.nr C \\n[m\\nB]
 .nr e 0
-.while \\ne<16 \{\
-.if (\\nC/\\n[G\\ne])%2 \{\
-.nr K (\\$1+(\\ne%4))
-.nr L (\\$2+(\\ne/4))
-.ie (\\nK<0):(\\nK>9):(\\nL<0):(\\nL>19) .nr u 0
-.el \{\
-.nr J (\\nL*10)+\\nK
-.if \\n[b\\nJ] .nr u 0
+.while \\nC \{\
+.if \\nC%2 \{\
+.nr K \\ne%4+(\\$1)
+.nr L \\ne/4+\\$2
+.nr J \\nL*10+\\nK
+.ie \\n[.$]>3 .nr b\\nJ \\$4
+.el .if \\nK>?(9-\\nK)>9:(\\nL>19):\\n[b\\nJ] .nr u 0
 .\}
-.\}
+.nr C \\nC/2
 .nr e +1
 .\}
 ..
 .de F
-.nr B (\\no*4)+\\nr
-.nr C (\\n[m\\nB])
-.nr e 0
-.while \\ne<16 \{\
-.if (\\nC/\\n[G\\ne])%2 \{\
-.nr J ((\\ny+(\\ne/4))*10)+\\nx+(\\ne%4)
-.nr b\\nJ (\\$1)
-.\}
-.nr e +1
-.\}
+.C \\nx \\ny \\nr \\$1
 ..
 .de G
+.nr o \\nv
+.A
 .nr x 3
 .nr y 0
 .nr r 0
 .nr t 0
 .C 3 0 0
-.if !\\nu .nr h 1
+.nr h 1-\\nu
+.nr u 0
 ..
 .de H
-.nr F (\\no+1)
-.F \\nF
+.F \\no+35
 .nr A 19
-.nr z 19
-.while \\nz>=0 \{\
-.nr H 0
-.nr j 0
-.while \\nj<10 \{\
-.nr k (\\nz*10)+\\nj
-.if \\n[b\\nk] .nr H +1
-.nr j +1
-.\}
-.if \\nH<10 \{\
-.nr j 0
-.while \\nj<10 \{\
-.nr k (\\nz*10)+\\nj
-.nr P (\\nA*10)+\\nj
-.nr b\\nP (\\n[b\\nk])
-.nr j +1
-.\}
-.nr A -1
-.\}
+.nr z 20
+.while \\nz \{\
 .nr z -1
-.\}
-.nr I (\\nA+1)
-.nr k 0
-.while \\nk<(\\nI*10) \{\
-.nr b\\nk 0
+.nr H 1
+.nr k \\nz*10
+.nr P \\nA*10
+.while \\nk/10=\\nz \{\
+.nr H \\nH<?\\n[b\\nk]
+.nr b\\nP \\n[b\\nk]
 .nr k +1
+.nr P +1
 .\}
-.nr M (\\nd/10)+1
-.nr w +(\\n[p\\nI]*\\nM)
+.if !\\nH .nr A -1
+.\}
+.nr I 1+\\nA
+.nr k \\nI*10
+.while \\nk \{\
+.nr k -1
+.nr b\\nk 0
+.\}
+.nr w +(\\nd/10+1*\\n[m3\\nI])
 .nr d +\\nI
-.nr o (\\nv)
-.A
 .G
 ..
-.de I
-.nr E (\\ny+1)
-.C \\nx \\nE \\nr
-.ie \\nu .nr y (\\nE)
+.de e4
+.C \\nx \\ny+1 \\nr
+.ie \\nu .nr y +1
 .el .H
 ..
-.de J
-.nr D (\\nx+\\$1)
-.C \\nD \\ny \\nr
-.if \\nu .nr x (\\nD)
+.de e5
+.e4
+.if \\nu .e5
 ..
 .de L
-.nr a (\\nr+1)%4
-.nr q 0
-.while \\nq<5 \{\
-.nr D (\\nx+\\n[g\\nq])
-.C \\nD \\ny \\na
+.nr a \\nr+\\$1%4
+.shift
+.while \\n[.$] \{\
+.C \\nx+(\\$1) \\ny \\na
 .if \\nu \{\
-.nr x (\\nD)
-.nr r (\\na)
+.nr x +(\\$1)
+.nr r \\na
 .break
 .\}
-.nr q +1
+.shift
 .\}
 ..
-.de M
-.while 1 \{\
-.nr E (\\ny+1)
-.C \\nx \\nE \\nr
-.if !\\nu .break
-.nr y (\\nE)
-.\}
-.H
+.de e1
+.L 0 -1
 ..
-.de N
+.de e2
+.L 0 1
+..
+.de e3
+.L 1 0 -1 1 -2 2
+..
+.als e9 ex
+.de e0
 .nr t +1
-.nr n 0
-.if (\\nt+(\\nd/10))>=10 \{\
+.nr n \\nd/10+\\nt>9
+.if \\nn \{\
 .nr t 0
-.nr n 1
-.I
+.e4
 .\}
-..
-.de O
-.ds n "   \\*B\\u2502\\*R\\x20\\x20\\x20
-.nr B (\\nv*4)
-.nr C (\\n[m\\nB])
-.nr F (\\nv+1)
-.nr q 0
-.while \\nq<4 \{\
-.nr e (\\$1*4)+\\nq
-.ie (\\nC/\\n[G\\ne])%2 .as n "\\*[c\\nF]
-.el .as n "\\x20\\x20
-.nr q +1
-.\}
-.as n "   \\*B\\u2502\\*R
 ..
 .de P
-.if !\\nh \{\
-.nr F (\\no+1)
-.F \\nF
-.\}
-.tm1 "\\*EH  \\*E1;38;5;75mT R O F F T R I S\\*R\\*K
+.if !\\nh .F \\no+35
+.tm1 \\*EH  \\*E1;38;5;75mT R O F F T R I S\\*R\\*K
 .tm1 " \\*B\\u2554\\*h\\u2557\\*R\\*K
+.nr C \\n[m\\nv]
+.nr F \\nv+35
+.nr e 0
+.while \\ne<16 \{\
+.nr R \\ne/4+2
+.if !(\\ne%4) .ds p\\nR \\*V   
+.ie \\nC%2 .as p\\nR \\*[c\\nF]
+.el .as p\\nR "  
+.if \\ne%4=3 .as p\\nR "   \\*V
+.nr C \\nC/2
+.nr e +1
+.\}
+.nr M \\nd/10+1
+.ds p10 \\*W\\nw\\*R
+.ds p11 \\*Dlevel\\*R \\*W\\nM\\*R  \\*Dlines\\*R \\*W\\nd\\*R
 .nr c 0
+.nr k 0
 .while \\nc<20 \{\
-.ds l " \\*v
-.ie \\nh&(\\nc=9) .as l "\\*E1;7m     GAME  OVER     \\*R
-.el \{\
-.nr j 0
-.while \\nj<10 \{\
-.nr k (\\nc*10)+\\nj
-.as l "\\*[c\\n[b\\nk]]
-.nr j +1
+.ds l
+.while \\nk/10=\\nc \{\
+.as l \\*[c\\n[b\\nk]]
+.nr k +1
 .\}
-.\}
-.as l "\\*v
-.ie (\\nc>=2)&(\\nc<=5) \{\
-.nr R (\\nc-2)
-.O \\nR
-.as l "\\*n
-.\}
-.el .ie \\nc=10 .as l "   \\*W\\nw\\*R
-.el .ie \\nc=11 \{\
-.nr M (\\nd/10)+1
-.as l "   \\*Dlevel\\*R \\*W\\nM\\*R  \\*Dlines\\*R \\*W\\nd\\*R
-.\}
-.el .if d p\\nc .as l "\\*[p\\nc]
-.tm1 "\\*l\\*K
+.if \\nh&(\\nc=9) .ds l \\*E1;7m     GAME  OVER     \\*R
+.as l \\*v
+.if d p\\nc .as l "   \\*[p\\nc]
+.tm1 " \\*v\\*l\\*K
 .nr c +1
 .\}
 .tm1 " \\*B\\u255a\\*h\\u255d\\*R\\*K
-.tmc "\\*EJ
-.if !\\nh .F 0
-..
-.de Q
-.nr s (\\$1)
-.nr k 0
-.while \\nk<200 \{\
-.nr b\\nk 0
-.nr k +1
-.\}
-.nr w 0
-.nr d 0
-.nr h 0
-.A
-.nr o (\\nv)
-.A
-.G
-.nr l 1
-.P
+.tmc \\*EJ
+.ie \\nh .ex
+.el .F 0
 ..
 .de S
-.if '\\$1'9' .ex
-.nr n 1
-.ie '\\$1'0' .N
-.el .ie '\\$1'1' .J -1
-.el .ie '\\$1'2' .J 1
-.el .ie '\\$1'3' .L
-.el .ie '\\$1'4' .I
-.el .ie '\\$1'5' .M
-.el .nr n 0
-.if \\nn \{\
-.P
-.if \\nh .ex
-.\}
+.nr n \\$1<6
+.e\\$1
+.if \\nn .P
 ..
 .de GO
-.ie \\nl .S \\$1
-.el .Q \\$1
+.nr s \\$1
+.A
+.G
+.P
+.rn S GO
 ..
-.nr l 0
-.while 1 \{\
-.rd
-.\}
+.while 1 .rd
