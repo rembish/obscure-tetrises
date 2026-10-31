@@ -1,143 +1,36 @@
 \scrollmode
-\catcode`\^^[=12
-{\catcode`\ =12\gdef\S{ }}%
-\newcount\s \newcount\Af \newcount\At \newcount\X \newcount\Y \newcount\R
-\newcount\T \newcount\Am \newcount\z \newcount\y \newcount\Ai
-\newcount\Ag \newcount\Aj
-\newcount\px \newcount\py \newcount\pr \newcount\C \newcount\fm \newcount\x
-\newcount\fx \newcount\fy \newcount\f \newcount\k \newcount\Ao \newcount\pv
-\newcount\Aw \newcount\Ap \newcount\Bk \newcount\p \newcount\J \newcount\cl
-\newcount\lv \newcount\nx \newcount\ny \newcount\nr \newcount\q \newcount\n
-\newcount\hi \newcount\lo
-\def\e#1#2{\expandafter\def\csname#1\endcsname{#2}}
-\e{m0}{240}\e{m1}{17476}\e{m2}{3840}\e{m3}{8738}
-\e{m4}{102}\e{m5}{102}\e{m6}{102}\e{m7}{102}
-\e{m8}{114}\e{m9}{610}\e{m10}{624}\e{m11}{562}
-\e{m12}{54}\e{m13}{1122}\e{m14}{864}\e{m15}{561}
-\e{m16}{99}\e{m17}{612}\e{m18}{1584}\e{m19}{306}
-\e{m20}{113}\e{m21}{550}\e{m22}{1136}\e{m23}{802}
-\e{m24}{116}\e{m25}{1570}\e{m26}{368}\e{m27}{547}
-\e{w0}{1}\e{w1}{2}\e{w2}{4}\e{w3}{8}\e{w4}{16}\e{w5}{32}
-\e{w6}{64}\e{w7}{128}\e{w8}{256}\e{w9}{512}\e{w10}{1024}
-\e{w11}{2048}\e{w12}{4096}\e{w13}{8192}\e{w14}{16384}\e{w15}{32768}
-\e{t0}{0}\e{t1}{40}\e{t2}{100}\e{t3}{300}\e{t4}{1200}
-\e{k0}{0}\e{k1}{-1}\e{k2}{1}\e{k3}{-2}\e{k4}{2}
-\def\m#1#2{\csname#1\number#2\endcsname}%
-\def\An#1#2{\expandafter\xdef\csname b\number#1\endcsname{\number#2}}
-\def\E{^^[[}
-\def\g{^^[[m}
-\def\K{^^[[K}
-\def\B{^^[[38;5;60m}
-\def\D{^^[[38;5;244m}
-\def\W{^^[[1m}
-\e{c0}{\E38;5;237m\S·\g}
-\e{c1}{\E38;5;51m██\g}
-\e{c2}{\E38;5;226m██\g}
-\e{c3}{\E38;5;135m██\g}
-\e{c4}{\E38;5;46m██\g}
-\e{c5}{\E38;5;196m██\g}
-\e{c6}{\E38;5;33m██\g}
-\e{c7}{\E38;5;208m██\g}
-\def\h{\S\S\S}
-\def\Bo{\B║\g}
-\e{p0}{\h\B╭──\g\S\D next\g\S\B──────╮\g}
-\e{p1}{\h\B│\g\h\h\h\h\S\S\B│\g}
-\e{p6}{\h\B│\g\h\h\h\h\S\S\B│\g}
-\e{p7}{\h\B╰──────────────╯\g}
-\e{p9}{\h\D score\g}
-\e{p13}{\h\D controls\g}
-\e{p14}{\h\W←\S a\g\S\S\D move\S left\g}
-\e{p15}{\h\W→\S d\g\S\S\D move\S right\g}
-\e{p16}{\h\W↑\S w\g\S\S\D rotate\g}
-\e{p17}{\h\W↓\S s\g\S\S\D soft\S drop\g}
-\e{p18}{\h\W␣\S z\g\S\S\D hard\S drop\g}
-\e{p19}{\h\W\S\S q\g\S\S\D quit\g}
-\def\Bb#1{\immediate\write16{#1}}
-\def\A#1#2#3{#1=#2\relax \Ao=#2\relax \divide\Ao by#3\relax
-\multiply\Ao by#3\relax \advance#1 by-\Ao}
-\def\Ba{\hi=\s \divide\hi by127773 \A\lo\s{127773}%
-\s=\lo \multiply\s by16807 \k=\hi \multiply\k by2836 \advance\s by-\k
-\ifnum\s<0 \advance\s by2147483647 \fi
-\A\At\s7}
-\def\Ay{\A\fx\x4\advance\fx by\px
-\fy=\x \divide\fy by4 \advance\fy by\py
-\ifnum\fx<0 \C=0 \fi \ifnum\fx>9 \C=0 \fi
-\ifnum\fy<0 \C=0 \fi \ifnum\fy>19 \C=0 \fi
-\ifnum\C=1 \f=\fy \multiply\f by10 \advance\f by\fx
-\ifnum\m b\f>0 \C=0 \fi\fi}
-\def\U{\ifnum\x<16 \k=\fm \divide\k by\m{w}\x\relax
-\ifodd\k \Ay\fi \advance\x by1 \expandafter\U\fi}
-\def\Q{\C=1 \x=0 \f=\Af \multiply\f by4 \advance\f by\pr
-\fm=\m m\f\relax \U}
-\def\Au{\A\fx\x4\advance\fx by\X
-\fy=\x \divide\fy by4 \advance\fy by\Y
-\f=\fy \multiply\f by10 \advance\f by\fx \An\f\pv}
-\def\G{\ifnum\x<16 \k=\fm \divide\k by\m{w}\x\relax
-\ifodd\k \Au\fi \advance\x by1 \expandafter\G\fi}
-\def\Ak{\x=0 \f=\Af \multiply\f by4 \advance\f by\R
-\fm=\m m\f\relax \G}
-\def\Bd{\X=3 \Y=0 \R=0 \T=0 \px=3 \py=0 \pr=0 \Q \ifnum\C=0 \y=1 \fi}
-\def\F{\ifnum\p<10 \f=\Aw \multiply\f by10 \advance\f by\p
-\ifnum\m b\f>0 \advance\Bk by1 \fi \advance\p by1 \expandafter\F\fi}
-\def\M{\ifnum\p<10 \f=\Aw \multiply\f by10 \advance\f by\p
-\J=\Ap \multiply\J by10 \advance\J by\p \k=\m b\f\relax \An\J\k
-\advance\p by1 \expandafter\M\fi}
-\def\Ah{\ifnum\Aw>-1 \Bk=0 \p=0 \F
-\ifnum\Bk<10 \p=0 \M \advance\Ap by-1 \fi
-\advance\Aw by-1 \expandafter\Ah\fi}
-\def\Ac{\ifnum\J<\k \An\J0 \advance\J by1 \expandafter\Ac\fi}
-\def\Bm{\pv=\Af \advance\pv by1 \Ak
-\Aw=19 \Ap=19 \Ah
-\cl=\Ap \advance\cl by1 \J=0 \k=\cl \multiply\k by10 \Ac
-\lv=\z \divide\lv by10 \advance\lv by1
-\k=\m{t}\cl\relax \multiply\k by\lv \advance\Am by\k
-\advance\z by\cl \Af=\At \Ba \Bd}
-\def\Bl{\px=\X \py=\Y \advance\py by1 \pr=\R \Q
-\ifnum\C=1 \advance\Y by1 \else\Bm\fi}
-\def\Bc#1{\px=\X \advance\px by#1 \py=\Y \pr=\R \Q
-\ifnum\C=1 \X=\px \fi}
-\def\V{\ifnum\q<5 \px=\X \advance\px by\m{k}\q\relax \py=\Y \pr=\nr \Q
-\ifnum\C=1 \X=\px \R=\nr \q=5 \fi \advance\q by1 \expandafter\V\fi}
-\def\Bn{\nr=\R \advance\nr by1 \ifnum\nr=4 \nr=0 \fi \q=0 \V}
-\def\N{\px=\X \py=\Y \advance\py by1 \pr=\R \Q
-\ifnum\C=1 \advance\Y by1 \expandafter\N\fi}
-\def\Bx{\N\Bm}
-\def\Cb{\advance\T by1 \k=\z \divide\k by10 \advance\k by\T
-\ifnum\k<10 \Aj=0 \else \T=0 \Bl\fi}
-\def\r#1{\xdef\Ax{\Ax#1}}
-\def\w{\ifnum\p<10 \f=\n \multiply\f by10 \advance\f by\p
-\k=\m b\f\relax \r{\m c\k}\advance\p by1 \expandafter\w\fi}
-\def\Z{\ifnum\p<4 \x=\n \advance\x by-2 \multiply\x by4 \advance\x by\p
-\k=\fm \divide\k by\m{w}\x\relax
-\ifodd\k \r{\m c\pv}\else\r{\S\S}\fi \advance\p by1 \expandafter\Z\fi}
-\def\Br{%
-\ifnum\n<2 \else\ifnum\n>5 \else
-\r{\h\B│\g\h}\f=\At \multiply\f by4 \fm=\m m\f\relax
-\pv=\At \advance\pv by1 \p=0 \Z \r{\h\B│\g}\fi\fi
-\ifnum\n=10 \r{\h\W\number\Am\g}\fi
-\ifnum\n=11 \lv=\z \divide\lv by10 \advance\lv by1
-\r{\h\D level\g\S\W\number\lv\g\S\S\D lines\g\S\W\number\z\g}\fi
-\expandafter\ifx\csname p\number\n\endcsname\relax\else\r{\m p\n}\fi}
-\def\Ab{\ifnum\n<20 \gdef\Ax{\S}\r{\Bo}%
-\ifnum\y=1 \ifnum\n=9 \r{\E1;7m\h\S\S GAME\S\S OVER\h\S\S\g}\else
-\p=0 \w\fi\else \p=0 \w\fi
-\r{\Bo}\Br \Bb{\Ax\K}\advance\n by1 \expandafter\Ab\fi}
-\def\Av{\ifnum\y=0 \pv=\Af \advance\pv by1 \Ak\fi
-\ifnum\Ag=1 \def\Bv{\E J}\else\def\Bv{}\fi
-\Bb{\Bv\E H\S\S\E1;38;5;75mT\S E\S X\S T\S R\S I\S S\g\K}%
-\Bb{\S\B╔════════════════════╗\g\K}%
-\n=0 \Ab
-\Bb{\S\B╚════════════════════╝\g\K}%
-\Ag=1
-\ifnum\y=0 \pv=0 \Ak\fi}
-\def\Aq{\message{\E J}\batchmode\end}
-\def\I{\ifnum\J<200 \An\J0 \advance\J by1 \expandafter\I\fi}
-\def\Bz{\s=\ev \J=0 \I \Am=0 \z=0 \y=0
-\Ba \Af=\At \Ba \Bd \Ai=1 \Av}
-\def\Bq{\Aj=1
-\ifcase\ev \Cb\or \Bc{-1}\or \Bc1\or \Bn\or \Bl\or \Bx\else \Aj=0 \fi
-\ifnum\Aj=1 \Av \ifnum\y=1 \Aq\fi\fi}
-\def\Ca{\ifnum\Ai=0 \Bz\else\ifnum\ev=9 \Aq\else\Bq\fi\fi}
-\def\go{{\endlinechar=-1 \global\read-1 to\ev}\Ca\go}
-\go
-
+{\catcode`\ =12\gdef~{ }}
+\let\a\advance\let\d\divide\let\u\multiply\let\i\ifnum\let\c\count
+\def\Z#1{\ifx\Z#1\else\a\c9 1 \countdef#1\c9 \expandafter\Z\fi}\c9 210
+\Z\s\A\N\X\Y\R\T\S\L\V\G\C\m\x\q\f\k\g\l\v\F\y\n\Z
+\def\z{[m}\def\B{[38;5;60m}\def\D{[38;5;244m}\def\W{[1m}
+\def\h{~~~}\def\j{\z\h}\def\_{──}\def\w{════}\def\"{}
+\def\K#1{[38;5;\ifcase#1237m~·\else\ifcase#1\or51\or226\or135\or46\or196\or33\or208\fi m██\fi\z}
+\def\O#1{\immediate\write16{#1\z[K}}\def\r#1{\edef\b{\b#1}}
+\def\P#1#2{\f#1\u\f4 \a\f#2\m\ifcase\f240\or17476\or3840\or8738\or102\or102\or102\or102\or114\or610\or624\or562\or54\or1122\or864\or561\or99\or612\or1584\or306\or113\or550\or1136\or802\or116\or1570\or368\or547\fi{}}
+\def\I#1{\P\A\R\x0 \J{#1}}
+\def\J#1{\ifodd\m\q\x\d\q4 \y\Y\a\y\q\F-\q\u\F4 \a\F\x\a\F\X\f\y\u\f10 \a\f\F#1\fi\d\m2 \a\x1 \i\m>0 \J{#1}\fi}
+\def\Q{\C1 \I{\i\F<0 \C0 \fi\i\F>9 \C0 \fi\i\y>20 \C0 \fi\i\c\f>0 \C0 \fi}}
+\def\@{\I{\c\f\v}}
+\def\U{\k\s\d\k127773 \m\k\u\m-127773 \a\s\m\u\s16807 \u\k-2836 \a\s\k\i\s<0 \a\s2147483647 \fi\N\s\d\N7 \u\N-7 \a\N\s}
+\def\!{\X3 \Y1 \R0 \T\V\Q\i\C=0 \G9 \fi}
+\def\|{\c\g\i\f<10 0 \else\c\f\fi\i\c\g=0 \k1 \fi\a\f-1 \a\g-1 }
+\def\${\v\A\a\v1 \@\f209 \g209 \l0 \loop\k0 \|\|\|\|\|\|\|\|\|\|\i\k=0 \a\g10 \a\l1 \fi\i\g>9 \repeat
+\k\ifcase\l0\or40\or100\or300\else1200\fi\u\k\V\a\S\k\a\L\l\V\L\d\V10 \a\V1 \A\N\U\!}
+\def\t#1{\a\X#1 \Q\i\C=0 \a\X-#1 \fi}
+\def\o#1{\i\C=0 \a\X#1 \Q\fi}
+\def\&{\l\R\a\R1 \i\R=4 \R0 \fi\Q\o{-1}\o2\o{-3}\o4\i\C=0 \a\X-2 \R\l\fi}
+\def\*#1{\a\Y1 \Q\i\C=0 \a\Y-1 \$\else#1\fi}\def\-{\*\-}
+\def\,{\a\T1 \i\T>10 \T\V\*{}\>\fi}
+\def\.{\r{\K{\c\f}}\a\f1 }
+\def\:{\ifodd\m\r{\K\v}\else\r{~~}\fi\d\m2 }\def\;#1{\j\W#1\z~~\D}
+\def\<{\i\n<7 \i\n>0 \r{\j\B│\z\h}\:\:\:\:\r{\h\B│}\fi\fi
+\r{\ifcase\n\j\B╭\_\z~\D next\z~\B\_\_\_╮\or\or\or\or\or\or\or\j\B╰\_\_\_\_\_\_\_╯\or\or\j\D score\or\j\W\the\S\or\j\D level\z~\W\the\V\z~~\D lines\z~\W\the\L\or\or\j\D controls\or\;{←~a}move~left\or\;{→~d}move~right\or\;{↑~w}rotate\or\;{↓~s}soft~drop\or\;{␣~z}hard~drop\or\;{~~q}quit\fi}}
+\def\>{\i\G<0 \v\A\a\v1 \@\fi
+\O{\"[H~~[1;38;5;75mT~E~X~T~R~I~S}\def\"{[J}\O{~\B╔\w\w\w\w\w╗}
+\P\N0 \u\m16 \v\N\a\v1 \f10 \n0
+\loop\edef\b{~\B║\z}\i\G=\n\r{[1;7m\h~~GAME~~OVER\h~~\z}\a\f10 \else\.\.\.\.\.\.\.\.\.\.\fi\r{\B║}\<\O\b\a\n1 \i\n<20 \repeat
+\O{~\B╚\w\w\w\w\w╝}\i\G<0 \v0 \@\else\?\fi}
+\def\?{\message{[J}\batchmode\end}
+\def\[{\read-1to\]\ifcase\]\,\or\t{-1}\>\or\t1\>\or\&\>\or\*{}\>\or\-\>\or\or\or\or\?\fi\[}
+\read-1to\]\s\]\f0 \loop\c\f0 \a\f1 \i\f<210 \repeat\G-1 \V1 \U\A\N\U\!\>\[
