@@ -1,248 +1,148 @@
 V10
 Kp macro
 Kc arith
-CK 0 -1 1 -2 2
+CZ0
+DB e e e e e e e e e e /
+DC$B$B$B$B$B
+DN na ns ns ns ns nz /
+DA$(c +$@
+DD$(p {
+DE$@$1
+DF$-$-
+DG r$F$-$*<$-$*
+DH 1 1 2 1
+DI$:$>k$>h$&{c}$&{x}$&{y}$&{r}|
+DJ$@1$)
+DK}$@0$)
+DL$E$)
+DM$@$5$) 
+DO$:$>
+DP<$6>$1$4
+DQ$*/$*
+DR$-$*
+DS 0 0 1
+DT$@$2
+DU$(c
+DV<$7>$8 $U $3$E
+DW$:$D
+DX$:$A
+DY$2$3
 Sa
-Ri 0$*	$@0 1 1 1 2 1 3 1$1
-Ri 1$*	$@2 0 2 1 2 2 2 3$1
-Ri 2$*	$@0 2 1 2 2 2 3 2$1
-Ri 3$*	$@1 0 1 1 1 2 1 3$1
-Ro 0$*	$@1 0 2 0 1 1 2 1$1
-Ro 1$*	$@1 0 2 0 1 1 2 1$1
-Ro 2$*	$@1 0 2 0 1 1 2 1$1
-Ro 3$*	$@1 0 2 0 1 1 2 1$1
-Rt 0$*	$@1 0 0 1 1 1 2 1$1
-Rt 1$*	$@1 0 1 1 2 1 1 2$1
-Rt 2$*	$@0 1 1 1 2 1 1 2$1
-Rt 3$*	$@1 0 0 1 1 1 1 2$1
-Rs 0$*	$@1 0 2 0 0 1 1 1$1
-Rs 1$*	$@1 0 1 1 2 1 2 2$1
-Rs 2$*	$@1 1 2 1 0 2 1 2$1
-Rs 3$*	$@0 0 0 1 1 1 1 2$1
-Rz 0$*	$@0 0 1 0 1 1 2 1$1
-Rz 1$*	$@2 0 1 1 2 1 1 2$1
-Rz 2$*	$@0 1 1 1 1 2 2 2$1
-Rz 3$*	$@1 0 0 1 1 1 0 2$1
-Rj 0$*	$@0 0 0 1 1 1 2 1$1
-Rj 1$*	$@1 0 2 0 1 1 1 2$1
-Rj 2$*	$@0 1 1 1 2 1 2 2$1
-Rj 3$*	$@1 0 1 1 0 2 1 2$1
-Rl 0$*	$@2 0 0 1 1 1 2 1$1
-Rl 1$*	$@1 0 1 1 1 2 2 2$1
-Rl 2$*	$@0 1 1 1 2 1 0 2$1
-Rl 3$*	$@0 0 1 0 1 1 1 2$1
+Ri	3 0 1$H 3 1
+Ro	0 1 0 2 0$H
+Rt	2 1$S$H
+Rs	2 1 0 2$S 1 1
+Rz	2$S 0$H
+Rj	2 0$S$H
+Rl	2 2$S$H
 Sb
-R0	$@i
-R1	$@o
-R2	$@t
-R3	$@s
-R4	$@z
-R5	$@j
-R6	$@l
-Sc
-Ri	$@ns ns ns ns / i i i i / ns ns ns ns / ns ns ns ns /
-Ro	$@ns o o ns / ns o o ns / ns ns ns ns / ns ns ns ns /
-Rt	$@ns t ns ns / t t t ns / ns ns ns ns / ns ns ns ns /
-Rs	$@ns s s ns / s s ns ns / ns ns ns ns / ns ns ns ns /
-Rz	$@z z ns ns / ns z z ns / ns ns ns ns / ns ns ns ns /
-Rj	$@j ns ns ns / j j j ns / ns ns ns ns / ns ns ns ns /
-Rl	$@ns ns l ns / l l l ns / ns ns ns ns / ns ns ns ns /
+R0	i
+R1	o
+R2	t
+R3	s
+R4	z
+R5	j
+R6	l
 Sd
-R0	$@0
-R1	$@40
-R2	$@100
-R3	$@300
-R4	$@1200
+R1	40
+R2	100
+R3	300
+R4	1200
 Se
-R$-$-<$*>	$:col$1row$2$(c l$@0$@$2$)<$3>
-Rcol$-row$-TRUE<$*/$*>	col$1row$(c -$@$2$@1$)$(c l$@1$@$2$)<$4>
-Rcol$-row$-FALSE<$*>	$:col$1$(c l$@0$@$1$)<$3>
-Rcol$-TRUE<$-$*>	col$(c -$@$1$@1$)$(c l$@1$@$1$)<$3>
-Rcol$-FALSE<$-$*>	$@$2
+R$-$~Z<$Q>	$1$U -$T$J<$4>
+R$-0<$Q>	$:$1<$2>
+R$~Z<$R>	$U -$E$J<$3>
+R0<$R>	$E
 Sf
-R$-$-$-<$*>	$:set$1$2$3$(c l$@0$@$2$)<|$4>
-Rset$-$-$-TRUE<$*|$*/$*>	set$1$(c -$@$2$@1$)$3$(c l$@1$@$2$)<$4$5/ |$6>
-Rset$-$-$-FALSE<$*|$*>	$:setc$1$3$(c l$@0$@$1$)<$4|$5>
-Rsetc$-$-TRUE<$*|$-$*>	setc$(c -$@$1$@1$)$2$(c l$@1$@$1$)<$3$4|$5>
-Rsetc$-$-FALSE<$*|$-$*>	$@$3$2$5
+R$*$-$~Z$-<$Q>	$1$5/$2 $U -$@$3$J$4<$6>
+R$*$- 0 go<$Q>	$E go /$4
+R$*$~Z 0$-<$R>	$1$4$U -$T$J 0$3<$5>
+R$*0 0$-<$R>	$E$2$4
 Sh
-R$-$-$-|$*	$:$1$2<$>a $&{c}$3>|$4
-R$-$-<$-$-$*>$*	$1$2<$5>$(c +$@$1$@$3$)$(c +$@$2$@$4$)$6
-R$-$-<>$*|$*	$@$3|$4
-Si
-R$-$-	$:$1$2$(c l$@$1$@0$)$(c l$@9$@$1$)$(c l$@$2$@0$)$(c l$@19$@$2$)
-R$-$-$*TRUE$*	$@no
-R$-$-$*	$:$>e$1$2< $&{r0} / $&{r1} / $&{r2} / $&{r3} / $&{r4} / $&{r5} / $&{r6} / $&{r7} / $&{r8} / $&{r9} / $&{r10} / $&{r11} / $&{r12} / $&{r13} / $&{r14} / $&{r15} / $&{r16} / $&{r17} / $&{r18} / $&{r19} />
-Re	$@ok
-R$*	$@no
+R$F$F$*	$:$4 r $1 $2 $3$5<$>a$1
+R0$G	$:$2 $3 + +$P
+R1$G	$X$2$M$3 - + s$P
+R2$G	$X$2$M$A$3$M- -$P
+R3$G	$:$2 $A$3$M+ - s$P
+R$F$F<$F$*>$R	$1$Y$4$V$M$U $4$T$@$6$)$9
+R$F$Fs<$F$*>$R	$1$Y$4 s$V$@$6$) $U $4$T$@$5$)$9
+R$*<>$*	$2
 Sj
-R$-$-$-	$:check$>h$1$2$3|
-Rcheck$-$-$*|$*	check$3|$4$>i$1$2
-Rcheck |$*no$*	$@no
-Rcheck |$*	$@yes
+R$F$-	$Oh$&{c}$1$Y|
+R$F$R|$*	$1$4|$5$>e$Y<$&{b}>
+R$-| e e e e	$@yes
+R$*	$@no
 Sk
-R$-$-$-$*|$*	$1$4|$>f$2$3$1<$5>
-R$-|$*	$@$2
+R$F$R|$*	$1$4|$>f$Y$1<$5>
+R$-|$*	$2
 Sm
-R$*e$*	$@$1e$2/
+R$*e$*	$Ee$2/
 R$*	$@x
 Sp
-R$*	$:|$1|
-R|$*/$*|$*	|$2|$3$>m$1
-R|$*|$*x$*	|$1x |$2$3
-R| x x x x |$*	$:4 | x x x x |$1
-R| x x x |$*	$:3 | x x x |$1
-R| x x |$*	$:2 | x x |$1
-R| x |$*	$:1 | x |$1
-R| |$*	$:0 | |$1
-R$-| x$*|$*	$1|$2| e e e e e e e e e e /$3
-R$-| |$*	$@$1|$2
+R$-|$Q<$*	$1|$3<$4$>m$2
+R$-|<$*x$*	$A$1$J|<$B$Y
 Sq
-R$*	$:$(c *$@ $&{s}$@16807$)
-R$-	$:$(c %$@$1$@2147483647$)
-R$-	$:$(p {s}$@$1$)$>b$(c %$@$1$@7$)
-R$-	$@$(p {q}$@$1$)
+R$*	$Wc}$@$&{q}$)$U *$@$&{s}$@16807$)
+R$-	$:$U %$E$@2147483647$)
+R$-	$Ws}$L$>b$U %$E$@7$)
+R$-	$@$Dq}$L$>u
 Su
-R$*	$:$(p {x}$@3$)$(p {y}$@0$)$(p {r}$@0$)$(p {t}$@0$)$>j 3 0 0
-Rno	$@$(p {o}$@1$)$(p {f}$@fin$)
-R$*	$@
+R$*	$Wx}$@3$)$Dy$K$Dr$K$Dt$K$>j 3 0 0
+Rno	$Do}$@fin$)
 Sw
-R0	$@
-R$-	$:$>d$1
-R$-	$:$1$(c /$@ $&{w}$@10$)
-R$-$-	$:$1$(c +$@$2$@1$)
-R$-$-	$:$(c *$@$1$@$2$)
-R$-	$:$(c +$@$1$@ $&{k}$)
-R$-	$@$(p {k}$@$1$)
+R$-	$Od$1
+R$-	$:$U *$E$@$&{l}$)
+R$-	$X$1$@$&{k}$)
+R$-	$Dk}$L
 Sx
-R$*	$:$>k $&{c}$>h $&{x} $&{y} $&{r} | $&{r0} / $&{r1} / $&{r2} / $&{r3} / $&{r4} / $&{r5} / $&{r6} / $&{r7} / $&{r8} / $&{r9} / $&{r10} / $&{r11} / $&{r12} / $&{r13} / $&{r14} / $&{r15} / $&{r16} / $&{r17} / $&{r18} / $&{r19} /
-R$*	$:$>p$1
-R$-|$*	$:rows$2|$1
-Rrows$*/$*	$:rows$(p {r0}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r1}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r2}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r3}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r4}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r5}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r6}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r7}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r8}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r9}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r10}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r11}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r12}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r13}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r14}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r15}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r16}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r17}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r18}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r19}$@$1$)$2
-Rrows |$-	$:$1$>w$1
-R$-	$:$(c +$@ $&{w}$@$1$)
-R$-	$:$(p {w}$@$1$)$(p {c}$@ $&{q}$)$>q
-R$*	$@$>u
+R$*	$I$&{b}
+R$*	$Op 0 |$1<
+R$-|<$*	$Wb}$T$)$A$&{w}$L $>w$1
+R$-	$Ww}$L$U /$E$@10$)
+R$-	$X$1$J
+R$-	$@$Dl}$L$>q
 Sy
-R$*	$:$>j $&{x}$(c +$@ $&{y}$@1$) $&{r}
-Rno	$@$>x
-Ryes	$:$(c +$@ $&{y}$@1$)
-R$-	$@$(p {y}$@$1$)
+R$*	$Oz 0 1
+R$+	$E$>x
 Sz
-R$-	$:$(c +$@ $&{x}$@$1$)
-R$-	$:$1$>j$1 $&{y} $&{r}
-R$-yes	$@$(p {x}$@$1$)
-R$*	$@
+R$F	$X$&{x}$L $A$&{y}$T$)
+R$F	$:$1 $2$>j$1 $2$&{r}
+R$Fyes	$Dx}$L$Dy}$T$)
 SA
-R$*	$:$(c +$@ $&{r}$@1$)
-R$-	$:try$(c %$@$1$@4$) $&{x} | 0 -1 1 -2 2
-Rtry$-$-|$=K$*	try$1$2|$4res$(c +$@$2$@$3$)$>j$(c +$@$2$@$3$) $&{y}$1
-Rtry$-$-|$*res$-yes$*	$@$(p {x}$@$4$)$(p {r}$@$1$)
-R$*	$@
+R$*	$:$&{c}$A$&{r}$J
+Ro$-	$@
+R$F	$:try$U %$T$@4$)$&{x} | 0 -1 1 -2 2 <
+Rtry$F|$R<$*	try$1$2|$4<$5 $A$2$@$3$)$>j$A$2$@$3$)$&{y}$1
+Rtry$F|<$*$-yes$*	$Dx}$@$4$)$Dr}$L
 SB
-R$*	$:hd $&{y}$>j $&{x}$(c +$@ $&{y}$@1$) $&{r}
-Rhd$-yes	hd$(c +$@$1$@1$)$>j $&{x}$(c +$@$1$@2$) $&{r}
-Rhd$-no	$@$(p {y}$@$1$)$>x
+R$*	$:x$>y
+Rx	x$>y
 SC
-R$*	$:$(c +$@ $&{t}$@1$)
-R$-	$:$(p {t}$@$1$)$1$(c /$@ $&{w}$@10$)
-R$-$-	$:$(c +$@$1$@$2$)
-R$-	$:$(c l$@$1$@10$)
-RTRUE	$@none
-RFALSE	$@$(p {t}$@0$)$>y
+R$*	$X$&{t}$J
+R$-	$Wt}$L$A$1$@$&{l}$)
+R$-	$:$U l$E$@11$)
+RFALSE	$@$Dt$K$>y
 SD
-R$*	$:< $&{o}> $&{r0} / $&{r1} / $&{r2} / $&{r3} / $&{r4} / $&{r5} / $&{r6} / $&{r7} / $&{r8} / $&{r9} / $&{r10} / $&{r11} / $&{r12} / $&{r13} / $&{r14} / $&{r15} / $&{r16} / $&{r17} / $&{r18} / $&{r19} /
-R<1>$*	$:view$1
-R<>$*	$:view$>k $&{c}$>h $&{x} $&{y} $&{r} |$1
-Rview$*/$*	$:view$(p {v0}$@$1$)$2
-Rview$*/$*	$:view$(p {v1}$@$1$)$2
-Rview$*/$*	$:view$(p {v2}$@$1$)$2
-Rview$*/$*	$:view$(p {v3}$@$1$)$2
-Rview$*/$*	$:view$(p {v4}$@$1$)$2
-Rview$*/$*	$:view$(p {v5}$@$1$)$2
-Rview$*/$*	$:view$(p {v6}$@$1$)$2
-Rview$*/$*	$:view$(p {v7}$@$1$)$2
-Rview$*/$*	$:view$(p {v8}$@$1$)$2
-Rview$*/$*	$:view$(p {v9}$@$1$)$2
-Rview$*/$*	$:view$(p {v10}$@$1$)$2
-Rview$*/$*	$:view$(p {v11}$@$1$)$2
-Rview$*/$*	$:view$(p {v12}$@$1$)$2
-Rview$*/$*	$:view$(p {v13}$@$1$)$2
-Rview$*/$*	$:view$(p {v14}$@$1$)$2
-Rview$*/$*	$:view$(p {v15}$@$1$)$2
-Rview$*/$*	$:view$(p {v16}$@$1$)$2
-Rview$*/$*	$:view$(p {v17}$@$1$)$2
-Rview$*/$*	$:view$(p {v18}$@$1$)$2
-Rview$*/$*	$:view$(p {v19}$@$1$)$2
-Rview	$:< $&{o}>
-R<1>	$:$(p {v9}$@go$)
-R$*	$:next$>c $&{q}
-Rnext$*/$*	$:next$(p {n0}$@$1$)$2
-Rnext$*/$*	$:next$(p {n1}$@$1$)$2
-Rnext$*/$*	$:next$(p {n2}$@$1$)$2
-Rnext$*/$*	$:next$(p {n3}$@$1$)$2
-Rnext	$:$(c /$@ $&{w}$@10$)
-R$-	$:$(c +$@$1$@1$)
-R$-	$:$(p {l}$@$1$)
-R$*	$@hh tt nl tp nl lb $&{v0} rb pn nl lb $&{v1} rb pb nl lb $&{v2} rb na $&{n0} nz nl lb $&{v3} rb na $&{n1} nz nl lb $&{v4} rb na $&{n2} nz nl lb $&{v5} rb na $&{n3} nz nl lb $&{v6} rb pb nl lb $&{v7} rb pz nl lb $&{v8} rb nl lb $&{v9} rb ps nl lb $&{v10} rb sc $&{k} re nl lb $&{v11} rb lv $&{l} lm $&{w} re nl lb $&{v12} rb nl lb $&{v13} rb pc nl lb $&{v14} rb k1 nl lb $&{v15} rb k2 nl lb $&{v16} rb k3 nl lb $&{v17} rb k4 nl lb $&{v18} rb k5 nl lb $&{v19} rb k6 nl bt nl cj $&{f}
+R$*	$:<$&{o}>$&{b}
+R<>$*	$I$1
+R<fin>$*	$Of 0 9 go<$1>
+R$*	$:$1!$>k$>h$&{q} 1 0 0 |$N$N$N$N
+R$*!$*	$:hh tt nl tp nl<$1| pn / pb / $2 pb / pz / / ps / sc$&{k} re / lv$&{l} lm$&{w} re / / pc / k1 / k2 / k3 / k4 / k5 / k6 />
+R$*<$Q|$Q>	$1 lb $2 rb $4 nl<$3|$5>
+R$*<|>	$1 bt nl cj$&{o}
 SE
-R$-	$:$(p {s}$@$1$)$(p {k}$@0$)$(p {w}$@0$)$(p {o}$@$)$(p {f}$@$)rows e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / e e e e e e e e e e / 
-Rrows$*/$*	$:rows$(p {r0}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r1}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r2}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r3}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r4}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r5}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r6}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r7}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r8}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r9}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r10}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r11}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r12}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r13}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r14}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r15}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r16}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r17}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r18}$@$1$)$2
-Rrows$*/$*	$:rows$(p {r19}$@$1$)$2
-Rrows	$:$>q
-R$*	$:$(p {c}$@ $&{q}$)$>q
-R$*	$:$>u
-R$*	$@$(p {g}$@1$)$>D
+R$-	$>D$>q$>q$Ds}$L$Dk$K$Dw$K$Dl}$J$Dq}$@i$)$Db}$@$C$C$C$C$)
 SGame
-R$-	$:$1< $&{g}>
-R$-<>	$@$>E$1
-R$-<$*>	$:$1< $&{o}>
-R$-<1>	$@
+R$-	$:$1<$&{s}$&{o}>
+R$-<>	$>E$1
+R$-<$- fin>	$@
 R$-<$*>	$:$1
 R9	$@quit
-R0	$:$>C
-Rnone	$@
-R1	$:$>z -1
-R2	$:$>z 1
-R3	$:$>A
-R4	$:$>y
-R5	$:$>B
+R0	$OC
+R1	$Oz -1 0
+R2	$Oz 1 0
+R3	$OA
+R4	$Oy
+R5	$OB
 R$-	$@
 R$*	$@$>D
