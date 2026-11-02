@@ -58,9 +58,9 @@ to golf its `.min` file again by hand.
 - **Bounds for free.**
   - **Sentinels on the board:** the board gets out-of-range sentinels, so the edge checks
     vanish. m4 wraps each row in `<…>` and TeX keeps a spare row of registers above it.
-    In CMake, unset cell variables already read as empty.
   - **Arithmetic for the rest:** what's left is folded into one expression, such as
-    `a*(a-9)<1` for 0 ≤ a ≤ 9.
+    `a*(a-9)<1` for 0 ≤ a ≤ 9 in jq, or CMake's `(x+10)/10-1|y/20`, which is non-zero
+    off the board.
 - **Line clears without counting.** A row is full when the product (or minimum) of its
   cells is non-zero. Rows are copied down unconditionally, and the destination only
   advances for rows that stay. m4 and jq delete full rows with one regex or `select` and
@@ -72,7 +72,7 @@ to golf its `.min` file again by hand.
 ## Per language
 
 - **bc**
-  - Everything comes out of the big-number tables with `/` and `%`; there are no arrays left.
+  - All tables come out of big numbers with `/` and `%`. The only array left is the board.
   - Loops count down with `for(i=16;i--;)`, and the read sits in the loop condition:
     `while(!g&&(e=read())-9)`.
   - A bare `y++` statement prints its value, so increments are written `y+=1`.
@@ -146,6 +146,9 @@ to golf its `.min` file again by hand.
 
 - **`jqtris.min.jq` needs jq 1.7.** It relies on native `%` on large numbers and raw
   control characters in strings.
-- **Speed:** the golfed bc does more big-number arithmetic and runs about 2.5× slower than
-  the readable one, around 8 ms per frame, still far under the 100 ms tick. The golfed TeX,
-  make and sendmail are faster than their sources.
+- **Speed:** measured on the 300-piece bot game:
+  - **bc:** the golfed version does more big-number arithmetic and runs about 2.7× slower
+    than the readable one. That's around 8 ms per frame, still far under the 100 ms tick.
+  - **m4:** about 25% slower.
+  - **dc and troff:** about the same speed.
+  - **TeX, make and sendmail:** faster than their sources.

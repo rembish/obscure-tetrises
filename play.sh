@@ -126,7 +126,9 @@ main() {
       q|Q|'') return 0 ;;
       g|G) min=$(( !min )); continue ;;
     esac
-    if spec=$(lookup "$choice"); then launch "$spec" "$min"; return; fi
+    spec=$(lookup "$choice") || continue
+    launch "$spec" "$min"
+    printf '\n  press Enter for the menu ' >/dev/tty; read -r </dev/tty || return 0
   done
 }
 
