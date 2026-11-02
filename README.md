@@ -5,6 +5,26 @@ meant to run games. Each one reads key presses from a small bash launcher and
 draws the whole game itself: the board, gravity, rotation, line clears, scoring
 and the colour terminal frame.
 
+## Quick start
+
+One launcher for all of them. It shows a menu, marks which tools are installed and
+toggles between the readable and the golfed engines:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/play.sh | bash
+# or, from a clone:
+./play.sh              # menu
+./play.sh jq           # straight into jqtris
+./play.sh --min tex    # the golfed textris
+./play.sh --list       # what's there and what's installed
+```
+
+Pass arguments through `curl | bash` with `bash -s -- --min m4`.
+
+## The games
+
+Each game also has its own launcher:
+
 | Game | Written in | Play |
 |---|---|---|
 | [**bctris**](bc/) | `bc`, the arbitrary-precision calculator language | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/bctris.sh \| bash` |
@@ -24,12 +44,13 @@ Every launcher also works with `| sh` (it hands itself over to bash), and from a
 ```sh
 git clone https://github.com/rembish/obscure-tetrises.git
 cd obscure-tetrises
-./bc/bctris.sh        # or ./dc/dctris.sh, ./jq/jqtris.sh, ...
+./play.sh             # or ./bc/bctris.sh, ./jq/jqtris.sh, ...
 ```
 
 > Piping a script from the internet into a shell runs it with your permissions.
 > Each launcher is short; read it first if you like. It downloads only its own engine
-> file to a temporary directory and deletes it on exit.
+> file to a temporary directory and deletes it on exit. `play.sh` downloads only the
+> launcher you pick (and its `.min` engine, if asked) the same way.
 
 ## Controls
 
@@ -51,11 +72,11 @@ tests/check.sh jq       # just one
 
 ## Golfed versions
 
-Every engine also comes minified as `<name>.min.<ext>`, next to the readable
-source. It is golfed as far as each language allows while producing exactly the same bytes.
+Every engine also comes golfed as `<name>.min.<ext>`, next to the readable
+source. It is about 50–80% smaller and produces exactly the same bytes.
 `tests/check.sh --min` runs every `.min` file through the same comparison. The
-golfed sedtris is compared against the original `sedtris.sed` on random key streams. Any
-launcher plays a golfed engine with `ENGINE_FILE`:
+golfed sedtris is compared against the original `sedtris.sed`. Play one with
+`./play.sh --min <game>`, or with any launcher's `ENGINE_FILE`:
 
 ```sh
 ENGINE_FILE=jq/jqtris.min.jq ./jq/jqtris.sh
@@ -64,27 +85,21 @@ tests/check.sh --min           # verify all of them
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |
 |---|---:|---:|---:|
-| bc | 5,561 | 3,132 | 44% |
-| CMake | 8,562 | 5,130 | 40% |
-| dc | 5,365 | 2,728 | 49% |
-| gnuplot | 6,887 | 3,282 | 52% |
-| jq | 5,321 | 2,444 | 54% |
-| m4 | 8,838 | 5,204 | 41% |
-| make | 12,757 | 8,118 | 36% |
-| sed | 8,357 | 7,222 | 14% |
-| sendmail | 13,395 | 7,904 | 41% |
-| TeX | 9,600 | 6,181 | 36% |
-| troff | 7,382 | 4,516 | 39% |
+| bc | 5,561 | 2,262 | 59% |
+| CMake | 8,562 | 3,660 | 57% |
+| dc | 5,365 | 2,138 | 60% |
+| gnuplot | 6,887 | 2,122 | 69% |
+| jq | 5,321 | 1,845 | 65% |
+| m4 | 8,838 | 2,083 | 76% |
+| make | 12,757 | 4,196 | 67% |
+| sed | 8,357 | 4,250 | 49% |
+| sendmail | 13,395 | 2,291 | 82% |
+| TeX | 9,600 | 2,597 | 72% |
+| troff | 7,382 | 2,887 | 60% |
 
-Much of what remains is the frame itself: escape codes, box-drawing characters and
-panel text that must come out byte for byte. A few languages set hard limits on what can go:
-- **sendmail:** only `<` and `>` are always token separators, so most spaces between words stay.
-- **make:** spaces are part of values.
-- **TeX:** the space after a control word must stay where the frame relies on it being skipped.
-- **CMake:** one command per line.
-
-`jqtris.min.jq` uses jq's native `%` on large numbers, so unlike the readable
-version it needs jq 1.7 or newer.
+[`GOLFING.md`](GOLFING.md) explains how: the shared tricks (generated tables, one
+cell iterator, merged moves, free bounds checks) and what each language allowed or refused.
+`jqtris.min.jq` needs jq 1.7 or newer.
 
 ## Requirements
 
