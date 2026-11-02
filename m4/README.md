@@ -44,3 +44,23 @@ To run the engine on its own:
 ```sh
 (echo 42; yes 0 | head -50; echo 5) | sed 's/.*/E(&)/' | m4 m4tris.m4 -
 ```
+
+## Golfed version
+
+[`m4tris.min.m4`](m4tris.min.m4) is the golfed twin of the engine: 2,083 bytes instead of 8,838 (76% smaller), with exactly the same output. `tests/check.sh --min m4` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to m4:
+
+- **One-letter builtins:** a helper copies builtins under new names with `defn`, so `define`, `ifelse`, `eval`, `patsubst` and `substr` become single letters.
+- **The board is one string:** rows like `<0000000000>` replace 200 cell macros. The `<` and `>` markers block every move off the sides, and reading past the end blocks moves off the bottom, so there are no bounds checks. Full rows are removed with one `patsubst(b,<[1-7]*>)`, and a recursive padder tops the board back up to 20 rows. The same padder builds the empty board at start.
+- **Generated rotations:** only rotation 0 of each piece is stored, as 56 digits. A recursive `patsubst` builds the other rotations at load time.
+- **One cell iterator:** a single macro runs a template over a piece's four cells. It is used for the fit check (the four cells joined and compared with `0000`), for drawing and for erasing.
+- **One try-move macro:** it covers left, right, soft drop, hard drop, the rotation kicks (a variadic recursion over `0,-1,1,-2,2`) and the spawn check.
+- **An nth-argument macro:** one macro replaces the colour, score and label tables.
+- **Rendering with patsubst:** board rows and cells are drawn by `patsubst` over the board string.
+- **No `divert(-1)`:** the file is effectively one line, and every event's expansion ends in `dnl`.
+- **What m4 refused:**
+  - **Joined words:** words join across expansion boundaries. `ESC[m` followed by `f` becomes `mf`, and `m4exit` ran into the next name. Each such spot needs a `` `' `` or `()` separator.
+  - **Reserved letters:** a single letter that appears as a word in the output can't be a macro name. That covers the title letters, the control keys and `m K H J` from the escape codes.
+  - **Regexes:** GNU m4 regexes have no `\{n\}` intervals.
+  - **32-bit `eval`:** this overflows, so the random step keeps Schrage's method.
+  - **Replacements:** `patsubst` turns `\(` into `(`.
+- **Slower:** about 25% slower than `m4tris.m4`, still a few ms per frame.

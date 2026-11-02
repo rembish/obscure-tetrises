@@ -35,3 +35,25 @@ To run the engine on its own:
 ```sh
 (echo 42; yes 0 | head -50; echo 5; echo 9) | BC_LINE_LENGTH=0 bc -q bctris.bc
 ```
+
+## Golfed version
+
+[`bctris.min.bc`](bctris.min.bc) is the golfed twin of the engine: 2,262 bytes instead of 5,561 (59% smaller), with exactly the same output. `tests/check.sh --min bc` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to bc:
+
+- **Tables in big numbers.**
+  - **Piece masks:** all 28 piece masks are one base-2¹⁶ literal, read with `t(a,i)=P/2^(16*a+i)%2`.
+  - **Colours:** `208033196046135226051/1000^v%1000`.
+  - **Scores:** `120030010004000/1000^e%1000*10`.
+  - **What's left:** the board is the only array.
+- **No kick table:** the rotation loop walks 0, −1, 1, −2, 2 with `for(j=0;j>-3;j=-j-(j>=0))`.
+- **Fewer functions:** most small functions, `scale=0` and most `auto`s are gone. The escapes are inlined into merged `print` strings, and the `═`/`─` runs are loops.
+- **Side panel:** the panel is a flat list of `if(r==N)` statements. A shared flag `i=(r-8)*(r-12)` adds the indent and the trailing reset.
+- **Line clear:** every row is copied down, and a row is kept only if the product of its cells is 0.
+- **Shorter idioms:**
+  - Count-down loops: `for(i=16;i--;)`.
+  - `+=` and chained assignment: `y=h=t=0`.
+  - The read inside the loop condition: `while(!g&&(e=read())-9)`.
+  - The tick becomes a soft-drop event (`e=4`), and hard drop falls through to the same code.
+- **What bc refused:**
+  - **Statements print:** a bare `y++` prints its value into the output, so increments are `y+=1`.
+  - **`halt` stays:** without it, bc would go on to execute the leftover input.

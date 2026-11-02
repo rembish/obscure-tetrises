@@ -45,3 +45,26 @@ To run the engine on its own:
 ```sh
 printf '.GO 42\n\n.GO 5\n\n.GO 9\n\n' | troff -z -Ww trofftris.tr 2>&1 >/dev/null | head -3
 ```
+
+## Golfed version
+
+[`trofftris.min.tr`](trofftris.min.tr) is the golfed twin of the engine: 2,887 bytes instead of 7,382 (60% smaller), with exactly the same output. `tests/check.sh --min troff` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to troff:
+
+- **One table:** the masks, line-clear scores and colours sit in one list, loaded by a recursive macro (`.shift` plus `.X \\$@`). The same macro defines the colour-block strings, so a cell value points straight at its string. The masks are ordered so the preview reads one entry directly.
+- **No powers-of-two table:** the bit test checks `C%2` and halves `C`. The loop ends when `C` reaches 0.
+- **Left-to-right arithmetic:** groff has no operator precedence, so most parentheses go. The random step is one line, and the bounds check is `\nK>?(9-\nK)>9:(\nL>19):\n[b\nJ]`.
+- **Merged macros:**
+  - **Stamping a piece:** this is the collision macro with a 4th argument.
+  - **Left, right and rotate:** one macro taking a rotation delta and a list of kick offsets.
+  - **Hard drop:** a recursive macro over soft drop. Spawn ends with `u=0`, which stops the recursion.
+- **Dispatch by name:** `.e\$1` calls macros `e0`–`e5`, and `.als e9 ex` quits. Unknown events have no macro, so nothing runs.
+- **Init:** the first-call macro is `GO` itself and ends with `.rn S GO`, so the init flag goes away. Unset registers read as 0, so nothing is zeroed at start.
+- **Line clear:** every row is copied down, and a full row is detected with the minimum operator `<?`.
+- **Strings:**
+  - **Shared escapes:** repeated escapes are shared strings, for example `\*T` for `ESC[38;5;`.
+  - **Border:** the 20-wide border is built by doubling a string.
+  - **Trailing spaces:** these survive in `.ds`/`.as`, so the `\x20` escapes went.
+- **What troff refused:**
+  - **Relative `.nr`:** `.nr I \nA+1` becomes a relative change when `A` is −1, so it's written `1+\nA`.
+  - **Overflow:** squaring cell values to test a full row would overflow, hence the minimum.
+  - **Strings can't dispatch:** a string can't serve as the event dispatcher, because its body isn't run as requests.

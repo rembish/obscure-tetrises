@@ -46,3 +46,26 @@ To run the engine on its own, use the launcher's pipe mode:
 ```sh
 (echo 42; yes 0 | head -50; echo 5; echo 9) | ./maketris.sh --pipe
 ```
+
+## Golfed version
+
+[`maketris.min.mk`](maketris.min.mk) is the golfed twin of the engine: 4,196 bytes instead of 12,757 (67% smaller), with exactly the same output. `tests/check.sh --min make` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to make:
+
+- **Generated tables:**
+  - **Rotations:** only rotation 0 of each piece is stored, with 1-based coordinates. Rotations 1–3 are computed at load as (x,y) → (n+1−y, x).
+  - **Colours:** they come from a `$(foreach)` over one word list.
+  - **Piece numbers:** these are 1-based, so the increment tables went.
+- **Cheaper arithmetic:**
+  - **Seed:** converted to binary digit by digit (`b = b*10 + d`) with the existing binary adder. The halving table went.
+  - **7-way random pick:** the bits are joined with x-strings weighted 1, 2 and 4, then `subst xxxxxxx` removes the multiples of 7.
+  - **Level:** a `subst` of 10-x groups on the lines counter.
+  - **Score:** kept as reversed digits, so it's reversed only once, for display.
+  - **Carry:** the adder's carry is `$(word 2,…)` of the list of 1s.
+- **Dispatch by name:** an event calls `$(E$J)`, guarded by `$(value E$J)`. A tick returns `n` when nothing moved, which replaces the redraw flag.
+- **One first-fit function:** a recursive function serves left, right and rotate, with the wall-kick offsets as `$(wordlist k,999,…)`.
+- **Line clear:** rows are shifted bottom-up in place, using a constant empty row.
+- **One `$(info)` per frame:** embedded newlines, and the space between `foreach` items supplies each row's leading space.
+- **Restart rule:** one line, `$(if quit,$(info ESC[J),$(STATE)):all;$(file >...):`.
+- **What make refused:**
+  - **Self-reference:** a recursive variable can't reference itself, so hard drop still needs `$(call E5)`.
+  - **Writing state at parse time:** this doesn't trigger a restart, and neither does a rule with an empty recipe. The state file must be written from a recipe that ends in `:`.

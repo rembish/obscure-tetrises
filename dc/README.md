@@ -39,3 +39,14 @@ To run the engine on its own:
 ```sh
 (echo 42; yes 0 | head -50; echo 5) | DC_LINE_LENGTH=0 dc dctris.dc
 ```
+
+## Golfed version
+
+[`dctris.min.dc`](dctris.min.dc) is the golfed twin of the engine: 2,138 bytes instead of 5,365 (60% smaller), with exactly the same output. `tests/check.sh --min dc` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to dc:
+
+- **Self-contained colour macros:** `l<`, `l>` and `l/` print the string on top of the stack and reset the colour themselves. So `l<x[X]PlRx` became `[X]l<x`, used 28 times. Further macros cover the three-space indent (`l.x`), the controls rows (`l?x`) and the row counter (`l!x`).
+- **Tables from the stack:** the mask and colour tables are pushed as plain numbers and stored by a stack-depth loop, `[z1-:Mz0<Z]dsZx`, instead of 35 separate `N:M` stores. Unset array cells are already 0, so zero entries are omitted.
+- **Dispatch through an array:** the six event handlers live in array `#` and are called with `;#x`, instead of an `lz0=0…lz5=5` comparison chain. Each handler draws its own frame, so the redraw flag is gone.
+- **Collision check:** the fit routine takes x and y from the stack, and the two bit loops share one body. Rotation restores the saved rotation itself after trying its kicks.
+- **A clean stack:** the main loop starts every event with `c` (clear the stack), so values left behind by failed moves and unused kicks can't pile up during long games.
+- **What dc refused:** an unbalanced `[` inside a string. ESC-`[` is still printed as `27P91P`.

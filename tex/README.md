@@ -47,3 +47,30 @@ To run the engine on its own:
 ```sh
 (echo 42; echo 5; echo 9) | max_print_line=100000 tex -8bit -interaction=batchmode -output-directory=/tmp textris.tex
 ```
+
+## Golfed version
+
+[`textris.min.tex`](textris.min.tex) is the golfed twin of the engine: 2,597 bytes instead of 9,600 (72% smaller), with exactly the same output. `tests/check.sh --min tex` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to TeX:
+
+- **Short names:**
+  - **`\let` aliases:** for `\advance`, `\divide`, `\multiply`, `\ifnum` and `\count`. The `by` keyword and `=` signs are dropped.
+  - **Control symbols:** two-letter macros became `\!`, `\$`, `\&`, `\@` and so on, which need no space after them.
+- **One counter allocator:** 41 `\newcount`s became one recursive `\countdef` loop numbering registers from 211.
+- **Board in count registers:** the board lives in registers 10–209 instead of 200 csnames. The one-row offset means out-of-bounds reads still hit a valid register, which removes a guard.
+- **Tables:**
+  - **`\ifcase` tables:** for the piece masks, the colours and the line-clear scores.
+  - **No powers-of-two table:** the mask is shifted instead.
+- **One cell loop:** the per-cell action is an argument. It serves the collision test, writing the piece and erasing it.
+- **Moves:** moves and rotations change X, Y and R directly and undo themselves on failure. Rotation tries its kicks as relative steps 0, −1, +2, −3, +4.
+- **Line clear:** one unrolled copy also detects full rows. Rows above the top read as zero, so the zero-fill loop is gone.
+- **Gravity:** the tick counter resets to the level instead of 0, so the gravity test is just `>10`.
+- **Frame drawing:**
+  - **Side panel:** one `\ifcase` over the row number.
+  - **Line ends:** every line ends in `ESC[m ESC[K`, so the write macro appends it.
+  - **Preview mask:** pre-shifted, so the empty box rows come out of the same loop as the piece rows.
+- **Event loop:** one tail-recursive `\read` loop with an `\ifcase` dispatch.
+- **What TeX refused:**
+  - **`\+`:** it is `\outer` in plain TeX, so it can't be a macro name inside a `\def`.
+  - **Recursion:** the recursive allocator needs `\expandafter`, or it takes the following `\fi` as its argument.
+  - **Spaces:** a control symbol doesn't swallow the space after it, and a number followed by an `\ifnum` macro is evaluated early. So terminator spaces stay where order matters.
+- **Faster:** about 40% faster than `textris.tex`.

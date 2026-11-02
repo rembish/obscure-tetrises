@@ -66,3 +66,25 @@ To run the engine without the launcher and see the raw tokens:
 ```sh
 printf 'Game 42\nGame 5\n' | sendmail -C sendmailtris.cf -bt | grep '^Game *returns'
 ```
+
+## Golfed version
+
+[`sendmailtris.min.cf`](sendmailtris.min.cf) is the golfed twin of the engine: 2,291 bytes instead of 13,395 (82% smaller), with exactly the same output. `tests/check.sh --min sendmail` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to sendmail:
+
+- **One board macro:** the board is a single macro `{b}` instead of `{r0}`…`{r19}`. That dropped the 3×20 row lists and 40 row-splitting rules; macro values keep their spaces.
+- **Rotation by formula:** the 28-entry piece table became 7 rotation-0 entries plus a box size `m`. One ruleset computes rotation r as (x,y), (m−y,x), (m−x,m−y) or (y,m−x).
+- **Preview with the board code:** the next-piece preview reuses the board-drawing rulesets on a small grid.
+- **Frame assembly in one loop:** one rule interleaves board rows with a `/`-separated panel string. GAME OVER is written into row 9 by one extra rule.
+- **Cell access:** cells are read and written by walking rows and columns with `$~` on a one-token class. Out-of-range coordinates simply don't match, so the bounds-check ruleset is gone.
+- **Merged rulesets:**
+  - **Moves:** one move-and-check ruleset covers left, right and soft drop.
+  - **Hard drop:** a two-rule loop.
+  - **Next piece:** picking it also spawns it.
+  - **Game-over flag:** it doubles as the decoder's end token.
+- **Read-time text macros:** frequent rule fragments are `D` macros expanded when the file is read, about 440 bytes saved. A search script kept a fragment only if a 400-event replay still matched and the file loaded silently.
+- **What sendmail refused:**
+  - **`|`:** this is not an operator character, so it needs spaces around it.
+  - **Arguments and maps:** there is no `$10`, and maps can't be nested.
+  - **Nested `$>` calls:** these make it about 3.5× slower, because `-bt` prints a trace line for every one and the decoder has to read them all. So the walks are loops.
+  - **Macro boundaries:** a text macro can't split a `{name}` across its boundary.
+- **Leftover from pass 1:** `V10` stays, so the file loads with no out-of-date warning.

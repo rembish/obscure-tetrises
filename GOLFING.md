@@ -71,76 +71,20 @@ to golf its `.min` file again by hand.
 
 ## Per language
 
-- **bc**
-  - All tables come out of big numbers with `/` and `%`. The only array left is the board.
-  - Loops count down with `for(i=16;i--;)`, and the read sits in the loop condition:
-    `while(!g&&(e=read())-9)`.
-  - A bare `y++` statement prints its value, so increments are written `y+=1`.
-- **CMake**
-  - Cells are named `b<row><col>` rather than `b<index>`, which saves a `math()` per access.
-  - Piece numbers are 1-based, so the `+1`s disappear.
-  - `cmake_minimum_required` and the usage guard went.
-  - The control rows come from one `foreach` over `"key|label"` strings.
-  - **Not possible:** `foreach(RANGE -1)` still runs, so clearing top rows needs `while`.
-    Frame strings contain `;`, so they can't be passed as macro arguments.
-- **dc**
-  - The colour macros print the string on top of the stack and reset the colour themselves.
-  - The tables are loaded by stack-depth loops (`[z1-:Mz0<Z]dsZx`).
-  - Events dispatch through an array of macros: `;#x`.
-  - The main loop clears the stack (`c`) at every event, so nothing piles up during long games.
-- **gnuplot**
-  - `local` and `return 0` are gone. `do for` variables are already scoped, and a function
-    block without `return` is fine as long as it's only assigned.
-  - gnuplot has assignment inside expressions, the comma operator and short-circuiting
-    `&&`, `||` and `?:`, so the collision test fits in one `if`.
-  - The side panel is one array literal, filled with `sprintf` and spare arguments.
-  - **Not possible:** there's no `+=`, and most keywords can't be abbreviated.
-- **jq**
-  - Moves are `first((move | select(fits)), .)`.
-  - Soft drop is `(.y+=1 | select(F)) // lock`.
-  - Quitting uses `try … error` instead of `label`/`break`.
-  - Drawing is decided by a `select` in the `foreach` extractor.
-- **m4**
-  - `defn` copies give the builtins one-letter names.
-  - The board is one string, rendered and cleared with `patsubst`.
-  - One nth-argument macro replaces all the lookup tables.
-  - **Not possible:** any single letter that appears as a word in the output (title letters,
-    control keys, `m K H J` from the escape codes) can't be a macro name.
-- **make**
-  - The random 7-way pick joins the bits with weighted x-strings and removes groups of
-    seven with `subst`.
-  - The score is kept as reversed digits.
-  - Events dispatch by variable name (`$(E$J)`).
-  - Each frame is one `$(info)`.
-  - **Not possible:** a recursive variable can't name itself, and restarts only happen when
-    the state file is written from a recipe.
-- **sed**
-  - The frame is built with one-byte placeholders that are expanded by a few `s///g` at the end.
-  - The side panel is one list consumed by a cursor loop.
-  - The board, the current piece and the preview share one colour mapping.
-  - Shifts are fixpoint loops.
-- **sendmail**
-  - The board is one macro, and rotation is a formula on rot-0 coordinates.
-  - The preview reuses the board-drawing rulesets.
-  - Frequent rule fragments are `D` macros expanded when the file is read; a search script
-    kept only the ones that passed.
-  - **Not possible:** `|` is not an operator character. Nested `$>` calls are slow, because
-    `-bt` traces every one.
-- **TeX**
-  - `\let` aliases for the long primitives.
-  - Control symbols (`\!`, `\$`, `\@`) as names, since they need no space after them.
-  - One recursive `\countdef` allocator.
-  - The board in count registers.
-  - Tables as `\ifcase`.
-  - Every line's `ESC[m ESC[K` tail is appended by the write macro.
-  - **Not possible:** `\+` is `\outer`.
-- **troff**
-  - One recursive table loader for masks, scores and colours.
-  - groff evaluates strictly left to right, which removes most parentheses.
-  - `.e\$1` dispatches events to macros `e0`–`e9`.
-  - The init macro renames itself away (`.rn S GO`).
-  - **Not possible:** `.nr x \nA+1` becomes relative when `A` is negative, so it's written
-    `1+\nA`.
+The tricks specific to one language, and what each language refused, are in that
+engine's README, under "Golfed version":
+
+- [bc](bc/README.md#golfed-version)
+- [CMake](cmake/README.md#golfed-version)
+- [dc](dc/README.md#golfed-version)
+- [gnuplot](gnuplot/README.md#golfed-version)
+- [jq](jq/README.md#golfed-version)
+- [m4](m4/README.md#golfed-version)
+- [make](make/README.md#golfed-version)
+- [sed](sed/README.md#golfed-version)
+- [sendmail](sendmail/README.md#golfed-version)
+- [TeX](tex/README.md#golfed-version)
+- [troff](troff/README.md#golfed-version)
 
 ## Caveats
 

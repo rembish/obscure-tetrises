@@ -102,3 +102,17 @@ If your terminal does not handle colours, uncomment the line marked
 - The launcher is based on
   [`playsed.sh`](http://sed.sf.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas
 - Upstream repository: [uuner/sedtris](https://github.com/uuner/sedtris)
+
+## Golfed version
+
+[`sedtris.min.sed`](sedtris.min.sed) is the golfed twin of the engine: 4,250 bytes instead of 8,357 (49% smaller), with exactly the same output. It is checked against the original `sedtris.sed`, which has its own rules, on random key streams. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to sed:
+
+- **One-byte placeholders:** the frame is built with one-byte control-character stand-ins for the colour prefix, the reset, `──`, `════` and the panel pieces. A few `s///g` commands expand them at the very end.
+- **Side panel as a list:** the 16 per-row panel substitutions became one list appended to the pattern space. A cursor loop hands each entry to the next board row, filling in the next-piece rows and the score on the way.
+- **One colour mapping:** the current piece and the preview produce ordinary cell codes, so one 7-line mapping covers the board, the current piece and the preview. That removed 14 near-duplicate lines.
+- **Piece type in the shape tag:** each shape tag carries its type, which deleted the 7 dot-count lines. The empty board is built from a 25-digit template.
+- **Loops instead of repeats:** the tripled left/right shift lines became fixpoint loops.
+- **Score:** the increment and decrement chains became digit lookup tables.
+- **GNU syntax:** numbered `s///N` flags, `s//~/`, `\?` and `\+`. GNU sed is the tested target anyway.
+- **What sed refused:** moving the top border's colour code earlier broke the output, because the current-piece regex `0[i-p]` matched the `0m` in `60m`. It stays a placeholder.
+- **Extra checks:** sedtris has its own rules, so there is no reference oracle. Besides the random streams in `check.sh`, the golfed file was compared with the original on 60 more streams and three bot-played games with line clears and game over.
