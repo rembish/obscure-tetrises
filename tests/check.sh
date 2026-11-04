@@ -19,16 +19,21 @@ trap 'rm -rf "$work"' EXIT
 # engine file given in $ENGINE. It comes last, so it may contain pipes. Option "nl": the engine can't avoid one extra newline
 # at the very end (make's $(info), TeX's newline on exit, gnuplot's print).
 ENGINES=(
+  "awk|A W K T R I S||awk/awktris.awk|ENGINE_FILE=\"\$ENGINE\" $root/awk/awktris.sh --pipe"
   "bc|B C T R I S||bc/bctris.bc|BC_LINE_LENGTH=0 bc -q \"\$ENGINE\""
   "cmake|C M A K E T R I S||cmake/cmaketris.cmake|ENGINE_FILE=\"\$ENGINE\" $root/cmake/cmaketris.sh --pipe"
   "dc|D C T R I S||dc/dctris.dc|DC_LINE_LENGTH=0 dc \"\$ENGINE\""
+  "emacs|E M A C S T R I S||emacs/emacstris.el|ENGINE_FILE=\"\$ENGINE\" $root/emacs/emacstris.sh --pipe"
   "gnuplot|G N U P L O T T R I S|nl|gnuplot/gnuplottris.gp|ENGINE_FILE=\"\$ENGINE\" $root/gnuplot/gnuplottris.sh --pipe"
   "jq|J Q T R I S||jq/jqtris.jq|jq -nrj -f \"\$ENGINE\""
   "m4|M 4 T R I S||m4/m4tris.m4|sed 's/.*/E(&)/' | m4 \"\$ENGINE\" -"
   "make|M A K E T R I S|nl|make/maketris.mk|ENGINE_FILE=\"\$ENGINE\" $root/make/maketris.sh --pipe"
+  "postscript|P O S T S C R I P T T R I S||postscript/postscripttris.ps|ENGINE_FILE=\"\$ENGINE\" $root/postscript/postscripttris.sh --pipe"
   "sendmail|S E N D M A I L T R I S||sendmail/sendmailtris.cf|ENGINE_FILE=\"\$ENGINE\" $root/sendmail/sendmailtris.sh --pipe"
+  "sqlite|S Q L I T E T R I S||sqlite/sqlitetris.sql|ENGINE_FILE=\"\$ENGINE\" $root/sqlite/sqlitetris.sh --pipe"
   "tex|T E X T R I S|nl|tex/textris.tex|ENGINE_FILE=\"\$ENGINE\" $root/tex/textris.sh --pipe"
   "troff|T R O F F T R I S||troff/trofftris.tr|ENGINE_FILE=\"\$ENGINE\" $root/troff/trofftris.sh --pipe"
+  "vim|V I M T R I S||vim/vimtris.vim|ENGINE_FILE=\"\$ENGINE\" $root/vim/vimtris.sh --pipe"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
