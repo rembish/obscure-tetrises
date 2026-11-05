@@ -1,0 +1,272 @@
+%!PS
+% postscripttris.ps - a falling-block puzzle game in PostScript, run by Ghostscript.
+%
+%   gs -q -dNODISPLAY -dBATCH postscripttris.ps < events > frames
+%
+% Nothing is drawn on a page: the program reads one number per line from %stdin
+% (the seed, then events) and prints the frames to stdout with `print`.
+% The rules and the output format are in ../SPEC.md.
+
+% ---- tables ---------------------------------------------------------------
+
+/W 10 def
+/H 20 def
+
+% masks[piece][rotation]: bit y*4+x of the 4x4 box
+/masks [
+  [240 17476 3840 8738]   % I
+  [102 102 102 102]       % O
+  [114 610 624 562]       % T
+  [54 1122 864 561]       % S
+  [99 612 1584 306]       % Z
+  [113 550 1136 802]      % J
+  [116 1570 368 547]      % L
+] def
+/colours [51 226 135 46 196 33 208] def
+/points [0 40 100 300 1200] def
+/kicks [0 -1 1 -2 2] def
+
+% ---- state ----------------------------------------------------------------
+
+% The board is a 200-byte string, row-major, row 0 at the top. A new string
+% is filled with zero bytes, which is exactly "empty". A cell holds piece + 1.
+/board W H mul string def
+/grid W H mul string def      % scratch copy used while drawing
+/score 0 def
+/lines 0 def
+/over false def
+
+% ---- random numbers -------------------------------------------------------
+
+% Park-Miller: s = s * 16807 mod (2^31 - 1), piece = s mod 7.
+% Ghostscript 10 has 64-bit integers, so the product (< 2^46) is exact.
+/rand {                       % -> piece
+  /seed seed 16807 mul 2147483647 mod def
+  seed 7 mod
+} def
+
+/level { lines 10 idiv 1 add } def
+
+% ---- the piece ------------------------------------------------------------
+
+% Run proc with the board index (y+cy)*W + x+cx of every cell of piece p at
+% rotation r and box position (x, y) on the stack. Cells off the board get
+% index -1, so the caller can tell.
+/cells {                      % x y p r proc -> -
+  /cproc exch def
+  masks 3 -1 roll get exch get /cmask exch def
+  /cy0 exch def /cx0 exch def
+  0 1 15 {
+    /ci exch def
+    cmask ci neg bitshift 1 and 1 eq {
+      /cx cx0 ci 4 mod add def
+      /cy cy0 ci 4 idiv add def
+      cx 0 ge cx W lt and cy 0 ge and cy H lt and
+      { cy W mul cx add } { -1 } ifelse
+      cproc
+    } if
+  } for
+} def
+
+% Does piece `cur` fit at (x, y) with rotation r?
+/fits {                       % x y r -> bool
+  /fr exch def /fy exch def /fx exch def
+  /ok true def
+  fx fy cur fr {
+    dup 0 lt { pop /ok false def } { board exch get 0 ne { /ok false def } if } ifelse
+  } cells
+  ok
+} def
+
+% Write the falling piece into a board string.
+/stamp {                      % string -> -
+  /starget exch def
+  x y cur r { starget exch cur 1 add put } cells
+} def
+
+/spawn {
+  /x 3 def /y 0 def /r 0 def /t 0 def
+  x y r fits not { /over true def } if
+} def
+
+% A row is full when its ten bytes hold no zero.
+/full {                       % row -> bool
+  board exch W mul W getinterval (\000) search { pop pop pop false } { pop true } ifelse
+} def
+
+/lock {
+  board stamp
+  % Copy the rows that stay down from the bottom; `dst` only moves for kept rows.
+  /dst H 1 sub def
+  H 1 sub -1 0 {
+    /src exch def
+    src full not {
+      board dst W mul board src W mul W getinterval putinterval
+      /dst dst 1 sub def
+    } if
+  } for
+  % dst + 1 rows were removed: clear the top dst + 1 rows.
+  0 1 dst { W mul board exch W string putinterval } for
+  /n dst 1 add def
+  /score score points n get level mul add def   % level before the clear
+  /lines lines n add def
+  /cur nxt def
+  /nxt rand def
+  spawn
+} def
+
+/stepdown {
+  x y 1 add r fits { /y y 1 add def } { lock } ifelse
+} def
+
+% ---- events ---------------------------------------------------------------
+
+/tick {                       % -> drew?
+  /t t 1 add def
+  t 11 level sub dup 1 lt { pop 1 } if lt
+  { false } { /t 0 def stepdown true } ifelse
+} def
+
+/shift {                      % dx -> -
+  /dx exch def
+  x dx add y r fits { /x x dx add def } if
+} def
+
+/rotate {
+  /nr r 1 add 4 mod def
+  kicks {
+    /dx exch def
+    x dx add y nr fits { /x x dx add def /r nr def exit } if
+  } forall
+} def
+
+/harddrop {
+  { x y 1 add r fits { /y y 1 add def } { exit } ifelse } loop
+  lock
+} def
+
+/handlers [
+  { tick }
+  { -1 shift true }
+  { 1 shift true }
+  { rotate true }
+  { stepdown true }
+  { harddrop true }
+] def
+
+/event {                      % code -> drew?
+  dup 0 ge 1 index 5 le and { handlers exch get exec } { pop false } ifelse
+} def
+
+% ---- drawing --------------------------------------------------------------
+
+/ESC (\033) def
+/RESET (\033[m) def
+/B { (\033[38;5;60m) print print RESET print } def      % border colour
+/D { (\033[38;5;244m) print print RESET print } def     % dim
+/bold { (\033[1m) print print RESET print } def
+/num { 12 string cvs } def
+/block {                      % piece -> -
+  (\033[38;5;) print colours exch get num print (m\342\226\210\342\226\210) print RESET print
+} def
+/indent { (   ) print } def
+
+% Row y of the next-piece box: four cells, two characters each.
+/nextrow {                    % y -> -
+  /ny exch def
+  indent (\342\224\202) B indent
+  0 1 3 {
+    masks nxt get 0 get exch ny 4 mul add neg bitshift 1 and 1 eq
+    { nxt block } { (  ) print } ifelse
+  } for
+  indent (\342\224\202) B
+} def
+/emptybox { indent (\342\224\202) B (              ) print (\342\224\202) B } def
+/keyrow {                     % action key -> -
+  indent bold (  ) print D
+} def
+
+% Side panel text, one procedure per board row.
+/panel [
+  { indent (\342\225\255\342\224\200\342\224\200) B ( ) print (next) D ( ) print
+    (\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\225\256) B }
+  { emptybox }
+  { 0 nextrow } { 1 nextrow } { 2 nextrow } { 3 nextrow }
+  { emptybox }
+  { indent
+    (\342\225\260\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\224\200\342\225\257) B }
+  { }
+  { indent (score) D }
+  { indent score num bold }
+  { indent (level) D ( ) print level num bold (  ) print (lines) D ( ) print lines num bold }
+  { }
+  { indent (controls) D }
+  { (move left) (\342\206\220 a) keyrow }
+  { (move right) (\342\206\222 d) keyrow }
+  { (rotate) (\342\206\221 w) keyrow }
+  { (soft drop) (\342\206\223 s) keyrow }
+  { (hard drop) (\342\220\243 z) keyrow }
+  { (quit) (  q) keyrow }
+] def
+
+/eol { (\033[K\n) print } def
+/hbar {                       % left right -> -  : " " + B(left + 20 x "=" + right)
+  ( ) print
+  (\033[38;5;60m) print exch print
+  10 { (\342\225\220\342\225\220) print } repeat
+  print RESET print eol
+} def
+
+/frame {
+  (\033[H  \033[1;38;5;75mP O S T S C R I P T T R I S\033[m) print eol
+  (\342\225\224) (\342\225\227) hbar
+  grid 0 board putinterval
+  over not { grid stamp } if
+  0 1 H 1 sub {
+    /gy exch def
+    ( ) print (\342\225\221) B
+    over gy 9 eq and {
+      (\033[1;7m     GAME  OVER     \033[m) print
+    } {
+      0 1 W 1 sub {
+        grid exch gy W mul add get
+        dup 0 eq { pop (\033[38;5;237m \302\267\033[m) print } { 1 sub block } ifelse
+      } for
+    } ifelse
+    (\342\225\221) B
+    panel gy get exec
+    eol
+  } for
+  (\342\225\232) (\342\225\235) hbar
+  (\033[J) print
+  flush
+} def
+
+% ---- main loop ------------------------------------------------------------
+
+/in (%stdin) (r) file def
+/buf 256 string def
+
+% Read the next non-empty line as an integer; quit at end of input.
+/readevent {                  % -> int
+  {
+    in buf readline not { dup length 0 eq { quit } if } if   % EOF: last partial line still counts
+    dup length 0 gt { cvi exit } if
+    pop
+  } loop
+} def
+
+/seed readevent def
+/cur rand def
+/nxt rand def
+spawn
+frame
+over { quit } if
+{
+  readevent
+  dup 9 eq { quit } if
+  event {
+    frame
+    over { quit } if
+  } if
+} loop
