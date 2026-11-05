@@ -23,21 +23,28 @@ Pass arguments through `curl | bash` with `bash -s -- --min m4`.
 
 ## The games
 
-Each game also has its own launcher:
+Each game also has its own launcher. awk, Emacs Lisp, PostScript, SQL and Vim script
+had a Tetris before this collection. Their engines here were written from scratch to the
+shared spec, and each README links the earlier project under "Prior art".
 
 | Game | Written in | Play |
 |---|---|---|
+| [**awktris**](awk/) | POSIX `awk` (mawk, gawk, busybox) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/awk/awktris.sh \| bash` |
 | [**bctris**](bc/) | `bc`, the arbitrary-precision calculator language | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/bctris.sh \| bash` |
 | [**cmaketris**](cmake/) | CMake script (`cmake -P`) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/cmake/cmaketris.sh \| bash` |
 | [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc/dctris.sh \| bash` |
+| [**emacstris**](emacs/) | Emacs Lisp, in `emacs --batch` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/emacs/emacstris.sh \| bash` |
 | [**gnuplottris**](gnuplot/) | gnuplot 6's command language | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/gnuplot/gnuplottris.sh \| bash` |
 | [**jqtris**](jq/) | `jq`, the JSON processor | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq/jqtris.sh \| bash` |
 | [**m4tris**](m4/) | `m4`, the macro processor | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4/m4tris.sh \| bash` |
 | [**maketris**](make/) | GNU `make` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/make/maketris.sh \| bash` |
+| [**postscripttris**](postscript/) | PostScript, run by Ghostscript | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/postscript/postscripttris.sh \| bash` |
 | [**sedtris**](sed/) | `sed`, the stream editor (the original, 2008) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed/sedtris.sh \| bash` |
 | [**sendmailtris**](sendmail/) | `sendmail.cf` rewriting rules (with a glyph-table decoder; see its README) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sendmail/sendmailtris.sh \| bash` |
+| [**sqlitetris**](sqlite/) | SQL: SQLite triggers, views and recursive CTEs | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sqlite/sqlitetris.sh \| bash` |
 | [**textris**](tex/) | plain TeX (Knuth's `tex`, no packages) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/tex/textris.sh \| bash` |
 | [**trofftris**](troff/) | `troff`, the typesetter behind `man` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/troff/trofftris.sh \| bash` |
+| [**vimtris**](vim/) | Vim script, in headless `vim -es` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/vim/vimtris.sh \| bash` |
 
 Every launcher also works with `| sh` (it hands itself over to bash), and from a clone:
 
@@ -73,7 +80,7 @@ tests/check.sh jq       # just one
 ## Golfed versions
 
 Every engine also comes golfed as `<name>.min.<ext>`, next to the readable
-source. It is about 50–80% smaller and produces exactly the same bytes.
+source. It is 49–82% smaller and produces exactly the same bytes.
 `tests/check.sh --min` runs every `.min` file through the same comparison. The
 golfed sedtris is compared against the original `sedtris.sed`. Play one with
 `./play.sh --min <game>`, or with any launcher's `ENGINE_FILE`:
@@ -85,17 +92,22 @@ tests/check.sh --min           # verify all of them
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |
 |---|---:|---:|---:|
+| awk | 6,966 | 1,717 | 75% |
 | bc | 5,561 | 2,262 | 59% |
 | CMake | 8,562 | 3,660 | 57% |
 | dc | 5,365 | 2,138 | 60% |
+| Emacs Lisp | 11,797 | 2,112 | 82% |
 | gnuplot | 6,887 | 2,122 | 69% |
 | jq | 5,321 | 1,845 | 65% |
 | m4 | 8,838 | 2,083 | 76% |
 | make | 12,757 | 4,196 | 67% |
+| PostScript | 7,753 | 1,501 | 80% |
 | sed | 8,357 | 4,250 | 49% |
 | sendmail | 13,395 | 2,291 | 82% |
+| SQLite | 11,993 | 2,616 | 78% |
 | TeX | 9,600 | 2,597 | 72% |
 | troff | 7,382 | 2,887 | 60% |
+| Vim script | 7,806 | 1,851 | 76% |
 
 [`GOLFING.md`](GOLFING.md) explains how: the shared tricks (generated tables, one
 cell iterator, merged moves, free bounds checks) and what each language allowed or refused.

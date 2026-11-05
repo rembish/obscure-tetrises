@@ -114,3 +114,11 @@ printf '42\n5\n9\n' | vim -Nu NONE -i NONE -es -S vimtris.vim | head -3
 - **Speed:** about 3 ms a frame against 2 ms for the readable version, because the falling
   piece is now looked up per cell with `index()` instead of being stamped into a copy of the
   board. That is still far under the 100 ms tick.
+
+## Prior art
+
+Tetris in Vim script had been done before this one. vimtris was written from scratch to
+`../SPEC.md` without looking at it:
+
+- [TeTrIs.vim](https://github.com/pihentagy/TeTrIs.vim) by Gergely Kontra (vim.org script #172, around 2002): plays inside
+  a Vim buffer with Vim's own UI. vimtris uses Vim only as an interpreter, in silent Ex mode with no screen.

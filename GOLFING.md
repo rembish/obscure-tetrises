@@ -8,17 +8,22 @@ bot games and fuzzed key streams. sedtris is compared against the original
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |
 |---|---:|---:|---:|
+| awk | 6,966 | 1,717 | 75% |
 | bc | 5,561 | 2,262 | 59% |
 | CMake | 8,562 | 3,660 | 57% |
 | dc | 5,365 | 2,138 | 60% |
+| Emacs Lisp | 11,797 | 2,112 | 82% |
 | gnuplot | 6,887 | 2,122 | 69% |
 | jq | 5,321 | 1,845 | 65% |
 | m4 | 8,838 | 2,083 | 76% |
 | make | 12,757 | 4,196 | 67% |
+| PostScript | 7,753 | 1,501 | 80% |
 | sed | 8,357 | 4,250 | 49% |
 | sendmail | 13,395 | 2,291 | 82% |
+| SQLite | 11,993 | 2,616 | 78% |
 | TeX | 9,600 | 2,597 | 72% |
 | troff | 7,382 | 2,887 | 60% |
+| Vim script | 7,806 | 1,851 | 76% |
 
 The golfing came in two passes:
 
@@ -74,22 +79,32 @@ to golf its `.min` file again by hand.
 The tricks specific to one language, and what each language refused, are in that
 engine's README, under "Golfed version":
 
+- [awk](awk/README.md#golfed-version)
 - [bc](bc/README.md#golfed-version)
 - [CMake](cmake/README.md#golfed-version)
 - [dc](dc/README.md#golfed-version)
+- [Emacs Lisp](emacs/README.md#golfed-version)
 - [gnuplot](gnuplot/README.md#golfed-version)
 - [jq](jq/README.md#golfed-version)
 - [m4](m4/README.md#golfed-version)
 - [make](make/README.md#golfed-version)
+- [PostScript](postscript/README.md#golfed-version)
 - [sed](sed/README.md#golfed-version)
 - [sendmail](sendmail/README.md#golfed-version)
+- [SQLite](sqlite/README.md#golfed-version)
 - [TeX](tex/README.md#golfed-version)
 - [troff](troff/README.md#golfed-version)
+- [Vim script](vim/README.md#golfed-version)
 
 ## Caveats
 
 - **`jqtris.min.jq` needs jq 1.7.** It relies on native `%` on large numbers and raw
   control characters in strings.
+- **`emacstris.min.el` needs Emacs 29.** It relies on `mapconcat` without a separator and
+  a preloaded `seq-filter`.
+- **`postscripttris.min.ps` is a binary file.** It uses Ghostscript's binary tokens: one
+  byte plus an index into the system-name table per operator, which needs no spaces around
+  it. git and GitHub show it as binary.
 - **Speed:** measured on the 300-piece bot game:
   - **bc:** the golfed version does more big-number arithmetic and runs about 2.7× slower
     than the readable one. That's around 8 ms per frame, still far under the 100 ms tick.

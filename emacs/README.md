@@ -77,3 +77,10 @@ printf '42\n5\n9\n' | emacs --batch -Q -l emacstris.el
   - **Variable names:** `t` can't be one (`setting-constant`), so the tick counter is `k`.
   - **Negative indices:** `(nth -1 row)` returns the first cell instead of failing, so the left wall needs its own check.
   - **Reading:** `(read t)` prints `Lisp expression: ` to stdout, so input stays on `read-from-minibuffer`.
+
+## Prior art
+
+Emacs already ships a block game, `M-x tetris` (`lisp/play/tetris.el`, built on
+`gamegrid.el`). It draws into an Emacs buffer with a real UI, and emacstris has nothing
+to do with it: emacstris runs under `-Q` in batch mode, doesn't load or reuse that file,
+and was written from scratch to `../SPEC.md`.

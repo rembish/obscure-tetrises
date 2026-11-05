@@ -82,3 +82,12 @@ printf '42\n5\n5\n9\n' | gs -q -dNODISPLAY -dBATCH postscripttris.ps
   - **Signed bytes:** the 8-bit integer token is signed, so 128–255 cost 3 bytes. That's one more reason the tables are strings.
   - **`repeat`** consumes its operand once, so repeating a printed string needs `{dup print}repeat pop`.
   - **Negative bytes:** strings can't hold negative numbers, so the wall-kick list `[0 -1 1 -2 2]` stays an array.
+
+## Prior art
+
+Tetris in PostScript had been done before this one. postscripttris was written from
+scratch to `../SPEC.md` without looking at it:
+
+- [PSTris](https://github.com/nst/PSTris) by Nicolas Seriot: runs in Ghostscript, draws real graphics on a page
+  device, and reads keys from a file another terminal writes to. It has levels, a 7-piece
+  bag and high scores.

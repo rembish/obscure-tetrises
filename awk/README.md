@@ -89,3 +89,12 @@ finished input like this one.)
   - **`printf frame`:** it is 5 bytes shorter, but mawk with `-W interactive` writes it a few bytes at a time and became 170 times slower.
   - **`++` in an index:** `K[i]=c M[++i]` depends on evaluation order, which differs between awks.
   - **`substr` on UTF-8:** it would have sliced `──────` out of one run of `─`, but gawk counts characters and mawk counts bytes.
+
+## Prior art
+
+Tetris in awk had been done before this one, which is why awk wasn't among the first
+engines in this collection. awktris was written from scratch to `../SPEC.md` without looking at
+it:
+
+- [AWKTC](https://github.com/mikkun/AWKTC) by mikkun: a Tetris-like game for gawk, nawk and goawk, with
+  an adjustable board width. The author has [slides](https://speakerdeck.com/mikkun/tetris-clone-in-awk) about it.

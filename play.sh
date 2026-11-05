@@ -30,17 +30,22 @@ fi
 
 # dir|game|engine file|tool to look for|written in
 GAMES=(
+  "awk|awktris|awktris.awk|awk|POSIX awk (mawk, gawk, busybox)"
   "bc|bctris|bctris.bc|bc|bc, the arbitrary-precision calculator"
   "cmake|cmaketris|cmaketris.cmake|cmake|CMake script (cmake -P)"
   "dc|dctris|dctris.dc|dc|dc, the reverse-Polish desk calculator"
+  "emacs|emacstris|emacstris.el|emacs|Emacs Lisp, in emacs --batch"
   "gnuplot|gnuplottris|gnuplottris.gp|gnuplot|gnuplot 6's command language"
   "jq|jqtris|jqtris.jq|jq|jq, the JSON processor"
   "m4|m4tris|m4tris.m4|m4|m4, the macro processor"
   "make|maketris|maketris.mk|make|GNU make"
+  "postscript|postscripttris|postscripttris.ps|gs|PostScript, run by Ghostscript"
   "sed|sedtris|sedtris.sed|sed|sed, the stream editor (the original, 2008)"
   "sendmail|sendmailtris|sendmailtris.cf|sendmail|sendmail.cf rewriting rules"
+  "sqlite|sqlitetris|sqlitetris.sql|sqlite3|SQL: SQLite triggers and views"
   "tex|textris|textris.tex|tex|plain TeX"
   "troff|trofftris|trofftris.tr|troff|troff, the typesetter behind man"
+  "vim|vimtris|vimtris.vim|vim|Vim script, in headless vim -es"
 )
 
 have() {
@@ -60,7 +65,7 @@ list() {
   for spec in "${GAMES[@]}"; do
     IFS='|' read -r d game file tool what <<<"$spec"
     if have "$tool"; then mark=$'\e[32m✓\e[m'; else mark=$'\e[31m✗ no '"$tool"$'\e[m'; fi
-    printf '  \e[1m%2d\e[m  %-13s %-44s %s\n' $((++i)) "$game" "$what" "$mark"
+    printf '  \e[1m%2d\e[m  %-15s %-44s %s\n' $((++i)) "$game" "$what" "$mark"
   done
 }
 
