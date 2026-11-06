@@ -24,9 +24,10 @@ GAME=preprocessortris DIR=preprocessor ENGINE=preprocessortris.h NEEDS=cpp
 # the frame. A lock takes three runs: while the new state's PHASE() isn't 0,
 # the engine runs again without a new event. No state at all means game over.
 # -traditional-cpp keeps the frame's spaces exactly; it is GCC's preprocessor.
+# -w: the golfed engine redefines macros without #undef, which only warns.
 pp_run() {    # pp_run [-DEV=n]: one run; 0 if it left a next state
   local line part name have=0
-  cpp -P -traditional-cpp -include "$work/state.h" -DPARTS="\"$work/parts.h\"" "$@" "$engine" \
+  cpp -P -traditional-cpp -w -include "$work/state.h" -DPARTS="\"$work/parts.h\"" "$@" "$engine" \
     > "$work/out" || return 1
   : > "$work/next.h"
   while IFS= read -r line; do

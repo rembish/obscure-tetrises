@@ -79,3 +79,16 @@ cpp -P -traditional-cpp -include /tmp/state.h preprocessortris.h | grep '^@'
 ```
 
 That prints the first state; the launcher would now write it into `state.h` and run again.
+
+## Golfed version
+
+[`preprocessortris.min.h`](preprocessortris.min.h) is the golfed twin of the engine: 12,393 bytes instead of 24,717 (50% smaller), with exactly the same output. `_tests/check.sh --min preprocessor` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to the preprocessor:
+
+- **Short names, with care:** macros are one or two letters. An object-like macro can't be named after any word the frame prints, or the word would expand: not `q` (the quit key), `K` or `H` (from `ESC[K` and `ESC[H`), nor the title's letters. Function-like macros are safe, since the frame never has `(` right after a word.
+- **Packed masks:** the four rotations of a piece are one 64-bit number, `M(p,r)` shifts out 16 bits. The readable file looks them up in a nested `?:` over all 28.
+- **Object-like digits:** the digit printer defines `#define D9 F3`, and the text's `D9()` becomes `F3()`. An empty digit is `#define D9 O` with an empty `O()`. A per-position `Q` holds the power of ten, so each branch is `#elif g(3)`.
+- **No eleventh digit:** a board row's leading 1 is printed as text, `W(1)D9()…`; `1D9()` would lex as one number.
+- **No `#undef`:** macros are just redefined. That only warns, and the launcher runs `cpp -w`. The few that pick which part runs (`V`, `Z`, `k`, `h`, `u`, tested with `defined`) are still undefined.
+- **Helpers for long expressions:** the fit test is 16 calls of a one-cell helper, and drawing a piece into a row 10 calls of another. The hard-drop chain is `#elif H(5)` with `H(n)` the failing fit test.
+- **What stayed:** every directive needs its own line, and nothing can generate directives. So the digit printer (ten 10-way chains), the 25-way mask freeze and the 20-row table are still spelled out, and the golfed file saves less than the others.
+
