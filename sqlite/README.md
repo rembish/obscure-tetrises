@@ -104,4 +104,4 @@ To run the engine on its own:
   - **Case:** names ignore case, so one-letter names run out fast (`g`/`G`, `r`/`R`, `c`/`C`).
   - **Speed:** `CREATE INDEX I ON C(p,q)` stays, at 24 bytes. Without it the overlay scans the cell table 260 times per frame, and the golfed engine runs 2.5× slower. With it, it takes about 6 ms per event on the 300-piece bot game, against 3 ms for the readable version.
 
-Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
+Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).

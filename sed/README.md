@@ -142,4 +142,4 @@ printf '42\n5\n9\n' | LC_ALL=C sed -n -E -u -f sedtris.sed
   - **A newline-free `p`:** sed won't print without a trailing newline, hence its place on the `NL` list.
   - **A `y` on part of the pattern space:** it always applies to all of it. The seed halving still needs five `s/o0/5/g` substitutions where a positional `y` would do.
 
-This sedtris replaced the 2008 original this collection was forked from; see [Prior art](../README.md#prior-art) in the main README.
+This sedtris replaced the 2008 original this collection was forked from; see [Prior art](../PRIOR-ART.md).

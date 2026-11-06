@@ -117,4 +117,4 @@ printf '42\n5\n9\n' | vim -Nu NONE -i NONE -es -S vimtris.vim | head -3
   piece is now looked up per cell with `index()` instead of being stamped into a copy of the
   board. That is still far under the 100 ms tick.
 
-Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
+Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).

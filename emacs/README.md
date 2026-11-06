@@ -80,4 +80,4 @@ printf '42\n5\n9\n' | emacs --batch -Q -l emacstris.el
   - **Negative indices:** `(nth -1 row)` returns the first cell instead of failing, so the left wall needs its own check.
   - **Reading:** `(read t)` prints `Lisp expression: ` to stdout, so input stays on `read-from-minibuffer`.
 
-Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
+Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).

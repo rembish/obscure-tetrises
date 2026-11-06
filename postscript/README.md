@@ -85,4 +85,4 @@ printf '42\n5\n5\n9\n' | gs -q -dNODISPLAY -dBATCH postscripttris.ps
   - **`repeat`** consumes its operand once, so repeating a printed string needs `{dup print}repeat pop`.
   - **Negative bytes:** strings can't hold negative numbers, so the wall-kick list `[0 -1 1 -2 2]` stays an array.
 
-Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
+Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).

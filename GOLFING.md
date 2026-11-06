@@ -3,7 +3,13 @@
 Every engine has a golfed twin, `<name>.min.<ext>`, next to its readable source. The
 rule: the golfed file must produce **exactly the same bytes** as the readable one.
 `_tests/check.sh --min` holds them to it. Each one is replayed against the reference on
-bot games and fuzzed key streams.
+bot games and fuzzed key streams. Play one with `./play.sh --min <game>`, or with any
+launcher's `ENGINE_FILE`:
+
+```sh
+ENGINE_FILE=jq/jqtris.min.jq ./jq/jqtris.sh
+_tests/check.sh --min           # verify all of them
+```
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |
 |---|---:|---:|---:|

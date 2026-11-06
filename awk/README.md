@@ -92,4 +92,4 @@ finished input like this one.)
   - **`++` in an index:** `K[i]=c M[++i]` depends on evaluation order, which differs between awks.
   - **`substr` on UTF-8:** it would have sliced `──────` out of one run of `─`, but gawk counts characters and mawk counts bytes.
 
-Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
+Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).

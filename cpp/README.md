@@ -136,4 +136,4 @@ or use the launcher's pipe mode: `(echo 42; echo 0; echo 1; echo 5) | ./cpptris.
   - **Shadowing:** member templates can't reuse the enclosing state's parameter names.
   - **Ambiguous specialisations:** `Cs<-1, P>` is ambiguous against `Cs<v, I<j...>>`, so the banner keeps the full pattern.
 
-Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
+Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).
