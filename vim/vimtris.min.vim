@@ -53,6 +53,6 @@ let f='[H  [1;38;5;75mV I M T R I S[m[K `60╔'.H.'╗`[K'
 for y in range(20)
 let f.=' `60║`'.(o&&y==9?'[1;7m     GAME  OVER     [m':join(map(b[y*12:y*12+9],'C[o||index(O[c][r],y*12+v:key-p)<0?v:val:c+1]'),'')).'`60║`'.(y&&y<7?'   `60│`   '.join(map(range(4),'index(O[m][0],y*12+v:val-24)<0?"  ":C[m+1]'),'').'   `60│`':P[y]).'[K'
 endfo
-cal writefile(split(substitute(f.' `60╚'.H.'╝`[K[J','\v`(\d*)([^`]*)`','[38;5;\1m\2[m','g'),'\[K\zs'),'/dev/fd/1','abS')
+cal writefile(split(substitute(f.' `60╚'.H.'╝`[K','\v`(\d*)([^`]*)`','[38;5;\1m\2[m','g'),'\[K\zs'),'/dev/fd/1','aS')
 endw
 q!

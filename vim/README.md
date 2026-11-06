@@ -26,10 +26,10 @@ and `and()` and `<<` read the rotation masks.
 - **Input.** In silent Ex mode, `input('')` reads one line from stdin. So the script reads
   the seed and then one event per line by itself, and the launcher passes the event lines
   through unchanged. There's no adapter line and no FIFO. At end of input Vim exits on its own.
-- **Output.** `writefile(lines, '/dev/stdout', 'abS')` writes the bytes as given:
-  - `b` puts a newline *between* the list items but not after the last one. The frame
-    goes out as its 23 lines plus a final `ESC[J` item, so there's no extra newline at the
-    end and no `nl` allowance.
+- **Output.** `writefile(lines, '/dev/stdout', 'aS')` writes the bytes as given:
+  - Without the `b` flag every list item is followed by a newline, the last one too. The
+    frame goes out as its 23 lines, each ending in `ESC[K`, so the newlines land exactly
+    where the frame format wants them.
   - `a` appends. Without it, every frame would truncate whatever stdout points at, and
     `_tests/check.sh` redirects it to a regular file.
   - `S` turns off the `fsync()` that `writefile()` does by default. On a regular file
@@ -66,7 +66,7 @@ printf '42\n5\n9\n' | vim -Nu NONE -i NONE -es -S vimtris.vim | head -3
 
 ## Golfed version
 
-[`vimtris.min.vim`](vimtris.min.vim) is the golfed twin of the engine: 1,851 bytes instead of 7,806 (76% smaller), with exactly the same output. `_tests/check.sh --min vim` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Vim script:
+[`vimtris.min.vim`](vimtris.min.vim) is the golfed twin of the engine: 1,847 bytes instead of 7,771 (76% smaller), with exactly the same output. `_tests/check.sh --min vim` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Vim script:
 
 - **No functions at all.** The whole game is script-level code in one `wh !o` loop. That
   removes every `s:` and `a:` prefix and every `fu`/`endf`/`retu`, because at script level

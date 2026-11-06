@@ -220,11 +220,11 @@ function! s:Render() abort
     call add(rows, ' ' . s:B('║') . body . s:B('║') . panel[y])
   endfor
   call add(rows, ' ' . s:B('╚' . repeat('═', 20) . '╝'))
-  " writefile() puts a newline between list items, so the frame is split
-  " at its newlines: every line ends with ESC[K and the next item starts.
+  " Without the 'b' flag writefile() ends every list item with a newline,
+  " so each item is one frame line ending with ESC[K.
   let lines = map(rows, {_, l -> l . s:E . '[K'})
   let lines[0] = s:E . '[H' . lines[0]
-  call writefile(lines + [s:E . '[J'], '/dev/stdout', 'abS')
+  call writefile(lines, '/dev/stdout', 'aS')
 endfunction
 
 " ---- main loop -------------------------------------------------------------------
