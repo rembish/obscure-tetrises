@@ -8,7 +8,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq/
 ./jq/jqtris.sh
 ```
 
-Needs jq and bash 4+. Tested with jq 1.7.
+Needs jq and bash 4+. Tested with jq 1.7 and 1.8.
 
 Install: Debian/Ubuntu `apt install jq` · Fedora `dnf install jq` · macOS 15+ has it preinstalled, or `brew install jq`.
 
@@ -45,20 +45,21 @@ To run the engine without the launcher:
 
 ## Golfed version
 
-[`jqtris.min.jq`](jqtris.min.jq) is the golfed twin of the engine: 1,845 bytes instead of 5,321 (65% smaller), with exactly the same output. `tests/check.sh --min jq` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to jq:
+[`jqtris.min.jq`](jqtris.min.jq) is the golfed twin of the engine: 1,863 bytes instead of 5,321 (65% smaller), with exactly the same output. `tests/check.sh --min jq` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to jq:
 
 - **Raw ESC:** jq 1.7 accepts a raw ESC byte inside string literals, so every `"\u001b[…"` is one byte.
-- **Pieces as letters:** the piece table is one 112-letter string, one cell index (0–15) per letter, decoded with `explode|map(.-97|[.%4,./4|floor])|[_nwise(16)|[_nwise(4)]]`. The next-piece preview tests `[$x,$y]|IN(...)` against rotation 0.
+- **Pieces as letters:** the piece table is one 112-letter string, one cell index (0–15) per letter, decoded with `explode|map(.-97|[.%4,./4|floor])|[W(16)|[W(4)]]`. The next-piece preview tests `[$x,$y]|IN(...)` against rotation 0.
+- **Own chunker:** jq 1.8 removed the undocumented `_nwise`, so `def W($n):.[range(0;length;$n):][:$n];` splits arrays into rows: a generator inside the slice gives every start index.
 - **One fit test, one move helper:**
   - **Fit test:** `F` checks the current state, with `$a*($a-9)<1` for the column bounds.
   - **Moves:** `m(D;$r)` is `first(((D) as $d | move | select(F)), .)`. It covers left, right and rotation with wall kicks.
   - **Soft drop:** `(.y+=1|select(F))//k`.
   - **Gravity tick:** `select(.t+l<11)//(.t=0|u)`.
 - **Draw decision:** a `select($e<6 and $e*9>=.t)` in the `foreach` extractor decides whether to draw, so there's no flag. Quitting uses `try(… error …)` instead of `label`/`break`.
-- **Line clear:** `[.b|_nwise(10)|select(min<1)[]]`, then `([zeros]+$k)[-200:]`. One `reduce` stamps the piece, for both locking and drawing.
+- **Line clear:** `[.b|W(10)|select(min<1)[]]`, then `([zeros]+$k)[-200:]`. One `reduce` stamps the piece, for both locking and drawing.
 - **Rendering:**
   - **Side panel:** an array `$P`, with the indent added by one `map`.
-  - **Board rows:** `_nwise(10)|map($K[.])` over a table of cell strings. Row 9 is overwritten with GAME OVER.
+  - **Board rows:** `W(10)|map($K[.])` over a table of cell strings. Row 9 is overwritten with GAME OVER.
   - **Control rows:** each one is a single string split with `.[:3]` and `.[3:]`.
 - **What jq refused:**
   - **`+.end`:** this lexes as the field `.end`, so it needs a space (`+. end`).
