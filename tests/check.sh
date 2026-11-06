@@ -42,6 +42,7 @@ ENGINES=(
   "tex|T E X T R I S|nl|tex/textris.tex|tex|ENGINE_FILE=\"\$ENGINE\" $root/tex/textris.sh --pipe"
   "troff|T R O F F T R I S||troff/trofftris.tr|troff|ENGINE_FILE=\"\$ENGINE\" $root/troff/trofftris.sh --pipe"
   "vim|V I M T R I S||vim/vimtris.vim|vim|ENGINE_FILE=\"\$ENGINE\" $root/vim/vimtris.sh --pipe"
+  "xslt|X S L T T R I S||xslt/xslttris.xsl|xsltproc|ENGINE_FILE=\"\$ENGINE\" $root/xslt/xslttris.sh --pipe"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")

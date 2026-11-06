@@ -47,6 +47,7 @@ GAMES=(
   "tex|textris|textris.tex|tex|plain TeX"
   "troff|trofftris|trofftris.tr|troff|troff, the typesetter behind man"
   "vim|vimtris|vimtris.vim|vim|Vim script, in headless vim -es"
+  "xslt|xslttris|xslttris.xsl|xsltproc|XSLT 1.0 stylesheet, run by xsltproc"
 )
 
 have() {

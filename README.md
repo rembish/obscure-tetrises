@@ -45,6 +45,7 @@ collection; see [Prior art](#prior-art).
 | [**textris**](tex/) | plain TeX (Knuth's `tex`, no packages) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/tex/textris.sh \| bash` |
 | [**trofftris**](troff/) | `troff`, the typesetter behind `man` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/troff/trofftris.sh \| bash` |
 | [**vimtris**](vim/) | Vim script, in headless `vim -es` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/vim/vimtris.sh \| bash` |
+| [**xslttris**](xslt/) | XSLT 1.0, run by `xsltproc` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/xslt/xslttris.sh \| bash` |
 
 Every launcher also works with `| sh` (it hands itself over to bash), and from a clone:
 
@@ -109,6 +110,7 @@ tests/check.sh --min           # verify all of them
 | TeX | 9,600 | 2,597 | 72% |
 | troff | 7,382 | 2,887 | 60% |
 | Vim script | 7,806 | 1,851 | 76% |
+| XSLT | 24,802 | 5,466 | 78% |
 
 [`GOLFING.md`](GOLFING.md) explains how: the shared tricks (generated tables, one
 cell iterator, merged moves, free bounds checks) and what each language allowed or refused.
@@ -164,6 +166,7 @@ listed here. No code was taken from any of them.
 | textris | `tex` | `texlive-base` | `texlive-tex` | `brew install --cask basictex` ⁶ |
 | trofftris | `troff` | `groff-base` (usually preinstalled) | `groff-base` | `brew install groff` |
 | vimtris | `vim` | `vim` (`vim-tiny` has no Vim script) | `vim-enhanced` | preinstalled |
+| xslttris | `xsltproc` | `xsltproc` | `libxslt` | preinstalled |
 
 1. Homebrew installs these next to the macOS versions instead of over them, so put
    them first on your `PATH`:

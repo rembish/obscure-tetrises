@@ -24,6 +24,7 @@ bot games and fuzzed key streams.
 | TeX | 9,600 | 2,597 | 72% |
 | troff | 7,382 | 2,887 | 60% |
 | Vim script | 7,806 | 1,851 | 76% |
+| XSLT | 24,802 | 5,466 | 78% |
 
 The golfing came in two passes:
 
@@ -96,6 +97,7 @@ engine's README, under "Golfed version":
 - [TeX](tex/README.md#golfed-version)
 - [troff](troff/README.md#golfed-version)
 - [Vim script](vim/README.md#golfed-version)
+- [XSLT](xslt/README.md#golfed-version)
 
 ## Caveats
 
@@ -109,9 +111,13 @@ engine's README, under "Golfed version":
 - **`postscripttris.min.ps` is a binary file.** It uses Ghostscript's binary tokens: one
   byte plus an index into the system-name table per operator, which needs no spaces around
   it. git and GitHub show it as binary.
+- **`xslttris.min.xsl` needs libxslt.** It is written with EXSLT `func:function`,
+  `str:replace` and `str:tokenize`, which libexslt implements and most other XSLT 1.0
+  processors don't. The readable file only needs `exsl:node-set`, `exsl:document`,
+  `str:decode-uri` and `str:padding`.
 - **Speed:** measured on the 300-piece bot game:
   - **bc:** the golfed version does more big-number arithmetic and runs about 2.7× slower
     than the readable one. That's around 8 ms per frame, still far under the 100 ms tick.
   - **m4:** about 25% slower.
   - **dc and troff:** about the same speed.
-  - **TeX, make and sendmail:** faster than their sources.
+  - **TeX, make, sendmail and XSLT:** faster than their sources.
