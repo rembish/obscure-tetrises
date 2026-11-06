@@ -109,8 +109,7 @@ define(`_line', ` _B(`║')ifelse(eval(_over && _row == 9), 1, `_e()[1;7m     GA
 define(`_frame', `_e()[H  _e()[1;38;5;75mM 4 T R I S`'_R()_eol()dnl
  _B(`╔════════════════════╗')_eol()dnl
 _for(`_row', 0, 19, `_line()')dnl
- _B(`╚════════════════════╝')_eol()dnl
-_e()[J`'')
+ _B(`╚════════════════════╝')_eol()')
 define(`_render', `ifelse(_over, 0, `_paint(incr(_cur))')divert(0)_frame()divert(-1)ifelse(_over, 0, `_paint(0)')')
 
 # ---- events ----------------------------------------------------------------------

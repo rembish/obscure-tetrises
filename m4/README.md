@@ -49,7 +49,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`m4tris.min.m4`](m4tris.min.m4) is the golfed twin of the engine: 2,083 bytes instead of 8,838 (76% smaller), with exactly the same output. `_tests/check.sh --min m4` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to m4:
+[`m4tris.min.m4`](m4tris.min.m4) is the golfed twin of the engine: 2,080 bytes instead of 8,826 (76% smaller), with exactly the same output. `_tests/check.sh --min m4` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to m4:
 
 - **One-letter builtins:** a helper copies builtins under new names with `defn`, so `define`, `ifelse`, `eval`, `patsubst` and `substr` become single letters.
 - **The board is one string:** rows like `<0000000000>` replace 200 cell macros. The `<` and `>` markers block every move off the sides, and reading past the end blocks moves off the bottom, so there are no bounds checks. Full rows are removed with one `patsubst(b,<[1-7]*>)`, and a recursive padder tops the board back up to 20 rows. The same padder builds the empty board at start.
@@ -61,7 +61,7 @@ To run the engine on its own:
 - **No `divert(-1)`:** the file is effectively one line, and every event's expansion ends in `dnl`.
 - **What m4 refused:**
   - **Joined words:** words join across expansion boundaries. `ESC[m` followed by `f` becomes `mf`, and `m4exit` ran into the next name. Each such spot needs a `` `' `` or `()` separator.
-  - **Reserved letters:** a single letter that appears as a word in the output can't be a macro name. That covers the title letters, the control keys and `m K H J` from the escape codes.
+  - **Reserved letters:** a single letter that appears as a word in the output can't be a macro name. That covers the title letters, the control keys and `m K H` from the escape codes.
   - **Regexes:** GNU m4 regexes have no `\{n\}` intervals.
   - **32-bit `eval`:** this overflows, so the random step keeps Schrage's method.
   - **Replacements:** `patsubst` turns `\(` into `(`.
