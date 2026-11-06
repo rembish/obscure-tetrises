@@ -86,11 +86,14 @@ decode() {
 }
 
 # Each event number N becomes the -bt input line "Game N" (run ruleset Game on N).
+# DontProbeInterfaces stops sendmail from reverse-resolving every network
+# interface address at start-up, which can stall for tens of seconds when a
+# lookup times out.
 run_engine() {
   local sm line
   sm=$(find_sendmail) || { echo "$GAME: sendmail not found" >&2; return 1; }
   while IFS= read -r line; do printf 'Game %s\n' "$line"; done |
-    "$sm" -C "$1" -bt 2>&1 | decode
+    "$sm" -ODontProbeInterfaces=true -C "$1" -bt 2>&1 | decode
 }
 
 fetch() {

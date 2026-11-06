@@ -12,7 +12,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sen
 
 Needs sendmail (tested with 8.18.1, the Debian/Ubuntu `sendmail-bin` package) and bash 4+.
 Nothing is configured or started as a mail server. The game runs sendmail as your
-own user in *address test mode* (`sendmail -C sendmailtris.cf -bt`), which only
+own user in *address test mode* (`sendmail -ODontProbeInterfaces=true -C sendmailtris.cf -bt`; the option skips a reverse DNS lookup of every network interface at start-up, which can take tens of seconds), which only
 rewrites the lines you type.
 
 Install: Debian/Ubuntu `apt install sendmail-bin` · Fedora `dnf install sendmail` · not available on macOS, whose `sendmail` is Postfix's wrapper without `-bt`. The package replaces any other mail server (Postfix, Exim) and may start a daemon, which the game doesn't need.
@@ -66,7 +66,7 @@ The decoded frames are byte-for-byte identical to [`../tests/reference.py`](../t
 To run the engine without the launcher and see the raw tokens:
 
 ```sh
-printf 'Game 42\nGame 5\n' | sendmail -C sendmailtris.cf -bt | grep '^Game *returns'
+printf 'Game 42\nGame 5\n' | sendmail -ODontProbeInterfaces=true -C sendmailtris.cf -bt | grep '^Game *returns'
 ```
 
 ## Golfed version
