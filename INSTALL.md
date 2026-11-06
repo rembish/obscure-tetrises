@@ -24,6 +24,7 @@
 | m4tris | `m4` | `m4` | `m4` | `brew install m4` ¹ |
 | maketris | `make` | `make` | `make` | `brew install make` ¹ |
 | postscripttris | `gs` | `ghostscript` | `ghostscript` | `brew install ghostscript` |
+| preprocessortris | `cpp` | `cpp` | `cpp` | `brew install gcc` ⁷ |
 | sedtris | `sed` | preinstalled | preinstalled | `brew install gnu-sed` ¹ |
 | sendmailtris | `sendmail` | `sendmail-bin` ⁴ | `sendmail` ⁴ | not available ⁵ |
 | sqlitetris | `sqlite3` | `sqlite3` ³ | `sqlite` | `brew install sqlite` ¹ |
@@ -55,3 +56,6 @@
    address test mode, and Homebrew has no sendmail.
 6. BasicTeX puts `tex` in `/Library/TeX/texbin`; open a new terminal afterwards. The
    full TeX Live (`brew install texlive` or the `mactex-no-gui` cask) works too.
+7. preprocessortris needs GCC's `cpp`; Apple's `cpp` is Clang. Homebrew's GCC installs it
+   as `cpp-15` (or whatever its version is); link it as `cpp` in a directory that comes
+   first on your `PATH`. Unverified on macOS.

@@ -56,6 +56,7 @@ Debian/Ubuntu, Fedora and macOS.
 | [**m4tris**](m4/) | `m4`, the macro processor |
 | [**maketris**](make/) | GNU `make` |
 | [**postscripttris**](postscript/) | PostScript, run by Ghostscript |
+| [**preprocessortris**](preprocessor/) | the C preprocessor (GCC `cpp -traditional-cpp`), fed its own output |
 | [**sedtris**](sed/) | GNU `sed`, the stream editor |
 | [**sendmailtris**](sendmail/) | `sendmail.cf` rewriting rules (with a glyph-table decoder; see its README) |
 | [**sqlitetris**](sqlite/) | SQL: SQLite triggers, views and recursive CTEs |
