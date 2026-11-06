@@ -13,8 +13,7 @@
 # Uses gnuplot 6 function blocks (function $name(args) << EOD), arrays (which start
 # at index 1) and 64-bit integer arithmetic with C-style operators. Frames go to
 # stdout with print. print always ends with a newline, so each frame is one string
-# that starts with the previous frame's ESC[J and lets print add the final newline.
-# The very last ESC[J therefore comes with one extra newline.
+# and print adds the newline after the last row.
 
 set print "-"
 
@@ -53,7 +52,6 @@ PANEL[19] = "   " . W . "␣ z" . R . "  " . D . "hard drop" . R
 PANEL[20] = "   " . W . "  q" . R . "  " . D . "quit" . R
 
 started = 0
-printed = 0
 
 # ---- game --------------------------------------------------------------------------
 # Park-Miller: s = s * 16807 mod (2^31 - 1); the next piece is s mod 7
@@ -157,7 +155,7 @@ EOD
 function $render() << EOD
   local d = 0
   if (!over) { d = $paint(cur + 1) }
-  local f = (printed ? E . "J" : "") . E . "H  " . E . "1;38;5;75mG N U P L O T T R I S" . R . K
+  local f = E . "H  " . E . "1;38;5;75mG N U P L O T T R I S" . R . K
   f = f . " " . B . "╔════════════════════╗" . R . K
   local nm = M[nxt * 4 + 1]
   local row = 0
@@ -192,7 +190,6 @@ function $render() << EOD
   }
   f = f . " " . B . "╚════════════════════╝" . R . E . "K"
   print f
-  printed = 1
   if (!over) { d = $paint(0) }
   return 0
 EOD
@@ -215,10 +212,7 @@ function $step(e) << EOD
     d = $render()
     return 0
   }
-  if (e == 9) {
-    print E . "J"
-    return 1
-  }
+  if (e == 9) { return 1 }
   local emit = 1
   if (e == 0) {
     t = t + 1
@@ -236,10 +230,6 @@ function $step(e) << EOD
   }
   if (emit) {
     d = $render()
-    if (over) {
-      print E . "J"
-      return 1
-    }
   }
-  return 0
+  return over
 EOD

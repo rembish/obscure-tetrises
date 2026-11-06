@@ -27,9 +27,7 @@ Integers are 64-bit, with C's `% & >> <<`. Strings concatenate with `.`.
   because `exit` inside a function block only leaves the function, not gnuplot.
 - **Output.** `set print "-"` sends `print` to stdout, and `"\033["` gives ESC inside
   double quotes. `print` always ends with a newline, so each frame is built as one
-  string that starts with the previous frame's `ESC[J`, and `print` adds the newline
-  after the last row. The very last `ESC[J` comes with one extra newline, the same
-  single-byte allowance as maketris and textris.
+  string and `print` adds the newline after the last row.
 - **State.** The board is an array of 200 numbers; the piece, position, score and the rest are
   globals. Every helper is a function block whose loop counters are declared
   `local`, so a loop inside `$fits` can't clobber the caller's.
@@ -43,7 +41,7 @@ printf 'if ($step(42)) { exit }\nif ($step(5)) { exit }\nif ($step(9)) { exit }\
 
 ## Golfed version
 
-[`gnuplottris.min.gp`](gnuplottris.min.gp) is the golfed twin of the engine: 2,122 bytes instead of 6,887 (69% smaller), with exactly the same output. `_tests/check.sh --min gnuplot` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to gnuplot:
+[`gnuplottris.min.gp`](gnuplottris.min.gp) is the golfed twin of the engine: 2,094 bytes instead of 6,659 (69% smaller), with exactly the same output. `_tests/check.sh --min gnuplot` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to gnuplot:
 
 - **No `local`:** `do for` loop variables are already scoped (unset again after the loop), and the other temporaries don't collide.
 - **No `return 0`:** a function block without `return` is fine when called as `d=$f()`.
@@ -54,7 +52,7 @@ printf 'if ($step(42)) { exit }\nif ($step(5)) { exit }\nif ($step(9)) { exit }\
   - **One array literal:** the side panel is built from one-line helpers such as `X(a)=B.a.R`.
   - **One `sprintf`:** the score and level rows hold `%d`, and every row goes through `sprintf(c[h+1],h>10?g/10+1:l,g)`. gnuplot ignores spare arguments.
 - **Smaller tables:** the colour and score tables are `word()` lists; strings turn into numbers in arithmetic.
-- **Flag as string:** the "already drew a frame" flag is the `ESC[J` string itself.
+- **Start flag in the chain:** `o=1` until the seed arrives, and init clears it in `l=g=n=H=o=0`.
 - **Line ends:** `K=E."K\n "` carries the next line's leading space.
 - **What gnuplot refused:**
   - **Assignment:** there is no `+=`.

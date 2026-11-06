@@ -17,7 +17,7 @@ V=O."           ".O
 C=X("║")
 w(v)=E."38;5;".(v?word("51 226 135 46 196 33 208",v)."m██":"237m ·").R
 array c[20]=[S.X("╭──")." ".Y("next")." ".X("──────╮"),V,O.S,O.S,O.S,O.S,V,S.X("╰──────────────╯"),"",S.Y("score"),S.Z("%d"),S.Y("level")." ".Z("%d")."  ".Y("lines")." ".Z("%d"),"",S.Y("controls"),T("← a","move left"),T("→ d","move right"),T("↑ w","rotate"),T("↓ s","soft drop"),T("␣ z","hard drop"),T("  q","quit")]
-o=""
+o=1
 function $b(a,m,p)<<F
 do for[i=0:15]{if(M[z*4+p+1]>>i&1&&((F=a+i%4)<0||F>9||(N=m+i/4)>19||b[N*10+F+1])){return 0}}
 return 1
@@ -33,7 +33,7 @@ y=r=t=0
 n=!$b(3,0,0)
 F
 function $step(e)<<F
-if(o eq""){s=e;do for[k=1:200]{b[k]=0};l=g=n=H=0;d=$n();d=$n();e=5.5}
+if(o){s=e;do for[k=1:200]{b[k]=0};l=g=n=H=o=0;d=$n();d=$n();e=5.5}
 if(e<1&&(t=t+1)+g/10>9){t=0;e=4}
 if(e>0&&e<3&&$b(x+2*e-3,y,r)){x=x+2*e-3}
 if(e==3){v=(r+1)%4;do for[q=1:5]{if($b(x+(k=q/2*(q%2*2-1)),y,v)){x=x+k;r=v;break}}}
@@ -49,7 +49,7 @@ d=$n()
 }}
 if(e>0&&e<6){
 d=n?0:$c(z+1)
-f=o.E."H  ".E."1;38;5;75mG N U P L O T T R I S".R.K.X("╔════════════════════╗").K
+f=E."H  ".E."1;38;5;75mG N U P L O T T R I S".R.K.X("╔════════════════════╗").K
 do for[h=0:19]{
 f=f.C
 if(n&&h==9){f=f.E."1;7m     GAME  OVER     ".R}else{do for[j=1:10]{f=f.w(b[h*10+j])}}
@@ -58,9 +58,7 @@ if(h>1&&h<6){do for[q=h*4-8:h*4-5]{f=f.(M[H*4+1]>>q&1?w(H+1):"  ")};f=f.O}
 f=f.K
 }
 pr f.X("╚════════════════════╝").E."K"
-o=E."J"
 d=n?0:$c(0)
 }
-if(n=n||e==9){pr o}
-return n
+return n||e==9
 F
