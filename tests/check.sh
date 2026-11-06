@@ -20,31 +20,13 @@ sched=""
 trap '[[ -n $sched ]] && kill "$sched" 2>/dev/null; rm -rf "$work"' EXIT
 trap 'exit 130' INT TERM
 
-# name|title|options|engine file|tool
+# The games are play.sh's GAMES table (dir|game|engine file|tool|description).
 # Each engine runs through its launcher, <dir>/<game>.sh --pipe, with the
-# engine file in ENGINE_FILE. Option "nl": the engine can't avoid one extra
-# newline at the very end (make's $(info), TeX's newline on exit, gnuplot's print).
-# Engines whose tool isn't installed are skipped.
-ENGINES=(
-  "awk|A W K T R I S||awk/awktris.awk|awk"
-  "bc|B C T R I S||bc/bctris.bc|bc"
-  "cmake|C M A K E T R I S||cmake/cmaketris.cmake|cmake"
-  "cpp|C P P T R I S||cpp/cpptris.cpp|g++"
-  "dc|D C T R I S||dc/dctris.dc|dc"
-  "emacs|E M A C S T R I S||emacs/emacstris.el|emacs"
-  "gnuplot|G N U P L O T T R I S|nl|gnuplot/gnuplottris.gp|gnuplot"
-  "jq|J Q T R I S||jq/jqtris.jq|jq"
-  "m4|M 4 T R I S||m4/m4tris.m4|m4"
-  "make|M A K E T R I S|nl|make/maketris.mk|make"
-  "postscript|P O S T S C R I P T T R I S||postscript/postscripttris.ps|gs"
-  "sed|S E D T R I S|nl|sed/sedtris.sed|sed"
-  "sendmail|S E N D M A I L T R I S||sendmail/sendmailtris.cf|sendmail"
-  "sqlite|S Q L I T E T R I S||sqlite/sqlitetris.sql|sqlite3"
-  "tex|T E X T R I S|nl|tex/textris.tex|tex"
-  "troff|T R O F F T R I S||troff/trofftris.tr|troff"
-  "vim|V I M T R I S||vim/vimtris.vim|vim"
-  "xslt|X S L T T R I S||xslt/xslttris.xsl|xsltproc"
-)
+# engine file in ENGINE_FILE. Engines whose tool isn't installed are skipped.
+eval "$(sed -n '/^GAMES=(/,/^)/p' "$root/play.sh")"
+# These can't avoid one extra newline at the very end (make's $(info), TeX's
+# newline on exit, gnuplot's print, sed's last line); it is dropped before comparing.
+NL=" gnuplot make sed tex "
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
 
@@ -96,14 +78,16 @@ run_one() {
 }
 
 for w in "${want[@]}"; do
-  [[ " ${ENGINES[*]%%|*} " == *" $w "* ]] || { echo "check.sh: no engine '$w'" >&2; exit 2; }
+  [[ " ${GAMES[*]%%|*} " == *" $w "* ]] || { echo "check.sh: no engine '$w'" >&2; exit 2; }
 done
 
 # Build the job list in table order; skips are results right away.
 keys=() args=() n=0
-for spec in "${ENGINES[@]}"; do
-  IFS='|' read -r name title opts file tool <<<"$spec"
-  launcher=${file%/*}/$(basename "${file%.*}").sh
+for spec in "${GAMES[@]}"; do
+  IFS='|' read -r name game file tool _ <<<"$spec"
+  title=$(sed 's/./& /g; s/ $//' <<<"${game^^}")    # jqtris -> J Q T R I S
+  opts=""; [[ $NL == *" $name "* ]] && opts=nl
+  launcher=$name/$game.sh file=$name/$file
   if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $name "* ]]; then continue; fi
   file=$root/$file
   (( min )) && file=${file%.*}.min.${file##*.}

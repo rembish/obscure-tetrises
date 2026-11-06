@@ -28,7 +28,7 @@ fi
 
 # bash from here on; everything runs from main() so `curl | bash` parses it all first.
 
-# dir|game|engine file|tool to look for|written in
+# dir|game|engine file|tool to look for|written in (tests/check.sh reads this table too)
 GAMES=(
   "awk|awktris|awktris.awk|awk|POSIX awk (mawk, gawk, busybox)"
   "bc|bctris|bctris.bc|bc|bc, the arbitrary-precision calculator"
