@@ -23,7 +23,8 @@ BASE_URL="${XSLTTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetr
 # in a few milliseconds, so in play a batch is usually one event or two.
 # Each event is one level of template recursion, and libxslt's default limits
 # (3000 levels, 15000 variables) are too low for a big batch; --maxvars and
-# --maxdepth raise them.
+# --maxdepth raise them. Keep CHUNK to a few thousand at most: far deeper
+# recursion overflows the C stack and xsltproc crashes.
 CHUNK=${XSLTTRIS_CHUNK:-500}
 XSLTFLAGS="--maxdepth 100000 --maxvars 10000000"
 # (This function is parsed by plain sh before the bash handoff below, so it

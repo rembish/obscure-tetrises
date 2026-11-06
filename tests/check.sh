@@ -11,6 +11,7 @@
 # Every (engine, stream) pair is a separate job, and the jobs run in parallel;
 # results are still printed in table order. The ms column is wall time per run,
 # so it is noisy while other jobs share the CPU; use -j 1 to time engines.
+# The scheduler uses `wait -n`, which needs bash 4.3 or newer.
 set -u
 here=$(cd "$(dirname "$0")" && pwd)
 root=$(dirname "$here")
