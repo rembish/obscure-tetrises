@@ -112,7 +112,7 @@ def bit($m; $i): mod(($m / pow(2; $i) | floor); 2) == 1;
              end)
           + B("║") + ($g | panel($y))),
        " " + B("╚════════════════════╝")]
-    | E + "[H" + (map(. + E + "[K\n") | add) + E + "[J";
+    | E + "[H" + (map(. + E + "[K\n") | add);
 
   def title: $ENV.JQTRIS_TITLE // "J Q T R I S";
 

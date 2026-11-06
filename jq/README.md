@@ -45,7 +45,7 @@ To run the engine without the launcher:
 
 ## Golfed version
 
-[`jqtris.min.jq`](jqtris.min.jq) is the golfed twin of the engine: 1,863 bytes instead of 5,321 (65% smaller), with exactly the same output. `_tests/check.sh --min jq` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to jq:
+[`jqtris.min.jq`](jqtris.min.jq) is the golfed twin of the engine: 1,860 bytes instead of 5,310 (65% smaller), with exactly the same output. `_tests/check.sh --min jq` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to jq:
 
 - **Raw ESC:** jq 1.7 accepts a raw ESC byte inside string literals, so every `"\u001b[…"` is one byte.
 - **Pieces as letters:** the piece table is one 112-letter string, one cell index (0–15) per letter, decoded with `explode|map(.-97|[.%4,./4|floor])|[W(16)|[W(4)]]`. The next-piece preview tests `[$x,$y]|IN(...)` against rotation 0.
