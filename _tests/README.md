@@ -20,3 +20,16 @@ _tests/check.sh --min    # the golfed .min engines
   `play.sh`'s `GAMES` table, so a new game only has to be added there.
 - The `ms` column is wall time. With runs in parallel it is noisy, so use `-j 1` when
   comparing speeds.
+
+[`launchers.sh`](launchers.sh) covers the ways into a game that `check.sh` doesn't:
+the hand-over from `sh` to bash, the download path of `curl | bash` (with `TRIS_URL`
+pointing at the clone through `file://`), and a real session on a pseudo-terminal
+under `script`. It also checks that no run leaves temporary files behind.
+
+```sh
+_tests/launchers.sh           # all games, about a minute
+_tests/launchers.sh jq        # just one
+```
+
+Both scripts take `--strict`, which turns a missing tool from a skip into a failure;
+CI uses it.

@@ -5,6 +5,7 @@
 #   _tests/check.sh jq dc      just these
 #   _tests/check.sh --min ...  the same, with each engine's golfed .min file
 #   _tests/check.sh -j 1 ...   one run at a time (default: one per CPU)
+#   _tests/check.sh --strict   fail, instead of skipping, when a tool is missing (CI)
 #
 # Each engine gets the same event streams: a few line-clearing bot games and a
 # few random fuzz runs. The engine must print exactly what the reference prints.
@@ -27,10 +28,11 @@ eval "$(sed -n '/^GAMES=(/,/^)/p' "$root/play.sh")"
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
 
-min=0 jobs=$(nproc 2>/dev/null || echo 4)
+min=0 strict=0 jobs=$(nproc 2>/dev/null || echo 4)
 while [[ ${1:-} == -* ]]; do
   case $1 in
     --min) min=1 ;;
+    --strict) strict=1 ;;
     -j) jobs=${2:?-j needs a number}; shift ;;
     -j*) jobs=${1#-j} ;;
     *) echo "check.sh: unknown option $1" >&2; exit 2 ;;
@@ -90,7 +92,9 @@ for spec in "${GAMES[@]}"; do
     printf 'skip  %-12s (no %s)\n' "$label" "${file#"$root"/}" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
   fi
   if ! have "$tool"; then
-    printf 'skip  %-12s (%s is not installed)\n' "$label" "$tool" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
+    if (( strict )); then printf 'FAIL  %-12s (%s is not installed)\n' "$label" "$tool"
+    else printf 'skip  %-12s (%s is not installed)\n' "$label" "$tool"; fi > "$work/res.$n"
+    keys+=("$n"); (( n++ )); continue
   fi
   for i in "${!STREAMS[@]}"; do
     keys+=("$n"); args+=("$n|$label|$title|$file|$i|$root/$launcher"); (( n++ ))
