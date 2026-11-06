@@ -31,10 +31,9 @@ typesets anything (no `.dvi` is written); it uses TeX only as a programming lang
   - TeX writes the frame itself, so no decoder is involved.
 - **Quiet.** TeX starts in `\batchmode`, which keeps its file-opening chatter off the
   terminal, switches to `\scrollmode` for the game, and returns to `\batchmode` before `\end`. Two
-  things still get through: the banner line, which the launcher drops, and the newline TeX
-  prints on exit. `\write16` always ends its line, so each frame begins with the previous
-  frame's `ESC[J`, and the final `ESC[J` is followed by that one extra newline. That is the
-  same single-byte allowance maketris gets.
+  things still get through: the banner line, and one empty line, because switching modes
+  always ends the terminal line once more. The launcher drops both with `sed '1d;/^$/d'`;
+  frame lines are never empty.
 - **Arithmetic.** There are only `\count` registers with `\advance`, `\multiply` and
   `\divide`, which truncates. Modulo is built from those, and the Park–Miller step
   uses Schrage's trick, because counts are 32-bit.
@@ -52,7 +51,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`textris.min.tex`](textris.min.tex) is the golfed twin of the engine: 2,597 bytes instead of 9,600 (72% smaller), with exactly the same output. `_tests/check.sh --min tex` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to TeX:
+[`textris.min.tex`](textris.min.tex) is the golfed twin of the engine: 2,563 bytes instead of 9,467 (73% smaller), with exactly the same output. `_tests/check.sh --min tex` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to TeX:
 
 - **Short names:**
   - **`\let` aliases:** for `\advance`, `\divide`, `\multiply`, `\ifnum` and `\count`. The `by` keyword and `=` signs are dropped.

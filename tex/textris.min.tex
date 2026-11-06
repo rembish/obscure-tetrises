@@ -4,7 +4,7 @@
 \def\Z#1{\ifx\Z#1\else\a\c9 1 \countdef#1\c9 \expandafter\Z\fi}\c9 210
 \Z\s\A\N\X\Y\R\T\S\L\V\G\C\m\x\q\f\k\g\l\v\F\y\n\Z
 \def\z{[m}\def\B{[38;5;60m}\def\D{[38;5;244m}\def\W{[1m}
-\def\h{~~~}\def\j{\z\h}\def\_{──}\def\w{════}\def\"{}
+\def\h{~~~}\def\j{\z\h}\def\_{──}\def\w{════}
 \def\K#1{[38;5;\ifcase#1237m~·\else\ifcase#1\or51\or226\or135\or46\or196\or33\or208\fi m██\fi\z}
 \def\O#1{\immediate\write16{#1\z[K}}\def\r#1{\edef\b{\b#1}}
 \def\P#1#2{\f#1\u\f4 \a\f#2\m\ifcase\f240\or17476\or3840\or8738\or102\or102\or102\or102\or114\or610\or624\or562\or54\or1122\or864\or561\or99\or612\or1584\or306\or113\or550\or1136\or802\or116\or1570\or368\or547\fi{}}
@@ -27,10 +27,10 @@
 \def\<{\i\n<7 \i\n>0 \r{\j\B│\z\h}\:\:\:\:\r{\h\B│}\fi\fi
 \r{\ifcase\n\j\B╭\_\z~\D next\z~\B\_\_\_╮\or\or\or\or\or\or\or\j\B╰\_\_\_\_\_\_\_╯\or\or\j\D score\or\j\W\the\S\or\j\D level\z~\W\the\V\z~~\D lines\z~\W\the\L\or\or\j\D controls\or\;{←~a}move~left\or\;{→~d}move~right\or\;{↑~w}rotate\or\;{↓~s}soft~drop\or\;{␣~z}hard~drop\or\;{~~q}quit\fi}}
 \def\>{\i\G<0 \v\A\a\v1 \@\fi
-\O{\"[H~~[1;38;5;75mT~E~X~T~R~I~S}\def\"{[J}\O{~\B╔\w\w\w\w\w╗}
+\O{[H~~[1;38;5;75mT~E~X~T~R~I~S}\O{~\B╔\w\w\w\w\w╗}
 \P\N0 \u\m16 \v\N\a\v1 \f10 \n0
 \loop\edef\b{~\B║\z}\i\G=\n\r{[1;7m\h~~GAME~~OVER\h~~\z}\a\f10 \else\.\.\.\.\.\.\.\.\.\.\fi\r{\B║}\<\O\b\a\n1 \i\n<20 \repeat
 \O{~\B╚\w\w\w\w\w╝}\i\G<0 \v0 \@\else\?\fi}
-\def\?{\message{[J}\batchmode\end}
+\def\?{\batchmode\end}
 \def\[{\read-1to\]\ifcase\]\,\or\t{-1}\>\or\t1\>\or\&\>\or\*{}\>\or\-\>\or\or\or\or\?\fi\[}
 \read-1to\]\s\]\f0 \loop\c\f0 \a\f1 \i\f<210 \repeat\G-1 \V1 \U\A\N\U\!\>\[

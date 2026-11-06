@@ -9,9 +9,8 @@
 %
 % TeX starts in \batchmode, so nothing but its banner line reaches the terminal,
 % then switches to \scrollmode for the game and back to \batchmode before \end.
-% \write16 always ends a line, so every frame starts by printing the previous
-% frame's ESC[J, and the very last ESC[J is followed by the newline TeX prints
-% when it exits.
+% That last switch ends the terminal line once more, so TeX's output ends with
+% one empty line; the launcher drops it along with the banner.
 %
 % Knuth's TeX only: \count registers, \advance/\multiply/\divide, \ifnum and
 % \ifcase. Loops are macros that call themselves as their last token. The board
@@ -21,7 +20,7 @@
 {\catcode`\ =12\gdef\S{ }}% a space that \write prints as is
 \newcount\s \newcount\cur \newcount\nxt \newcount\X \newcount\Y \newcount\R
 \newcount\T \newcount\score \newcount\lines \newcount\gover \newcount\started
-\newcount\printed \newcount\emit
+\newcount\emit
 \newcount\px \newcount\py \newcount\pr \newcount\ok \newcount\fm \newcount\fb
 \newcount\fx \newcount\fy \newcount\idx \newcount\tmp \newcount\tmpb \newcount\pv
 \newcount\src \newcount\dst \newcount\cnt \newcount\jj \newcount\kk \newcount\cl
@@ -152,15 +151,13 @@
     \jj=0 \cellsloop\fi\else \jj=0 \cellsloop\fi
   \app{\side}\panel \out{\Line\K}\advance\row by1 \expandafter\rowsloop\fi}
 \def\render{\ifnum\gover=0 \pv=\cur \advance\pv by1 \paint\fi
-  \ifnum\printed=1 \def\pre{\E J}\else\def\pre{}\fi
-  \out{\pre\E H\S\S\E1;38;5;75mT\S E\S X\S T\S R\S I\S S\Rs\K}%
+  \out{\E H\S\S\E1;38;5;75mT\S E\S X\S T\S R\S I\S S\Rs\K}%
   \out{\S\B╔════════════════════╗\Rs\K}%
   \row=0 \rowsloop
   \out{\S\B╚════════════════════╝\Rs\K}%
-  \printed=1
   \ifnum\gover=0 \pv=0 \paint\fi}
 % ---- events --------------------------------------------------------------------------------
-\def\finish{\message{\E J}\batchmode\end}
+\def\finish{\batchmode\end}
 \def\zeroboard{\ifnum\kk<200 \setb\kk0 \advance\kk by1 \expandafter\zeroboard\fi}
 \def\init{\s=\ev \kk=0 \zeroboard \score=0 \lines=0 \gover=0
   \rand \cur=\nxt \rand \spawn \started=1 \render}

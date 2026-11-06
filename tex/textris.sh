@@ -18,14 +18,15 @@ fi
 
 GAME=textris DIR=tex ENGINE=textris.tex NEEDS=tex
 
-# TeX writes its log into a temporary directory and always prints a banner line
-# first, which is dropped here. -8bit lets ESC and UTF-8 through, and
-# max_print_line stops TeX from breaking long lines.
+# TeX writes its log into a temporary directory. It always prints a banner line
+# first, and switching back to \batchmode at the end prints one empty line; sed
+# drops both (frame lines are never empty). -8bit lets ESC and UTF-8 through,
+# and max_print_line stops TeX from breaking long lines.
 run_engine() {
   local out
   out=$(mktemp -d "${TMPDIR:-/tmp}/$GAME-run.XXXXXX") || return 1
   max_print_line=100000 tex -8bit -interaction=batchmode -output-directory="$out" "$1" |
-    { IFS= read -r _; cat; }
+    sed '1d;/^$/d'
   rm -rf "$out"
 }
 
