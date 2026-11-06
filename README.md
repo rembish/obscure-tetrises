@@ -56,9 +56,30 @@ cd obscure-tetrises
 ```
 
 > Piping a script from the internet into a shell runs it with your permissions.
-> Each launcher is short; read it first if you like. It downloads only its own engine
-> file to a temporary directory and deletes it on exit. `play.sh` downloads only the
+> Each launcher is short and the part they share is in
+> [`lib/launcher.sh`](lib/launcher.sh); read them first if you like. Under `curl | bash`
+> a launcher downloads two files: `lib/launcher.sh`, which it runs, and its own engine,
+> which goes to a temporary directory deleted on exit. `play.sh` downloads only the
 > launcher you pick (and its `.min` engine, if asked) the same way.
+> `TRIS_URL` changes where all of them download from (by default, this repository's `master`).
+
+### How a launcher works
+
+Each `<dir>/<game>.sh` holds only what is specific to its game: the name, engine file and
+tool, and a `run_engine` function that turns a stream of event numbers on stdin into
+frames on stdout, adapting the input wherever the tool needs it (troff gets `.GO N`
+requests, m4 gets `E(N)` macro calls, and so on). Everything else is shared in
+[`lib/launcher.sh`](lib/launcher.sh):
+
+- **Keys and ticks:** reading the keyboard and turning keys into event numbers, with a
+  tick every 100 ms.
+- **Checks:** the bash version and whether the tool is installed.
+- **The engine:** using the one next to the launcher, or downloading it.
+- **The terminal:** setting it up and restoring it on exit.
+- **`--pipe`:** reading events from stdin, which is how `tests/check.sh` runs every engine.
+
+The only code repeated in every launcher is the hand-over from `sh` to bash at the top,
+which has to run before any bash syntax, and a few lines that load `lib/launcher.sh`.
 
 ## Controls
 

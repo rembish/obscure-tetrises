@@ -102,7 +102,7 @@ launch() {   # launch <spec> <min 0|1>
       fetch "$BASE_URL/$d/${engine_file##*/}" "$engine_file" || return 1
     fi
   fi
-  ENGINE_FILE=$engine_file bash "$launcher"
+  TRIS_URL=$BASE_URL ENGINE_FILE=$engine_file bash "$launcher"
 }
 
 main() {

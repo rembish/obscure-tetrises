@@ -20,30 +20,30 @@ sched=""
 trap '[[ -n $sched ]] && kill "$sched" 2>/dev/null; rm -rf "$work"' EXIT
 trap 'exit 130' INT TERM
 
-# name|title|options|engine file|tool|command
-# The command reads events on stdin and writes frames to stdout, running the
-# engine file given in $ENGINE. It comes last, so it may contain pipes. Option "nl": the engine can't avoid one extra newline
-# at the very end (make's $(info), TeX's newline on exit, gnuplot's print).
+# name|title|options|engine file|tool
+# Each engine runs through its launcher, <dir>/<game>.sh --pipe, with the
+# engine file in ENGINE_FILE. Option "nl": the engine can't avoid one extra
+# newline at the very end (make's $(info), TeX's newline on exit, gnuplot's print).
 # Engines whose tool isn't installed are skipped.
 ENGINES=(
-  "awk|A W K T R I S||awk/awktris.awk|awk|ENGINE_FILE=\"\$ENGINE\" $root/awk/awktris.sh --pipe"
-  "bc|B C T R I S||bc/bctris.bc|bc|BC_LINE_LENGTH=0 bc -q \"\$ENGINE\""
-  "cmake|C M A K E T R I S||cmake/cmaketris.cmake|cmake|ENGINE_FILE=\"\$ENGINE\" $root/cmake/cmaketris.sh --pipe"
-  "cpp|C P P T R I S||cpp/cpptris.cpp|g++|ENGINE_FILE=\"\$ENGINE\" $root/cpp/cpptris.sh --pipe"
-  "dc|D C T R I S||dc/dctris.dc|dc|DC_LINE_LENGTH=0 dc \"\$ENGINE\""
-  "emacs|E M A C S T R I S||emacs/emacstris.el|emacs|ENGINE_FILE=\"\$ENGINE\" $root/emacs/emacstris.sh --pipe"
-  "gnuplot|G N U P L O T T R I S|nl|gnuplot/gnuplottris.gp|gnuplot|ENGINE_FILE=\"\$ENGINE\" $root/gnuplot/gnuplottris.sh --pipe"
-  "jq|J Q T R I S||jq/jqtris.jq|jq|jq -nrj -f \"\$ENGINE\""
-  "m4|M 4 T R I S||m4/m4tris.m4|m4|sed 's/.*/E(&)/' | m4 \"\$ENGINE\" -"
-  "make|M A K E T R I S|nl|make/maketris.mk|make|ENGINE_FILE=\"\$ENGINE\" $root/make/maketris.sh --pipe"
-  "postscript|P O S T S C R I P T T R I S||postscript/postscripttris.ps|gs|ENGINE_FILE=\"\$ENGINE\" $root/postscript/postscripttris.sh --pipe"
-  "sed|S E D T R I S|nl|sed/sedtris.sed|sed|ENGINE_FILE=\"\$ENGINE\" $root/sed/sedtris.sh --pipe"
-  "sendmail|S E N D M A I L T R I S||sendmail/sendmailtris.cf|sendmail|ENGINE_FILE=\"\$ENGINE\" $root/sendmail/sendmailtris.sh --pipe"
-  "sqlite|S Q L I T E T R I S||sqlite/sqlitetris.sql|sqlite3|ENGINE_FILE=\"\$ENGINE\" $root/sqlite/sqlitetris.sh --pipe"
-  "tex|T E X T R I S|nl|tex/textris.tex|tex|ENGINE_FILE=\"\$ENGINE\" $root/tex/textris.sh --pipe"
-  "troff|T R O F F T R I S||troff/trofftris.tr|troff|ENGINE_FILE=\"\$ENGINE\" $root/troff/trofftris.sh --pipe"
-  "vim|V I M T R I S||vim/vimtris.vim|vim|ENGINE_FILE=\"\$ENGINE\" $root/vim/vimtris.sh --pipe"
-  "xslt|X S L T T R I S||xslt/xslttris.xsl|xsltproc|ENGINE_FILE=\"\$ENGINE\" $root/xslt/xslttris.sh --pipe"
+  "awk|A W K T R I S||awk/awktris.awk|awk"
+  "bc|B C T R I S||bc/bctris.bc|bc"
+  "cmake|C M A K E T R I S||cmake/cmaketris.cmake|cmake"
+  "cpp|C P P T R I S||cpp/cpptris.cpp|g++"
+  "dc|D C T R I S||dc/dctris.dc|dc"
+  "emacs|E M A C S T R I S||emacs/emacstris.el|emacs"
+  "gnuplot|G N U P L O T T R I S|nl|gnuplot/gnuplottris.gp|gnuplot"
+  "jq|J Q T R I S||jq/jqtris.jq|jq"
+  "m4|M 4 T R I S||m4/m4tris.m4|m4"
+  "make|M A K E T R I S|nl|make/maketris.mk|make"
+  "postscript|P O S T S C R I P T T R I S||postscript/postscripttris.ps|gs"
+  "sed|S E D T R I S|nl|sed/sedtris.sed|sed"
+  "sendmail|S E N D M A I L T R I S||sendmail/sendmailtris.cf|sendmail"
+  "sqlite|S Q L I T E T R I S||sqlite/sqlitetris.sql|sqlite3"
+  "tex|T E X T R I S|nl|tex/textris.tex|tex"
+  "troff|T R O F F T R I S||troff/trofftris.tr|troff"
+  "vim|V I M T R I S||vim/vimtris.vim|vim"
+  "xslt|X S L T T R I S||xslt/xslttris.xsl|xsltproc"
 )
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
@@ -69,14 +69,14 @@ for i in "${!STREAMS[@]}"; do
   python3 "$here/gen_events.py" ${STREAMS[$i]} > "$work/ev$i"
 done
 
-# run_one KEY LABEL TITLE OPTS FILE CMD STREAM: one engine on one stream; the
-# result line(s) go to $work/res.KEY, which appears only when the run is done.
+# run_one KEY LABEL TITLE OPTS FILE LAUNCHER STREAM: one engine on one stream;
+# the result line(s) go to $work/res.KEY, which appears only when the run is done.
 run_one() {
-  local key=$1 label=$2 title=$3 opts=$4 file=$5 cmd=$6 i=$7 d=$work/$1 start ms frames
+  local key=$1 label=$2 title=$3 opts=$4 file=$5 launcher=$6 i=$7 d=$work/$1 start ms frames
   mkdir "$d"
   python3 "$here/reference.py" "$title" < "$work/ev$i" > "$d/ref"
   start=$(date +%s%N)
-  ENGINE=$file bash -c "$cmd" < "$work/ev$i" > "$d/out" 2> "$d/err"
+  ENGINE_FILE=$file "$launcher" --pipe < "$work/ev$i" > "$d/out" 2> "$d/err"
   ms=$(( ($(date +%s%N) - start) / 1000000 ))
   if [[ $opts == nl && $(tail -c1 "$d/out" | od -An -c | tr -d ' ') == '\n' ]]; then
     truncate -s -1 "$d/out"
@@ -102,7 +102,8 @@ done
 # Build the job list in table order; skips are results right away.
 keys=() args=() n=0
 for spec in "${ENGINES[@]}"; do
-  IFS='|' read -r name title opts file tool cmd <<<"$spec"
+  IFS='|' read -r name title opts file tool <<<"$spec"
+  launcher=${file%/*}/$(basename "${file%.*}").sh
   if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $name "* ]]; then continue; fi
   file=$root/$file
   (( min )) && file=${file%.*}.min.${file##*.}
@@ -114,7 +115,7 @@ for spec in "${ENGINES[@]}"; do
     printf 'skip  %-12s (%s is not installed)\n' "$label" "$tool" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
   fi
   for i in "${!STREAMS[@]}"; do
-    keys+=("$n"); args+=("$n|$label|$title|$opts|$file|$i|$cmd"); (( n++ ))
+    keys+=("$n"); args+=("$n|$label|$title|$opts|$file|$i|$root/$launcher"); (( n++ ))
   done
 done
 
@@ -122,9 +123,9 @@ done
 (
   trap 'kill $(jobs -p) 2>/dev/null; exit 1' TERM
   for a in "${args[@]}"; do
-    IFS='|' read -r key label title opts file i cmd <<<"$a"
+    IFS='|' read -r key label title opts file i launcher <<<"$a"
     while (( $(jobs -rp | wc -l) >= jobs )); do wait -n; done
-    run_one "$key" "$label" "$title" "$opts" "$file" "$cmd" "$i" &
+    run_one "$key" "$label" "$title" "$opts" "$file" "$launcher" "$i" &
   done
   wait
 ) & sched=$!
