@@ -281,7 +281,6 @@
 .  nr row +1
 .\}
 .tm1 " \\*B\\u255a\\*[hb]\\u255d\\*R\\*K
-.tmc "\\*EJ
 .if !\\n[over] .PAINT 0
 ..
 .\" ---- events: .GO <seed> first, then .GO <event> per line

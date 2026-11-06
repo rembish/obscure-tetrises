@@ -172,7 +172,6 @@
 .nr c +1
 .\}
 .tm1 " \\*B\\u255a\\*h\\u255d\\*R\\*K
-.tmc \\*EJ
 .ie \\nh .ex
 .el .F 0
 ..

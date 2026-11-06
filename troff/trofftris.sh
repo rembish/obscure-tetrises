@@ -21,15 +21,13 @@ GAME=trofftris DIR=troff ENGINE=trofftris.tr NEEDS=troff
 # troff reads input with .rd, which stops at a blank line, so each event N
 # goes in as the request ".GO N" followed by an empty line. troff can only print
 # printable ASCII, so it writes its frames to stderr with C-style escapes
-# (\033[1m, \u2588), and printf '%b' turns those into bytes. The last line of a
-# frame (ESC[J) has no newline, so it comes out together with the next frame.
+# (\033[1m, \u2588), and printf '%b' turns those into bytes, one line at a time.
 run_engine() {
   local line
   while IFS= read -r line; do printf '.GO %s\n\n' "$line"; done |
     troff -z -Ww "$1" 2>&1 >/dev/null | {
       export LC_ALL=C.UTF-8
       while IFS= read -r line; do printf '%b\n' "$line"; done
-      [[ -n $line ]] && printf '%b' "$line"
     }
 }
 

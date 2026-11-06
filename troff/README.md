@@ -50,7 +50,7 @@ printf '.GO 42\n\n.GO 5\n\n.GO 9\n\n' | troff -z -Ww trofftris.tr 2>&1 >/dev/nul
 
 ## Golfed version
 
-[`trofftris.min.tr`](trofftris.min.tr) is the golfed twin of the engine: 2,887 bytes instead of 7,382 (60% smaller), with exactly the same output. `_tests/check.sh --min troff` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to troff:
+[`trofftris.min.tr`](trofftris.min.tr) is the golfed twin of the engine: 2,876 bytes instead of 7,370 (61% smaller), with exactly the same output. `_tests/check.sh --min troff` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to troff:
 
 - **One table:** the masks, line-clear scores and colours sit in one list, loaded by a recursive macro (`.shift` plus `.X \\$@`). The same macro defines the colour-block strings, so a cell value points straight at its string. The masks are ordered so the preview reads one entry directly.
 - **No powers-of-two table:** the bit test checks `C%2` and halves `C`. The loop ends when `C` reaches 0.
