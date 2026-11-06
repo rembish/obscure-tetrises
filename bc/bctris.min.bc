@@ -26,7 +26,7 @@ if(r==17)print "↓ s[m  [38;5;244msoft drop"
 if(r==18)print "␣ z[m  [38;5;244mhard drop"
 if(r==19)print "  q[m  [38;5;244mquit"
 if(i)print "[m"
-print "[K\n"};print " [38;5;60m╚";for(j=20;j--;)print "═";print "╝[m[K\n[J";if(!g)p(0)}
+print "[K\n"};print " [38;5;60m╚";for(j=20;j--;)print "═";print "╝[m[K\n";if(!g)p(0)}
 s=read();c=r();v=r();n();d()
 while(!g&&(e=read())-9){if(!e&&++t+o/10>9){t=0;e=4}
 if(e&&e<3&&f(x+2*e-3,y,h))x+=2*e-3

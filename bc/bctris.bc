@@ -166,7 +166,7 @@ define void render() {
     panel(row)
     print "[K\n"
   }
-  print " [38;5;60m╚════════════════════╝[m[K\n[J"
+  print " [38;5;60m╚════════════════════╝[m[K\n"
   if (over == 0) paint(0)
 }
 
