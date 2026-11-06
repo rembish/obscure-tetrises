@@ -14,10 +14,6 @@
 #     compares. The score is a decimal string with digit-by-digit addition,
 #     and the random-number generator works on lists of bits.
 #   - Every assignment during a pass is a $(eval) inside a function.
-#
-# The one deviation from SPEC.md: $(info) always ends with a newline, so each
-# frame starts by printing the previous frame's trailing ESC[J, and the last
-# ESC[J is followed by an extra newline.
 
 ESC := 
 empty :=
@@ -225,7 +221,7 @@ levelrow = $(SP3)$(DIM)level$(RST) $(BOLD)$(words $(LV))$(RST)$(SP)$(SP)$(DIM)li
 panel = $(if $(filter 3 4 5 6,$1),$(call nextrow,$(DEC.$(DEC.$(DEC.$1)))),$(if $(filter 11,$1),$(SP3)$(BOLD)$(SCORE)$(RST),$(if $(filter 12,$1),$(call levelrow),$(PANEL.$1))))
 cells = $(subst @0,$(DOT),$(subst @1,$(BLK.1),$(subst @2,$(BLK.2),$(subst @3,$(BLK.3),$(subst @4,$(BLK.4),$(subst @5,$(BLK.5),$(subst @6,$(BLK.6),$(subst @7,$(BLK.7),$(call glue,$(foreach v,$(ROW$1),@$v))))))))))
 rowline = $(SP)$(BC)║$(RST)$(if $(and $(OVER),$(filter 10,$1)),$(BANNER),$(call cells,$1))$(BC)║$(RST)$(call panel,$1)$(EOLK)
-render = $(if $(OVER),,$(call paint,$(VAL.$(CUR))))$(info $(if $(PRINTED),$(ESC)[J)$(ESC)[H$(TITLE))$(info $(TOPLINE))$(foreach i,$(N20),$(info $(call rowline,$i)))$(info $(BOTLINE))$(eval PRINTED := 1)$(if $(OVER),,$(call paint,0))
+render = $(if $(OVER),,$(call paint,$(VAL.$(CUR))))$(info $(ESC)[H$(TITLE))$(info $(TOPLINE))$(foreach i,$(N20),$(info $(call rowline,$i)))$(info $(BOTLINE))$(if $(OVER),,$(call paint,0))
 
 # ---- one pass: load the state, read events, play them, save the state ----------
 -include $(STATE)
@@ -246,13 +242,11 @@ EVENTS := $(wordlist 2,999999,$(EVENTS))
 endif
 $(foreach e,$(EVENTS),$(call event,$e))
 
-SAVED := STARTED SEED CUR NXT XU YU ROT T LV LINES SCORE OVER PRINTED $(foreach r,$(N20),ROW$r)
+SAVED := STARTED SEED CUR NXT XU YU ROT T LV LINES SCORE OVER $(foreach r,$(N20),ROW$r)
 
 all: ;
 
-ifdef DONE
-$(info $(ESC)[J)
-else
+ifndef DONE
 $(STATE): FORCE ; @$(file >$(STATE),$(foreach v,$(SAVED),$v := $($v)$(NL)))true
 FORCE: ;
 endif

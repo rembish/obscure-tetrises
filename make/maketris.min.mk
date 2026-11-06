@@ -64,9 +64,9 @@ V4=$(call V,2)
 V5=$(call V,3)
 V6=$(call V,4)
 V=$O$X│$C   $(subst _,  ,$(subst $F,,$(foreach c,1 2 3 4,$(if $(filter $c.$1,$(D$t1)),$(l$t),_))))   $X│$C
-Bj=$(if $H,,$(call m,$P))$(info $(if $(MAKE_RESTARTS),$UJ)$UH  $U1;38;5;75mM A K E T R I S$C$UK$N $X╔════════════════════╗$C$UK$N $(foreach i,$L,$X║$C$(if $(filter 1_10,$H_$i),$(Cx),$(subst @, ,$(subst $F,,$(foreach v,$(g$i),$(l$v)))))$X║$C$(V$i)$UK$N) $X╚════════════════════╝$C$UK)$(if $H,,$(call m,0))
+Bj=$(if $H,,$(call m,$P))$(info $UH  $U1;38;5;75mM A K E T R I S$C$UK$N $X╔════════════════════╗$C$UK$N $(foreach i,$L,$X║$C$(if $(filter 1_10,$H_$i),$(Cx),$(subst @, ,$(subst $F,,$(foreach v,$(g$i),$(l$v)))))$X║$C$(V$i)$UK$N) $X╚════════════════════╝$C$UK)$(if $H,,$(call m,0))
 -include $(STATE)
 J:=$(file <$(FIFO).$(or $(MAKE_RESTARTS),0))
 $(if $S,$(if $(value E$J),$(if $(strip $(E$J)),,$(Bj))),$(foreach d,$(call h,$J),$(eval b:=$(call j,0 $b,0 0 0 $b))$(foreach i,$(call u,$d),$(eval b:=$(call j,$b,1))))$(eval A:=$(wordlist 1,31,$b $e)$NS:=0$NG:=x$NJ:=$(J:9=s)$N$(foreach r,$L,g$r:=$(g0)$N))$k$n$(Bj))
 all:;
-$(if $H$(filter 9,$(or $J,9)),$(info $UJ),$(STATE)):all;$(file >$(STATE),$(foreach v,A P t Q W R T G D S $(L:%=g%),$v:=$($v)$N)):
+$(if $H$(filter 9,$(or $J,9)),,$(STATE)):all;$(file >$(STATE),$(foreach v,A P t Q W R T G D S $(L:%=g%),$v:=$($v)$N)):

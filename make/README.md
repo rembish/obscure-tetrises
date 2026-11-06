@@ -37,10 +37,6 @@ you can build out of string functions and its own rebuild logic.
   Multiplying by 16807 means adding seven shifted copies, and the modulus uses
   2³¹ ≡ 1 (mod 2³¹−1): the high bits are added back onto the low ones. `mod 7` uses
   2ⁱ mod 7 = 1, 2, 4, 1, 2, 4, …. The decimal seed becomes bits by long division by 2.
-- **One deviation from the spec:** `$(info)` always ends its output with a newline.
-  So each frame begins by printing the previous frame's trailing `ESC[J`, and the
-  very last `ESC[J` is followed by one extra newline. The test harness allows
-  exactly that byte.
 
 Everything else is shared with the other engines in this repo; see [`../SPEC.md`](../SPEC.md).
 To run the engine on its own, use the launcher's pipe mode:
@@ -51,7 +47,7 @@ To run the engine on its own, use the launcher's pipe mode:
 
 ## Golfed version
 
-[`maketris.min.mk`](maketris.min.mk) is the golfed twin of the engine: 4,196 bytes instead of 12,757 (67% smaller), with exactly the same output. `_tests/check.sh --min make` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to make:
+[`maketris.min.mk`](maketris.min.mk) is the golfed twin of the engine: 4,159 bytes instead of 12,485 (67% smaller), with exactly the same output. `_tests/check.sh --min make` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to make:
 
 - **Generated tables:**
   - **Rotations:** only rotation 0 of each piece is stored, with 1-based coordinates. Rotations 1–3 are computed at load as (x,y) → (n+1−y, x).
@@ -67,7 +63,7 @@ To run the engine on its own, use the launcher's pipe mode:
 - **One first-fit function:** a recursive function serves left, right and rotate, with the wall-kick offsets as `$(wordlist k,999,…)`.
 - **Line clear:** rows are shifted bottom-up in place, using a constant empty row.
 - **One `$(info)` per frame:** embedded newlines, and the space between `foreach` items supplies each row's leading space.
-- **Restart rule:** one line, `$(if quit,$(info ESC[J),$(STATE)):all;$(file >...):`.
+- **Restart rule:** one line, `$(if quit,,$(STATE)):all;$(file >...):`.
 - **What make refused:**
   - **Self-reference:** a recursive variable can't reference itself, so hard drop still needs `$(call E5)`.
   - **Writing state at parse time:** this doesn't trigger a restart, and neither does a rule with an empty recipe. The state file must be written from a recipe that ends in `:`.
