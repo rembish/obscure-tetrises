@@ -37,7 +37,7 @@ decode() {
   local B="$E[38;5;60m" D="$E[38;5;244m" R="$E[m" W="$E[1m"
   local -a toks
   local -A G=(
-    [hh]="$E[H" [nl]="$E[K"$'\n' [cj]="$E[J"
+    [hh]="$E[H" [nl]="$E[K"$'\n'
     [tt]="  $E[1;38;5;75mS E N D M A I L T R I S$R"
     [tp]=" ${B}╔════════════════════╗$R" [bt]=" ${B}╚════════════════════╝$R"
     [lb]=" ${B}║$R" [rb]="${B}║$R" [e]="$E[38;5;237m ·$R"

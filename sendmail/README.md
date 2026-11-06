@@ -71,7 +71,7 @@ printf 'Game 42\nGame 5\n' | sendmail -ODontProbeInterfaces=true -C sendmailtris
 
 ## Golfed version
 
-[`sendmailtris.min.cf`](sendmailtris.min.cf) is the golfed twin of the engine: 2,291 bytes instead of 13,395 (82% smaller), with exactly the same output. `_tests/check.sh --min sendmail` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to sendmail:
+[`sendmailtris.min.cf`](sendmailtris.min.cf) is the golfed twin of the engine: 2,288 bytes instead of 13,392 (83% smaller), with exactly the same output. `_tests/check.sh --min sendmail` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to sendmail:
 
 - **One board macro:** the board is a single macro `{b}` instead of `{r0}`…`{r19}`. That dropped the 3×20 row lists and 40 row-splitting rules; macro values keep their spaces.
 - **Rotation by formula:** the 28-entry piece table became 7 rotation-0 entries plus a box size `m`. One ruleset computes rotation r as (x,y), (m−y,x), (m−x,m−y) or (y,m−x).

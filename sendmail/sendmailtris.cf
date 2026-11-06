@@ -269,7 +269,7 @@ Rnext $* / $*		$: next $(put {n3} $@ $1 $) $2
 Rnext		$: $(calc / $@ $&{lines} $@ 10 $)
 R$-		$: $(calc + $@ $1 $@ 1 $)
 R$-		$: $(put {lv} $@ $1 $)
-R$*		$@ hh tt nl tp nl lb $&{v0} rb pn nl lb $&{v1} rb pb nl lb $&{v2} rb na $&{n0} nz nl lb $&{v3} rb na $&{n1} nz nl lb $&{v4} rb na $&{n2} nz nl lb $&{v5} rb na $&{n3} nz nl lb $&{v6} rb pb nl lb $&{v7} rb pz nl lb $&{v8} rb nl lb $&{v9} rb ps nl lb $&{v10} rb sc $&{score} re nl lb $&{v11} rb lv $&{lv} lm $&{lines} re nl lb $&{v12} rb nl lb $&{v13} rb pc nl lb $&{v14} rb k1 nl lb $&{v15} rb k2 nl lb $&{v16} rb k3 nl lb $&{v17} rb k4 nl lb $&{v18} rb k5 nl lb $&{v19} rb k6 nl bt nl cj $&{fin}
+R$*		$@ hh tt nl tp nl lb $&{v0} rb pn nl lb $&{v1} rb pb nl lb $&{v2} rb na $&{n0} nz nl lb $&{v3} rb na $&{n1} nz nl lb $&{v4} rb na $&{n2} nz nl lb $&{v5} rb na $&{n3} nz nl lb $&{v6} rb pb nl lb $&{v7} rb pz nl lb $&{v8} rb nl lb $&{v9} rb ps nl lb $&{v10} rb sc $&{score} re nl lb $&{v11} rb lv $&{lv} lm $&{lines} re nl lb $&{v12} rb nl lb $&{v13} rb pc nl lb $&{v14} rb k1 nl lb $&{v15} rb k2 nl lb $&{v16} rb k3 nl lb $&{v17} rb k4 nl lb $&{v18} rb k5 nl lb $&{v19} rb k6 nl bt nl $&{fin}
 
 # Init: 'seed' -> empty board, first two pieces, first frame
 SInit
