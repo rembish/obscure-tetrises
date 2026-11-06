@@ -100,8 +100,8 @@ If your terminal does not handle colours, uncomment the line marked
 
 - Original game: Julia Jomantaite (2008)
 - The launcher is based on
-  [`playsed.sh`](http://sed.sf.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas
-- Upstream repository: [uuner/sedtris](https://github.com/uuner/sedtris)
+  [`playsed.sh`](https://web.archive.org/web/20220823204008/http://sed.sourceforge.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas
+- Original repository: [uuner/sedtris](https://github.com/uuner/sedtris)
 
 ## Golfed version
 

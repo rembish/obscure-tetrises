@@ -10,7 +10,7 @@
 # come out less predictable. All the game logic lives in sedtris.sed.
 #
 # Based on playsed.sh by Aurelio Marinho Jargas
-# http://sed.sf.net/grabbag/scripts/playsed.sh.txt
+# https://web.archive.org/web/20220823204008/http://sed.sourceforge.net/grabbag/scripts/playsed.sh.txt
 
 SEDTRIS_URL="${SEDTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed}"
 

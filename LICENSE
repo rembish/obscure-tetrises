@@ -27,6 +27,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 This license does not cover the sed/ directory. sed/sedtris.sed and
 sed/sedtris.sh are Julia Jomantaite's sedtris (2008, github.com/uuner/sedtris),
-whose launcher is based on playsed.sh by Aurelio Marinho Jargas; the upstream
+whose launcher is based on playsed.sh by Aurelio Marinho Jargas; the original
 repository states no license. sed/sedtris.min.sed is derived from
 sedtris.sed. These files remain under their authors' terms.
