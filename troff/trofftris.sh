@@ -41,8 +41,9 @@ run_engine() {
     . "$HERE/../_lib/launcher.sh"
   else
     lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh
-    lib=$(curl -fsSL "$lib" 2>/dev/null || wget -qO- "$lib") && [[ -n $lib ]] ||
-      { echo "$GAME: can't download _lib/launcher.sh" >&2; exit 1; }
+    if ! lib=$(curl -fsSL "$lib" 2>/dev/null || wget -qO- "$lib") || [[ -z $lib ]]; then
+      echo "$GAME: can't download _lib/launcher.sh" >&2; exit 1
+    fi
     eval "$lib"
   fi
   tris_main "$@"

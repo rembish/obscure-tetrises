@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - name: Install shellcheck 0.11.0 (the runner's is older, and versions disagree)
+        run: |
+          curl -fsSL https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz | tar -xJ
+          echo "$PWD/shellcheck-v0.11.0" >> "$GITHUB_PATH"
       - name: shellcheck
         run: shellcheck --version && shellcheck play.sh _lib/launcher.sh _tests/*.sh .github/*.sh */*tris.sh
 
