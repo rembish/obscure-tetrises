@@ -10,7 +10,7 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/rew
 ./rewrite/rewritetris.sh
 ```
 
-Needs Apache httpd 2.4 with mod_rewrite (tested with 2.4.66) and bash 4+. The launcher
+Needs Apache httpd 2.4 with mod_rewrite (tested with 2.4.66 and 2.4.58) and bash 4+. The launcher
 finds `apache2` or `httpd` and the module directory; set `APACHE_MODULES` if it doesn't. It
 runs the server as your user on a random port of 127.0.0.1, and stops it when the game ends.
 
