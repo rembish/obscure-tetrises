@@ -1,0 +1,58 @@
+name: check
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: shellcheck --version && shellcheck play.sh _lib/launcher.sh _tests/*.sh .github/*.sh */*tris.sh
+
+  engines:
+    name: engines (${{ matrix.variant }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: readable
+            flags: ""
+          - variant: golfed
+            flags: "--min"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the tools
+        run: .github/install-tools.sh
+      - name: Give the host name a domain (sendmail sleeps 60 s at start-up otherwise)
+        run: grep -q "$(hostname)\." /etc/hosts || echo "127.0.1.1 $(hostname).localdomain $(hostname)" | sudo tee -a /etc/hosts
+      - name: Every engine against the reference
+        run: _tests/check.sh --strict ${{ matrix.flags }}
+
+  launchers:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the tools
+        run: .github/install-tools.sh
+      - name: Give the host name a domain (sendmail sleeps 60 s at start-up otherwise)
+        run: grep -q "$(hostname)\." /etc/hosts || echo "127.0.1.1 $(hostname).localdomain $(hostname)" | sudo tee -a /etc/hosts
+      - name: sh hand-over, curl | bash download path, terminal session
+        run: _tests/launchers.sh --strict
+      - name: awktris on mawk, gawk and busybox awk
+        run: |
+          for awk in mawk gawk "busybox awk"; do
+            mkdir -p "/tmp/$awk-bin"
+            printf '#!/bin/sh\nexec %s "$@"\n' "$awk" > "/tmp/$awk-bin/awk"
+            chmod +x "/tmp/$awk-bin/awk"
+            echo "== $awk"
+            PATH="/tmp/$awk-bin:$PATH" _tests/check.sh --strict awk
+            PATH="/tmp/$awk-bin:$PATH" _tests/check.sh --strict --min awk
+          done

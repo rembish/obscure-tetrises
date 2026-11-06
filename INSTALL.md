@@ -48,7 +48,9 @@
    releases ship older versions.
 4. The game only runs `sendmail -bt` as your user and needs no mail server, but the
    package replaces whatever mail server you have (Postfix, Exim) and may start a daemon.
-   Stop or disable it afterwards if you don't want it.
+   Stop or disable it afterwards if you don't want it. If sendmailtris takes a minute to
+   start, your host name has no domain and sendmail sleeps 60 s before giving up on it;
+   a line like `127.0.1.1 myhost.localdomain myhost` in `/etc/hosts` fixes that.
 5. macOS's `/usr/sbin/sendmail` is Postfix's compatibility wrapper, which has no `-bt`
    address test mode, and Homebrew has no sendmail.
 6. BasicTeX puts `tex` in `/Library/TeX/texbin`; open a new terminal afterwards. The

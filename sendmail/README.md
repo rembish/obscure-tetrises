@@ -17,6 +17,11 @@ rewrites the lines you type.
 
 Install: Debian/Ubuntu `apt install sendmail-bin` · Fedora `dnf install sendmail` · not available on macOS, whose `sendmail` is Postfix's wrapper without `-bt`. The package replaces any other mail server (Postfix, Exim) and may start a daemon, which the game doesn't need.
 
+If the game takes a minute to start, the machine's host name has no domain part.
+sendmail then logs "My unqualified host name … unknown; sleeping for retry" and waits
+60 seconds. Adding `127.0.1.1 myhost.localdomain myhost` (with your host name) to
+`/etc/hosts` fixes it; CI does exactly that.
+
 ## The one thing sendmail can't do: draw
 
 sendmail can't print an escape character or a UTF-8 byte. It drops control

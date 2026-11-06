@@ -32,4 +32,7 @@ _tests/launchers.sh jq        # just one
 ```
 
 Both scripts take `--strict`, which turns a missing tool from a skip into a failure;
-CI uses it.
+CI uses it. CI ([`../.github/workflows/check.yml`](../.github/workflows/check.yml))
+installs every tool on Ubuntu 24.04 with
+[`../.github/install-tools.sh`](../.github/install-tools.sh) and runs shellcheck, both
+engine suites, `launchers.sh`, and awktris on mawk, gawk and busybox awk.

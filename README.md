@@ -1,5 +1,7 @@
 # Falling blocks in unlikely places
 
+[![check](https://github.com/rembish/obscure-tetrises/actions/workflows/check.yml/badge.svg)](https://github.com/rembish/obscure-tetrises/actions/workflows/check.yml)
+
 The same falling-block puzzle game, implemented in Unix tools that were never
 meant to run games. Each one reads key presses from a small bash launcher and
 draws the whole game itself: the board, gravity, rotation, line clears, scoring
