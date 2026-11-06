@@ -140,9 +140,7 @@ project is listed here. No code was taken from any of them.
 - `curl` or `wget` for the run-from-the-web mode
 - Python 3 only for the tests
 
-## Credits
+## License
 
-- sedtris: Julia Jomantaite (2008), [uuner/sedtris](https://github.com/uuner/sedtris).
-  The original launcher is based on [`playsed.sh`](http://sed.sf.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas.
-- The other engines and the shared spec were added in 2026. Earlier games in the same
-  tools are credited under [Prior art](#prior-art).
+[BSD 2-Clause](LICENSE), except the `sed/` directory: sedtris is Julia Jomantaite's 2008
+game (see [Prior art](#prior-art)), and its upstream repository states no license.
