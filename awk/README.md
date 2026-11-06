@@ -69,7 +69,7 @@ finished input like this one.)
 
 ## Golfed version
 
-[`awktris.min.awk`](awktris.min.awk) is the golfed twin of the engine: 1,717 bytes instead of 6,966 (75% smaller), with exactly the same output. `_tests/check.sh --min awk` replays it against the reference. A mechanical pass (comments, whitespace, short names) got it to 3,128 bytes, and the rest came from restructuring by hand. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to awk:
+[`awktris.min.awk`](awktris.min.awk) is the golfed twin of the engine: 1,709 bytes instead of 6,957 (75% smaller), with exactly the same output. `_tests/check.sh --min awk` replays it against the reference. A mechanical pass (comments, whitespace, short names) got it to 3,128 bytes, and the rest came from restructuring by hand. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to awk:
 
 - **Board as a string:**
   - **Layout:** the board is one 240-character string, `<          >` repeated 20 times. Each cell is a space or the piece digit `1`–`7`.

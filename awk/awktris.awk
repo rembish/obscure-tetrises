@@ -166,7 +166,7 @@ function render(    grid, i, k, row, col, s, line, c, nx, ny) {
         }
         s = s " " WALL line WALL PANEL[row] ESC "[K\n"
     }
-    s = s BOTTOM ESC "[K\n" ESC "[J"
+    s = s BOTTOM ESC "[K\n"
     printf "%s", s
     fflush()            # one frame per event, even through a pipe
 }
