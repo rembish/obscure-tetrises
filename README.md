@@ -51,6 +51,7 @@ Debian/Ubuntu, Fedora and macOS.
 | [**cpptris**](cpp/) | C++ templates, computed by `g++` at compile time |
 | [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator |
 | [**emacstris**](emacs/) | Emacs Lisp, in `emacs --batch` |
+| [**ghcitris**](ghci/) | Haskell type families: GHC's type checker plays, ghci prints |
 | [**gnuplottris**](gnuplot/) | gnuplot 6's command language |
 | [**jqtris**](jq/) | `jq`, the JSON processor |
 | [**m4tris**](m4/) | `m4`, the macro processor |

@@ -19,6 +19,7 @@
 | cpptris | `g++` | `g++` | `gcc-c++` | `brew install gcc` ² |
 | dctris | `dc` | `dc` | `bc` (it includes `dc`) | `brew install bc` ¹ |
 | emacstris | `emacs` | `emacs-nox` | `emacs-nox` | `brew install emacs` |
+| ghcitris | `ghci` | `ghc` | `ghc` | `brew install ghc` ⁹ |
 | gnuplottris | `gnuplot` | `gnuplot-nox` ³ | `gnuplot` | `brew install gnuplot` |
 | jqtris | `jq` | `jq` ³ | `jq` | preinstalled on macOS 15+, or `brew install jq` |
 | m4tris | `m4` | `m4` | `m4` | `brew install m4` ¹ |
@@ -64,3 +65,5 @@
    but it also starts a system web server on port 80; `sudo systemctl disable --now apache2`
    stops it. rewritetris starts its own server, as your user, on a random port of
    127.0.0.1. Unverified on Fedora and macOS.
+9. GHC is a large install (hundreds of megabytes); ghcitris needs 9.2 or newer. GHCup
+   (https://www.haskell.org/ghcup/) works too. Unverified on Fedora and macOS.

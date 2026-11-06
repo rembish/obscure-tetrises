@@ -36,6 +36,7 @@ GAMES=(
   "cpp|cpptris|cpptris.cpp|g++|C++ templates, computed by g++"
   "dc|dctris|dctris.dc|dc|dc, the reverse-Polish desk calculator"
   "emacs|emacstris|emacstris.el|emacs|Emacs Lisp, in emacs --batch"
+  "ghci|ghcitris|ghcitris.hs|ghci|Haskell type families, reduced by ghci"
   "gnuplot|gnuplottris|gnuplottris.gp|gnuplot|gnuplot 6's command language"
   "jq|jqtris|jqtris.jq|jq|jq, the JSON processor"
   "m4|m4tris|m4tris.m4|m4|m4, the macro processor"
