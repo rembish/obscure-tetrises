@@ -25,6 +25,7 @@
 | maketris | `make` | `make` | `make` | `brew install make` ¹ |
 | postscripttris | `gs` | `ghostscript` | `ghostscript` | `brew install ghostscript` |
 | preprocessortris | `cpp` | `cpp` | `cpp` | `brew install gcc` ⁷ |
+| rewritetris | `apache2` or `httpd` | `apache2-bin` ⁸ | `httpd` | `brew install httpd` |
 | sedtris | `sed` | preinstalled | preinstalled | `brew install gnu-sed` ¹ |
 | sendmailtris | `sendmail` | `sendmail-bin` ⁴ | `sendmail` ⁴ | not available ⁵ |
 | sqlitetris | `sqlite3` | `sqlite3` ³ | `sqlite` | `brew install sqlite` ¹ |
@@ -59,3 +60,7 @@
 7. preprocessortris needs GCC's `cpp`; Apple's `cpp` is Clang. Homebrew's GCC installs it
    as `cpp-15` (or whatever its version is); link it as `cpp` in a directory that comes
    first on your `PATH`. Unverified on macOS.
+8. `apache2-bin` is the server binary and its modules. The `apache2` package works too,
+   but it also starts a system web server on port 80; `sudo systemctl disable --now apache2`
+   stops it. rewritetris starts its own server, as your user, on a random port of
+   127.0.0.1. Unverified on Fedora and macOS.

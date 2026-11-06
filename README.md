@@ -57,6 +57,7 @@ Debian/Ubuntu, Fedora and macOS.
 | [**maketris**](make/) | GNU `make` |
 | [**postscripttris**](postscript/) | PostScript, run by Ghostscript |
 | [**preprocessortris**](preprocessor/) | the C preprocessor (GCC `cpp -traditional-cpp`), fed its own output |
+| [**rewritetris**](rewrite/) | Apache `mod_rewrite` rules, one HTTP request per event |
 | [**sedtris**](sed/) | GNU `sed`, the stream editor |
 | [**sendmailtris**](sendmail/) | `sendmail.cf` rewriting rules (with a glyph-table decoder; see its README) |
 | [**sqlitetris**](sqlite/) | SQL: SQLite triggers, views and recursive CTEs |

@@ -42,6 +42,7 @@ GAMES=(
   "make|maketris|maketris.mk|make|GNU make"
   "postscript|postscripttris|postscripttris.ps|gs|PostScript, run by Ghostscript"
   "preprocessor|preprocessortris|preprocessortris.h|cpp|the C preprocessor, fed its own output"
+  "rewrite|rewritetris|rewritetris.conf|httpd|Apache mod_rewrite rules, one request per event"
   "sed|sedtris|sedtris.sed|sed|GNU sed, the stream editor"
   "sendmail|sendmailtris|sendmailtris.cf|sendmail|sendmail.cf rewriting rules"
   "sqlite|sqlitetris|sqlitetris.sql|sqlite3|SQL: SQLite triggers and views"
@@ -53,6 +54,7 @@ GAMES=(
 
 have() {
   [[ $1 == sendmail ]] && { [[ -x /usr/sbin/sendmail || -x /usr/lib/sendmail ]] && return 0; }
+  [[ $1 == httpd ]] && { command -v apache2 >/dev/null 2>&1 && return 0; }
   command -v "$1" >/dev/null 2>&1
 }
 

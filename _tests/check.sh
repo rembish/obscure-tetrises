@@ -43,6 +43,7 @@ want=("$@")
 
 have() {
   [[ $1 == sendmail ]] && { [[ -x /usr/sbin/sendmail || -x /usr/lib/sendmail ]] && return 0; }
+  [[ $1 == httpd ]] && { command -v apache2 >/dev/null 2>&1 && return 0; }
   command -v "$1" >/dev/null 2>&1
 }
 
