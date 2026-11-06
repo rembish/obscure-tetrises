@@ -23,6 +23,7 @@ GAME=gnuplottris DIR=gnuplot ENGINE=gnuplottris.gp NEEDS=gnuplot
 # away from the display; the game only prints text.
 run_engine() {
   local line
+  # shellcheck disable=SC2016 # $step is gnuplot syntax, not shell
   while IFS= read -r line; do printf 'if ($step(%s)) { exit }\n' "$line"; done |
     GNUTERM=dumb gnuplot "$1" -
 }
@@ -33,6 +34,7 @@ run_engine() {
   HERE=""
   [[ -f ${BASH_SOURCE[0]:-} ]] && HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   if [[ -n $HERE && -f $HERE/../_lib/launcher.sh ]]; then
+    # shellcheck source=SCRIPTDIR/../_lib/launcher.sh
     . "$HERE/../_lib/launcher.sh"
   else
     lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh

@@ -25,6 +25,7 @@ run_engine() { DC_LINE_LENGTH=0 dc "$1"; }
   HERE=""
   [[ -f ${BASH_SOURCE[0]:-} ]] && HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   if [[ -n $HERE && -f $HERE/../_lib/launcher.sh ]]; then
+    # shellcheck source=SCRIPTDIR/../_lib/launcher.sh
     . "$HERE/../_lib/launcher.sh"
   else
     lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh

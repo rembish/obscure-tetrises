@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # launcher.sh - the part every game launcher shares. Each <dir>/<game>.sh sets a
 # few variables, defines run_engine, loads this file (from the clone, or from
 # $TRIS_URL under curl | bash) and calls tris_main.

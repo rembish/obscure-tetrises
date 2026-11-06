@@ -34,16 +34,16 @@ find_sendmail() {
 # from sendmail.cf.
 decode() {
   local E=$'\e' line out tok
-  local B="$E[38;5;60m" D="$E[38;5;244m" R="$E[m" W="$E[1m"
+  local B="${E}[38;5;60m" D="${E}[38;5;244m" R="${E}[m" W="${E}[1m"
   local -a toks
   local -A G=(
-    [hh]="$E[H" [nl]="$E[K"$'\n'
-    [tt]="  $E[1;38;5;75mS E N D M A I L T R I S$R"
+    [hh]="${E}[H" [nl]="${E}[K"$'\n'
+    [tt]="  ${E}[1;38;5;75mS E N D M A I L T R I S$R"
     [tp]=" ${B}╔════════════════════╗$R" [bt]=" ${B}╚════════════════════╝$R"
-    [lb]=" ${B}║$R" [rb]="${B}║$R" [e]="$E[38;5;237m ·$R"
-    [i]="$E[38;5;51m██$R" [o]="$E[38;5;226m██$R" [t]="$E[38;5;135m██$R" [s]="$E[38;5;46m██$R"
-    [z]="$E[38;5;196m██$R" [j]="$E[38;5;33m██$R" [l]="$E[38;5;208m██$R" [ns]="  "
-    [go]="$E[1;7m     GAME  OVER     $R"
+    [lb]=" ${B}║$R" [rb]="${B}║$R" [e]="${E}[38;5;237m ·$R"
+    [i]="${E}[38;5;51m██$R" [o]="${E}[38;5;226m██$R" [t]="${E}[38;5;135m██$R" [s]="${E}[38;5;46m██$R"
+    [z]="${E}[38;5;196m██$R" [j]="${E}[38;5;33m██$R" [l]="${E}[38;5;208m██$R" [ns]="  "
+    [go]="${E}[1;7m     GAME  OVER     $R"
     [pn]="   ${B}╭──$R ${D}next$R ${B}──────╮$R" [pb]="   ${B}│$R              ${B}│$R"
     [na]="   ${B}│$R   " [nz]="   ${B}│$R" [pz]="   ${B}╰──────────────╯$R"
     [ps]="   ${D}score$R" [sc]="   $W" [re]="$R"
@@ -91,6 +91,7 @@ check_tool() { find_sendmail >/dev/null || { echo "$GAME: '$NEEDS' is not instal
   HERE=""
   [[ -f ${BASH_SOURCE[0]:-} ]] && HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   if [[ -n $HERE && -f $HERE/../_lib/launcher.sh ]]; then
+    # shellcheck source=SCRIPTDIR/../_lib/launcher.sh
     . "$HERE/../_lib/launcher.sh"
   else
     lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh

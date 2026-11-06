@@ -58,6 +58,7 @@ run_engine() {
     # the first batch also draws the starting state
     echo "using Game = Batch<S0, $first$ev>;" > "$work/events.hpp"
     first=0
+    # shellcheck disable=SC2086 # CXXFLAGS is several flags
     g++ $CXXFLAGS -I"$work" -x c++ "$1" -o "$work/game" || break
     "$work/game" 3> "$work/next.hpp"; rc=$?
     mv "$work/next.hpp" "$work/state.hpp"
@@ -73,6 +74,7 @@ run_engine() {
   HERE=""
   [[ -f ${BASH_SOURCE[0]:-} ]] && HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   if [[ -n $HERE && -f $HERE/../_lib/launcher.sh ]]; then
+    # shellcheck source=SCRIPTDIR/../_lib/launcher.sh
     . "$HERE/../_lib/launcher.sh"
   else
     lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh

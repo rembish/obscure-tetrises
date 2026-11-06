@@ -60,6 +60,7 @@ run_engine() {
     [ -z "$ev" ] && [ "$first" = 0 ] && continue      # nothing to play
     first=0
     rm -f "$work/next.xml"
+    # shellcheck disable=SC2086 # XSLTFLAGS is several flags
     xsltproc $XSLTFLAGS --stringparam ev "$ev" --stringparam out "$work/next.xml" "$1" "$work/state.xml" || break
     [ -e "$work/next.xml" ] || break                  # game over
     mv "$work/next.xml" "$work/state.xml"
@@ -74,6 +75,7 @@ run_engine() {
   HERE=""
   [[ -f ${BASH_SOURCE[0]:-} ]] && HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   if [[ -n $HERE && -f $HERE/../_lib/launcher.sh ]]; then
+    # shellcheck source=SCRIPTDIR/../_lib/launcher.sh
     . "$HERE/../_lib/launcher.sh"
   else
     lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh

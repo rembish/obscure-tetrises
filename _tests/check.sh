@@ -45,6 +45,7 @@ have() {
 }
 
 for i in "${!STREAMS[@]}"; do
+  # shellcheck disable=SC2086 # each stream is "mode seed count", split on purpose
   python3 "$here/gen_events.py" ${STREAMS[$i]} > "$work/ev$i"
 done
 
@@ -86,7 +87,7 @@ for spec in "${GAMES[@]}"; do
   (( min )) && file=${file%.*}.min.${file##*.}
   label=$name; (( min )) && label=$name.min
   if [[ ! -f $file ]]; then
-    printf 'skip  %-12s (no %s)\n' "$label" "${file#$root/}" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
+    printf 'skip  %-12s (no %s)\n' "$label" "${file#"$root"/}" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
   fi
   if ! have "$tool"; then
     printf 'skip  %-12s (%s is not installed)\n' "$label" "$tool" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
