@@ -51,7 +51,7 @@ printf '42\n5\n9\n' | emacs --batch -Q -l emacstris.el
 
 ## Golfed version
 
-[`emacstris.min.el`](emacstris.min.el) is the golfed twin of the engine: 2,112 bytes instead of 11,797 (82% smaller), with exactly the same output. `_tests/check.sh --min emacs` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Emacs Lisp: It was tested on Emacs 29.3 and uses features that are new in 29: `mapconcat` without a separator, and a preloaded `seq-filter`. The readable version uses neither.
+[`emacstris.min.el`](emacstris.min.el) is the golfed twin of the engine: 2,109 bytes instead of 11,778 (82% smaller), with exactly the same output. `_tests/check.sh --min emacs` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Emacs Lisp: It was tested on Emacs 29.3 and uses features that are new in 29: `mapconcat` without a separator, and a preloaded `seq-filter`. The readable version uses neither.
 
 - **No `defvar`:** the globals are created by one top-level `setq`.
   - **Why it matters:** `defvar` makes a symbol special everywhere. A `let` or `dotimes` variable with the same one-letter name would then rebind the global dynamically, even under lexical binding. That was the first golfing bug.

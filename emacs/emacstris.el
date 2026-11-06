@@ -245,8 +245,7 @@ Emacs fixnums are 62 bits wide, so seed * 16807 never overflows."
               lines)))
     (push (concat " " (emacstris-border (concat "╚" (make-string 20 ?═) "╝"))) lines)
     (concat "\e[H"
-            (mapconcat (lambda (l) (concat l "\e[K\n")) (nreverse lines) "")
-            "\e[J")))
+            (mapconcat (lambda (l) (concat l "\e[K\n")) (nreverse lines) ""))))
 
 (defun emacstris-draw ()
   ;; In batch mode `princ' writes to stdout and the bytes reach the pipe
