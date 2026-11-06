@@ -35,6 +35,7 @@ run_engine() {
       [[ -n $line ]] && printf 'INSERT INTO ev VALUES(%s);SELECT*FROM frame;\n' "$line"
     done
   } | sqlite3 -batch -init /dev/null :memory: 2>"$err"
+  return 0   # sqlite3 exits 1 after that deliberate error; the game ended normally
 }
 
 # Load the shared part from the clone, or download it; then play. (In braces, so
