@@ -23,7 +23,7 @@ Pass arguments through `curl | bash` with `bash -s -- --min m4`.
 
 ## The games
 
-Each game also has its own launcher. awk, Emacs Lisp, PostScript, SQL and Vim script
+Each game also has its own launcher. awk, C++ templates, Emacs Lisp, PostScript, SQL and Vim script
 had a Tetris before this collection. Their engines here were written from scratch to the
 shared spec, and each README links the earlier project under "Prior art".
 
@@ -32,6 +32,7 @@ shared spec, and each README links the earlier project under "Prior art".
 | [**awktris**](awk/) | POSIX `awk` (mawk, gawk, busybox) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/awk/awktris.sh \| bash` |
 | [**bctris**](bc/) | `bc`, the arbitrary-precision calculator language | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/bctris.sh \| bash` |
 | [**cmaketris**](cmake/) | CMake script (`cmake -P`) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/cmake/cmaketris.sh \| bash` |
+| [**cpptris**](cpp/) | C++ templates, computed by `g++` at compile time | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/cpp/cpptris.sh \| bash` |
 | [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc/dctris.sh \| bash` |
 | [**emacstris**](emacs/) | Emacs Lisp, in `emacs --batch` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/emacs/emacstris.sh \| bash` |
 | [**gnuplottris**](gnuplot/) | gnuplot 6's command language | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/gnuplot/gnuplottris.sh \| bash` |
@@ -95,6 +96,7 @@ tests/check.sh --min           # verify all of them
 | awk | 6,966 | 1,717 | 75% |
 | bc | 5,561 | 2,262 | 59% |
 | CMake | 8,562 | 3,660 | 57% |
+| C++ templates | 21,530 | 3,980 | 82% |
 | dc | 5,365 | 2,138 | 60% |
 | Emacs Lisp | 11,797 | 2,112 | 82% |
 | gnuplot | 6,887 | 2,122 | 69% |

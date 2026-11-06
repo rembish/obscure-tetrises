@@ -33,6 +33,7 @@ GAMES=(
   "awk|awktris|awktris.awk|awk|POSIX awk (mawk, gawk, busybox)"
   "bc|bctris|bctris.bc|bc|bc, the arbitrary-precision calculator"
   "cmake|cmaketris|cmaketris.cmake|cmake|CMake script (cmake -P)"
+  "cpp|cpptris|cpptris.cpp|g++|C++ templates, computed by g++"
   "dc|dctris|dctris.dc|dc|dc, the reverse-Polish desk calculator"
   "emacs|emacstris|emacstris.el|emacs|Emacs Lisp, in emacs --batch"
   "gnuplot|gnuplottris|gnuplottris.gp|gnuplot|gnuplot 6's command language"

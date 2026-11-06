@@ -11,6 +11,7 @@ bot games and fuzzed key streams. sedtris is compared against the original
 | awk | 6,966 | 1,717 | 75% |
 | bc | 5,561 | 2,262 | 59% |
 | CMake | 8,562 | 3,660 | 57% |
+| C++ templates | 21,530 | 3,980 | 82% |
 | dc | 5,365 | 2,138 | 60% |
 | Emacs Lisp | 11,797 | 2,112 | 82% |
 | gnuplot | 6,887 | 2,122 | 69% |
@@ -82,6 +83,7 @@ engine's README, under "Golfed version":
 - [awk](awk/README.md#golfed-version)
 - [bc](bc/README.md#golfed-version)
 - [CMake](cmake/README.md#golfed-version)
+- [C++ templates](cpp/README.md#golfed-version)
 - [dc](dc/README.md#golfed-version)
 - [Emacs Lisp](emacs/README.md#golfed-version)
 - [gnuplot](gnuplot/README.md#golfed-version)
@@ -102,6 +104,9 @@ engine's README, under "Golfed version":
   control characters in strings.
 - **`emacstris.min.el` needs Emacs 29.** It relies on `mapconcat` without a separator and
   a preloaded `seq-filter`.
+- **`cpptris.min.cpp` needs g++.** Like the readable file, it relies on GNU extensions
+  (the string literal operator template, `\e`), and adds zero-length arrays, `?:` with
+  the middle left out and `__integer_pack`. Clang refuses it.
 - **`postscripttris.min.ps` is a binary file.** It uses Ghostscript's binary tokens: one
   byte plus an index into the system-name table per operator, which needs no spaces around
   it. git and GitHub show it as binary.
