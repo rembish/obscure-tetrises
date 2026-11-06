@@ -69,11 +69,13 @@ Every engine plays exactly the same game, described in [`SPEC.md`](SPEC.md): the
 number generator, rules and output, down to the byte. [`tests/reference.py`](tests/reference.py) is
 the executable version of the spec. [`tests/check.sh`](tests/check.sh) replays bot games and
 fuzzed key streams through every engine and compares each frame byte for byte with
-the reference:
+the reference. The runs go in parallel, one per CPU, and engines whose tool isn't
+installed are skipped:
 
 ```sh
 tests/check.sh          # all engines
 tests/check.sh jq       # just one
+tests/check.sh -j 1     # one run at a time, for comparable timings
 ```
 
 ## Golfed versions
@@ -97,7 +99,7 @@ tests/check.sh --min           # verify all of them
 | dc | 5,365 | 2,138 | 60% |
 | Emacs Lisp | 11,797 | 2,112 | 82% |
 | gnuplot | 6,887 | 2,122 | 69% |
-| jq | 5,321 | 1,845 | 65% |
+| jq | 5,321 | 1,863 | 65% |
 | m4 | 8,838 | 2,083 | 76% |
 | make | 12,757 | 4,196 | 67% |
 | PostScript | 7,753 | 1,501 | 80% |
