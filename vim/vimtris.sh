@@ -4,9 +4,9 @@
 #   ./vimtris.sh
 #   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/vim/vimtris.sh | bash
 #
-#   ./vimtris.sh --pipe    events on stdin, frames on stdout (used by tests/check.sh)
+#   ./vimtris.sh --pipe    events on stdin, frames on stdout (used by _tests/check.sh)
 #
-# Keys, ticks, the engine download and the terminal are handled by ../lib/launcher.sh.
+# Keys, ticks, the engine download and the terminal are handled by ../_lib/launcher.sh.
 
 # Under plain sh (e.g. `curl ... | sh`), hand over to bash first.
 if [ -z "${BASH_VERSION:-}" ]; then
@@ -37,12 +37,12 @@ run_engine() {
 {
   HERE=""
   [[ -f ${BASH_SOURCE[0]:-} ]] && HERE=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-  if [[ -n $HERE && -f $HERE/../lib/launcher.sh ]]; then
-    . "$HERE/../lib/launcher.sh"
+  if [[ -n $HERE && -f $HERE/../_lib/launcher.sh ]]; then
+    . "$HERE/../_lib/launcher.sh"
   else
-    lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/lib/launcher.sh
+    lib=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}/_lib/launcher.sh
     lib=$(curl -fsSL "$lib" 2>/dev/null || wget -qO- "$lib") && [[ -n $lib ]] ||
-      { echo "$GAME: can't download lib/launcher.sh" >&2; exit 1; }
+      { echo "$GAME: can't download _lib/launcher.sh" >&2; exit 1; }
     eval "$lib"
   fi
   tris_main "$@"

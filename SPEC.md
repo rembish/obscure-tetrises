@@ -2,8 +2,8 @@
 
 Every engine in this collection plays exactly
 the same game. Given the same seed and the same events, each one prints the
-same bytes. [`tests/reference.py`](tests/reference.py) is the executable version of this
-document, and [`tests/check.sh`](tests/check.sh) diffs every engine against it.
+same bytes. [`_tests/reference.py`](_tests/reference.py) is the executable version of this
+document, and [`_tests/check.sh`](_tests/check.sh) diffs every engine against it.
 
 ## Input: one number per line
 

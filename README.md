@@ -57,8 +57,8 @@ cd obscure-tetrises
 
 > Piping a script from the internet into a shell runs it with your permissions.
 > Each launcher is short and the part they share is in
-> [`lib/launcher.sh`](lib/launcher.sh); read them first if you like. Under `curl | bash`
-> a launcher downloads two files: `lib/launcher.sh`, which it runs, and its own engine,
+> [`_lib/launcher.sh`](_lib/launcher.sh); read them first if you like. Under `curl | bash`
+> a launcher downloads two files: `_lib/launcher.sh`, which it runs, and its own engine,
 > which goes to a temporary directory deleted on exit. `play.sh` downloads only the
 > launcher you pick (and its `.min` engine, if asked) the same way.
 > `TRIS_URL` changes where all of them download from (by default, this repository's `master`).
@@ -69,17 +69,17 @@ Each `<dir>/<game>.sh` holds only what is specific to its game: the name, engine
 tool, and a `run_engine` function that turns a stream of event numbers on stdin into
 frames on stdout, adapting the input wherever the tool needs it (troff gets `.GO N`
 requests, m4 gets `E(N)` macro calls, and so on). Everything else is shared in
-[`lib/launcher.sh`](lib/launcher.sh):
+[`_lib/launcher.sh`](_lib/launcher.sh):
 
 - **Keys and ticks:** reading the keyboard and turning keys into event numbers, with a
   tick every 100 ms.
 - **Checks:** the bash version and whether the tool is installed.
 - **The engine:** using the one next to the launcher, or downloading it.
 - **The terminal:** setting it up and restoring it on exit.
-- **`--pipe`:** reading events from stdin, which is how `tests/check.sh` runs every engine.
+- **`--pipe`:** reading events from stdin, which is how `_tests/check.sh` runs every engine.
 
 The only code repeated in every launcher is the hand-over from `sh` to bash at the top,
-which has to run before any bash syntax, and a few lines that load `lib/launcher.sh`.
+which has to run before any bash syntax, and a few lines that load `_lib/launcher.sh`.
 
 ## Controls
 
@@ -88,28 +88,28 @@ which has to run before any bash syntax, and a few lines that load `lib/launcher
 ## One game, many engines
 
 Every engine plays exactly the same game, described in [`SPEC.md`](SPEC.md): the same event protocol, random
-number generator, rules and output, down to the byte. [`tests/reference.py`](tests/reference.py) is
-the executable version of the spec. [`tests/check.sh`](tests/check.sh) replays bot games and
+number generator, rules and output, down to the byte. [`_tests/reference.py`](_tests/reference.py) is
+the executable version of the spec. [`_tests/check.sh`](_tests/check.sh) replays bot games and
 fuzzed key streams through every engine and compares each frame byte for byte with
 the reference. The runs go in parallel, one per CPU, and engines whose tool isn't
 installed are skipped:
 
 ```sh
-tests/check.sh          # all engines
-tests/check.sh jq       # just one
-tests/check.sh -j 1     # one run at a time, for comparable timings
+_tests/check.sh          # all engines
+_tests/check.sh jq       # just one
+_tests/check.sh -j 1     # one run at a time, for comparable timings
 ```
 
 ## Golfed versions
 
 Every engine also comes golfed as `<name>.min.<ext>`, next to the readable
 source. It is 57–82% smaller and produces exactly the same bytes.
-`tests/check.sh --min` runs every `.min` file through the same comparison. Play one with
+`_tests/check.sh --min` runs every `.min` file through the same comparison. Play one with
 `./play.sh --min <game>`, or with any launcher's `ENGINE_FILE`:
 
 ```sh
 ENGINE_FILE=jq/jqtris.min.jq ./jq/jqtris.sh
-tests/check.sh --min           # verify all of them
+_tests/check.sh --min           # verify all of them
 ```
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |

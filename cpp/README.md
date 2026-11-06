@@ -85,7 +85,7 @@ Getting the speed right took longer than getting the game right. Some of the tra
   state goes behind `If<...>::type::type`. `>>` inside a template argument list closes
   two lists, so shifts need parentheses there.
 
-Timings on this machine (`tests/check.sh cpp`, 13,900 events, 3,557 frames): 25 to 35 s
+Timings on this machine (`_tests/check.sh cpp`, 13,900 events, 3,557 frames): 25 to 35 s
 for the whole suite, depending on load, or roughly 2 to 3 s per 500-event compile. Almost
 all of that is template instantiation. An empty compile, including the link, takes 0.15 s.
 The golfed version is a little slower, at 30 to 45 s.
@@ -106,7 +106,7 @@ or use the launcher's pipe mode: `(echo 42; echo 0; echo 1; echo 5) | ./cpptris.
 
 ## Golfed version
 
-[`cpptris.min.cpp`](cpptris.min.cpp) is the golfed twin of the engine: 3,980 bytes instead of 21,530 (82% smaller), with exactly the same output. `tests/check.sh --min cpp` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to C++ templates:
+[`cpptris.min.cpp`](cpptris.min.cpp) is the golfed twin of the engine: 3,980 bytes instead of 21,530 (82% smaller), with exactly the same output. `_tests/check.sh --min cpp` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to C++ templates:
 
 - **Keyword macros:** `T` is `template<long`, `TC` is `template<class`, and `V`, `G`, `K`, `U`, `Y`, `L` stand for `struct`, `enum`, `static constexpr`, `using`, `typename`, `long`. Every `int` and `bool` parameter became `long`, so almost every template header is `T x,L y>`.
 - **Text without gluing:**

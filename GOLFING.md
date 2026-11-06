@@ -2,7 +2,7 @@
 
 Every engine has a golfed twin, `<name>.min.<ext>`, next to its readable source. The
 rule: the golfed file must produce **exactly the same bytes** as the readable one.
-`tests/check.sh --min` holds them to it. Each one is replayed against the reference on
+`_tests/check.sh --min` holds them to it. Each one is replayed against the reference on
 bot games and fuzzed key streams.
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |

@@ -51,7 +51,7 @@ To run the engine on its own, use the launcher's pipe mode:
 
 ## Golfed version
 
-[`maketris.min.mk`](maketris.min.mk) is the golfed twin of the engine: 4,196 bytes instead of 12,757 (67% smaller), with exactly the same output. `tests/check.sh --min make` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to make:
+[`maketris.min.mk`](maketris.min.mk) is the golfed twin of the engine: 4,196 bytes instead of 12,757 (67% smaller), with exactly the same output. `_tests/check.sh --min make` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to make:
 
 - **Generated tables:**
   - **Rotations:** only rotation 0 of each piece is stored, with 1-based coordinates. Rotations 1–3 are computed at load as (x,y) → (n+1−y, x).

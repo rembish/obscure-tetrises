@@ -31,7 +31,7 @@ and `and()` and `<<` read the rotation masks.
     goes out as its 23 lines plus a final `ESC[J` item, so there's no extra newline at the
     end and no `nl` allowance.
   - `a` appends. Without it, every frame would truncate whatever stdout points at, and
-    `tests/check.sh` redirects it to a regular file.
+    `_tests/check.sh` redirects it to a regular file.
   - `S` turns off the `fsync()` that `writefile()` does by default. On a regular file
     that made each frame wait for the disk: the 300-piece bot game took 20 s instead of 4 s.
   - Each call opens, writes and closes the file, so every frame reaches the terminal at once.
@@ -66,7 +66,7 @@ printf '42\n5\n9\n' | vim -Nu NONE -i NONE -es -S vimtris.vim | head -3
 
 ## Golfed version
 
-[`vimtris.min.vim`](vimtris.min.vim) is the golfed twin of the engine: 1,851 bytes instead of 7,806 (76% smaller), with exactly the same output. `tests/check.sh --min vim` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Vim script:
+[`vimtris.min.vim`](vimtris.min.vim) is the golfed twin of the engine: 1,851 bytes instead of 7,806 (76% smaller), with exactly the same output. `_tests/check.sh --min vim` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Vim script:
 
 - **No functions at all.** The whole game is script-level code in one `wh !o` loop. That
   removes every `s:` and `a:` prefix and every `fu`/`endf`/`retu`, because at script level

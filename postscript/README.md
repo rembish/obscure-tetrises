@@ -67,7 +67,7 @@ printf '42\n5\n5\n9\n' | gs -q -dNODISPLAY -dBATCH postscripttris.ps
 
 ## Golfed version
 
-[`postscripttris.min.ps`](postscripttris.min.ps) is the golfed twin of the engine: 1,501 bytes instead of 7,753 (81% smaller), with exactly the same output. `tests/check.sh --min postscript` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to PostScript:
+[`postscripttris.min.ps`](postscripttris.min.ps) is the golfed twin of the engine: 1,501 bytes instead of 7,753 (81% smaller), with exactly the same output. `_tests/check.sh --min postscript` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to PostScript:
 
 - **Binary tokens.** The file is mostly not text. PostScript Level 2 has a binary encoding: byte `0x92` followed by an index from the system name table is an operator name. So `getinterval`, `putinterval`, `exch`, `def`, `print` and the rest are 2 bytes each. Small integers are `0x88` plus one signed byte, larger ones `0x86` plus two bytes, and `2147483647` is 5 bytes. Binary tokens delimit themselves, so the spaces between them go too. Ghostscript accepts all of this from a program file under `-dSAFER`. The file was hand-golfed as text first (2,102 bytes) and then re-encoded token by token.
 - **Tables in strings.** `get` on a string returns a byte, so the colours (`K`), the rotation-0 masks (`M`), the per-piece rotation size and the line-score table (divided by 20) are all raw-byte string literals. That's 1 byte per entry instead of 2–3 for binary numbers.

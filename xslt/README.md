@@ -67,7 +67,7 @@ xsltproc --stringparam ev "5 5" --stringparam out /tmp/next.xml xslttris.xsl /tm
 
 ## Golfed version
 
-[`xslttris.min.xsl`](xslttris.min.xsl) is the golfed twin of the engine: 5,466 bytes instead of 24,802 (78% smaller), with exactly the same output. `tests/check.sh --min xslt` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to XSLT:
+[`xslttris.min.xsl`](xslttris.min.xsl) is the golfed twin of the engine: 5,466 bytes instead of 24,802 (78% smaller), with exactly the same output. `_tests/check.sh --min xslt` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to XSLT:
 
 - **XSLT as the default namespace:** `xmlns="http://www.w3.org/1999/XSL/Transform"` makes every `<xsl:param>` a `<param>`. The one literal result element, the state, moved to another namespace (`<s:s>`), and the input state is matched as `*`, so it is found in either namespace.
 - **Real functions:** libexslt implements EXSLT `func:function`, so the rules are XPath functions (`f:M`, `f:G`, `f:L`, …) that call each other inside expressions. There are no `call-template`/`with-param` blocks except the event loop.

@@ -44,7 +44,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`dctris.min.dc`](dctris.min.dc) is the golfed twin of the engine: 2,138 bytes instead of 5,365 (60% smaller), with exactly the same output. `tests/check.sh --min dc` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to dc:
+[`dctris.min.dc`](dctris.min.dc) is the golfed twin of the engine: 2,138 bytes instead of 5,365 (60% smaller), with exactly the same output. `_tests/check.sh --min dc` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to dc:
 
 - **Self-contained colour macros:** `l<`, `l>` and `l/` print the string on top of the stack and reset the colour themselves. So `l<x[X]PlRx` became `[X]l<x`, used 28 times. Further macros cover the three-space indent (`l.x`), the controls rows (`l?x`) and the row counter (`l!x`).
 - **Tables from the stack:** the mask and colour tables are pushed as plain numbers and stored by a stack-depth loop, `[z1-:Mz0<Z]dsZx`, instead of 35 separate `N:M` stores. Unset array cells are already 0, so zero entries are omitted.

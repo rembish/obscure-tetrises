@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate deterministic event streams for tests/check.sh.
+"""Generate deterministic event streams for _tests/check.sh.
 
     gen_events.py bot SEED [PIECES]   a greedy bot that clears lines
     gen_events.py fuzz SEED [COUNT]   random keys and ticks, including edge cases

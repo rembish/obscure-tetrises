@@ -49,7 +49,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`m4tris.min.m4`](m4tris.min.m4) is the golfed twin of the engine: 2,083 bytes instead of 8,838 (76% smaller), with exactly the same output. `tests/check.sh --min m4` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to m4:
+[`m4tris.min.m4`](m4tris.min.m4) is the golfed twin of the engine: 2,083 bytes instead of 8,838 (76% smaller), with exactly the same output. `_tests/check.sh --min m4` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to m4:
 
 - **One-letter builtins:** a helper copies builtins under new names with `defn`, so `define`, `ifelse`, `eval`, `patsubst` and `substr` become single letters.
 - **The board is one string:** rows like `<0000000000>` replace 200 cell macros. The `<` and `>` markers block every move off the sides, and reading past the end blocks moves off the bottom, so there are no bounds checks. Full rows are removed with one `patsubst(b,<[1-7]*>)`, and a recursive padder tops the board back up to 20 rows. The same padder builds the empty board at start.

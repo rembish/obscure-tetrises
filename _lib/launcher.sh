@@ -13,7 +13,7 @@
 #                              prints its own message on failure
 # What it can use while run_engine runs:
 #   work                       a scratch directory, removed afterwards
-#   pipe                       1 under --pipe (events from stdin, as tests/check.sh
+#   pipe                       1 under --pipe (events from stdin, as _tests/check.sh
 #                              runs it), 0 when playing on the terminal
 
 TRIS_URL=${TRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master}

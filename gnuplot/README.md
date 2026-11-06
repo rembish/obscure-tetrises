@@ -43,7 +43,7 @@ printf 'if ($step(42)) { exit }\nif ($step(5)) { exit }\nif ($step(9)) { exit }\
 
 ## Golfed version
 
-[`gnuplottris.min.gp`](gnuplottris.min.gp) is the golfed twin of the engine: 2,122 bytes instead of 6,887 (69% smaller), with exactly the same output. `tests/check.sh --min gnuplot` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to gnuplot:
+[`gnuplottris.min.gp`](gnuplottris.min.gp) is the golfed twin of the engine: 2,122 bytes instead of 6,887 (69% smaller), with exactly the same output. `_tests/check.sh --min gnuplot` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to gnuplot:
 
 - **No `local`:** `do for` loop variables are already scoped (unset again after the loop), and the other temporaries don't collide.
 - **No `return 0`:** a function block without `return` is fine when called as `d=$f()`.

@@ -52,7 +52,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`textris.min.tex`](textris.min.tex) is the golfed twin of the engine: 2,597 bytes instead of 9,600 (72% smaller), with exactly the same output. `tests/check.sh --min tex` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to TeX:
+[`textris.min.tex`](textris.min.tex) is the golfed twin of the engine: 2,597 bytes instead of 9,600 (72% smaller), with exactly the same output. `_tests/check.sh --min tex` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to TeX:
 
 - **Short names:**
   - **`\let` aliases:** for `\advance`, `\divide`, `\multiply`, `\ifnum` and `\count`. The `by` keyword and `=` signs are dropped.

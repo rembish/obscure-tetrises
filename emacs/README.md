@@ -34,7 +34,7 @@ numbers straight into it. The file starts with a `lexical-binding: t` cookie.
     byte.
   - **Flushing:** each frame reaches the pipe before Emacs reads the next line, with no
     explicit flush and no trailing newline. So interactive play updates on every key, and
-    the output has no extra final byte (no `nl` option in `tests/check.sh`).
+    the output has no extra final byte (it is not on the `NL` list in `_tests/check.sh`).
 - **State.** The board is a vector of 200 cells. The piece, position, score and the rest
   are `defvar` globals named `emacstris-…`. Fixnums are 62 bits wide, so the Park–Miller
   product `s * 16807` never overflows.
@@ -51,7 +51,7 @@ printf '42\n5\n9\n' | emacs --batch -Q -l emacstris.el
 
 ## Golfed version
 
-[`emacstris.min.el`](emacstris.min.el) is the golfed twin of the engine: 2,112 bytes instead of 11,797 (82% smaller), with exactly the same output. `tests/check.sh --min emacs` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Emacs Lisp: It was tested on Emacs 29.3 and uses features that are new in 29: `mapconcat` without a separator, and a preloaded `seq-filter`. The readable version uses neither.
+[`emacstris.min.el`](emacstris.min.el) is the golfed twin of the engine: 2,112 bytes instead of 11,797 (82% smaller), with exactly the same output. `_tests/check.sh --min emacs` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Emacs Lisp: It was tested on Emacs 29.3 and uses features that are new in 29: `mapconcat` without a separator, and a preloaded `seq-filter`. The readable version uses neither.
 
 - **No `defvar`:** the globals are created by one top-level `setq`.
   - **Why it matters:** `defvar` makes a symbol special everywhere. A `let` or `dotimes` variable with the same one-letter name would then rebind the global dynamically, even under lexical binding. That was the first golfing bug.

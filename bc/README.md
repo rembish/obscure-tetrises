@@ -40,7 +40,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`bctris.min.bc`](bctris.min.bc) is the golfed twin of the engine: 2,262 bytes instead of 5,561 (59% smaller), with exactly the same output. `tests/check.sh --min bc` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to bc:
+[`bctris.min.bc`](bctris.min.bc) is the golfed twin of the engine: 2,262 bytes instead of 5,561 (59% smaller), with exactly the same output. `_tests/check.sh --min bc` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to bc:
 
 - **Tables in big numbers.**
   - **Piece masks:** all 28 piece masks are one base-2¹⁶ literal, read with `t(a,i)=P/2^(16*a+i)%2`.

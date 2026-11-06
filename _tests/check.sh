@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# check.sh - play every engine against tests/reference.py and compare the output byte for byte.
+# check.sh - play every engine against _tests/reference.py and compare the output byte for byte.
 #
-#   tests/check.sh            all engines
-#   tests/check.sh jq dc      just these
-#   tests/check.sh --min ...  the same, with each engine's golfed .min file
-#   tests/check.sh -j 1 ...   one run at a time (default: one per CPU)
+#   _tests/check.sh            all engines
+#   _tests/check.sh jq dc      just these
+#   _tests/check.sh --min ...  the same, with each engine's golfed .min file
+#   _tests/check.sh -j 1 ...   one run at a time (default: one per CPU)
 #
 # Each engine gets the same event streams: a few line-clearing bot games and a
 # few random fuzz runs. The engine must print exactly what the reference prints.
