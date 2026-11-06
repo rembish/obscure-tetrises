@@ -134,7 +134,7 @@
  [ ]Pl<x[╔════════════════════╗]PlRx l-x
  0salOx
  [ ]Pl<x[╚════════════════════╝]PlRx l-x
- l^x[J]P lo0=8]sZ
+ lo0=8]sZ
 
 # ---- main loop ----------------------------------------------------------------
 # `?` reads one line. A sentinel (-1) underneath tells EOF apart from input.
