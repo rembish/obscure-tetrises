@@ -106,7 +106,7 @@ or use the launcher's pipe mode: `(echo 42; echo 0; echo 1; echo 5) | ./cpptris.
 
 ## Golfed version
 
-[`cpptris.min.cpp`](cpptris.min.cpp) is the golfed twin of the engine: 3,980 bytes instead of 21,530 (82% smaller), with exactly the same output. `_tests/check.sh --min cpp` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to C++ templates:
+[`cpptris.min.cpp`](cpptris.min.cpp) is the golfed twin of the engine: 3,977 bytes instead of 21,519 (82% smaller), with exactly the same output. `_tests/check.sh --min cpp` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to C++ templates:
 
 - **Keyword macros:** `T` is `template<long`, `TC` is `template<class`, and `V`, `G`, `K`, `U`, `Y`, `L` stand for `struct`, `enum`, `static constexpr`, `using`, `typename`, `long`. Every `int` and `bool` parameter became `long`, so almost every template header is `T x,L y>`.
 - **Text without gluing:**

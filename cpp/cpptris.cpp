@@ -308,7 +308,7 @@ template<unsigned V, class P> struct Line
     : Text<Wall, typename Cells<V>::type, Border<S("║")>, P, Eol> {};
 
 using Top = Cat<S("\e[H  \e[1;38;5;75mC P P T R I S\e[m\e[K\n "), Border<S("╔════════════════════╗")>, Eol>::type;
-using Bottom = Cat<S(" "), Border<S("╚════════════════════╝")>, Eol, S("\e[J")>::type;
+using Bottom = Cat<S(" "), Border<S("╚════════════════════╝")>, Eol>::type;
 
 // Board row y as shown: the row with the falling piece painted over it, or
 // the banner (~0) on row 9 once the game is over. This is worked out inline
