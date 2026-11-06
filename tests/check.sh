@@ -22,6 +22,7 @@ ENGINES=(
   "awk|A W K T R I S||awk/awktris.awk|ENGINE_FILE=\"\$ENGINE\" $root/awk/awktris.sh --pipe"
   "bc|B C T R I S||bc/bctris.bc|BC_LINE_LENGTH=0 bc -q \"\$ENGINE\""
   "cmake|C M A K E T R I S||cmake/cmaketris.cmake|ENGINE_FILE=\"\$ENGINE\" $root/cmake/cmaketris.sh --pipe"
+  "cpp|C P P T R I S||cpp/cpptris.cpp|ENGINE_FILE=\"\$ENGINE\" $root/cpp/cpptris.sh --pipe"
   "dc|D C T R I S||dc/dctris.dc|DC_LINE_LENGTH=0 dc \"\$ENGINE\""
   "emacs|E M A C S T R I S||emacs/emacstris.el|ENGINE_FILE=\"\$ENGINE\" $root/emacs/emacstris.sh --pipe"
   "gnuplot|G N U P L O T T R I S|nl|gnuplot/gnuplottris.gp|ENGINE_FILE=\"\$ENGINE\" $root/gnuplot/gnuplottris.sh --pipe"
