@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/dc/
 
 Needs GNU dc (it ships with GNU bc) and bash 4+. Tested with GNU dc 1.4.1.
 
+Install: Debian/Ubuntu `apt install dc` · Fedora `dnf install bc` (it includes `dc`) · macOS `brew install bc`, then put `$(brew --prefix bc)/bin` first on your `PATH`.
+
 ## How it works
 
 dc has a stack, registers with one-character names, an array attached to every

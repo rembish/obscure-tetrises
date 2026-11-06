@@ -15,6 +15,8 @@ Nothing is configured or started as a mail server. The game runs sendmail as you
 own user in *address test mode* (`sendmail -C sendmailtris.cf -bt`), which only
 rewrites the lines you type.
 
+Install: Debian/Ubuntu `apt install sendmail-bin` · Fedora `dnf install sendmail` · not available on macOS, whose `sendmail` is Postfix's wrapper without `-bt`. The package replaces any other mail server (Postfix, Exim) and may start a daemon, which the game doesn't need.
+
 ## The one thing sendmail can't do: draw
 
 sendmail can't print an escape character or a UTF-8 byte. It drops control

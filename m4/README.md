@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4/
 
 Needs GNU m4 and bash 4+. Tested with GNU m4 1.4.19.
 
+Install: Debian/Ubuntu `apt install m4` · Fedora `dnf install m4` · macOS `brew install m4`, then put `$(brew --prefix m4)/bin` first on your `PATH`.
+
 ## How it works
 
 m4 does one thing: it reads text, and whenever it sees a macro name it replaces the

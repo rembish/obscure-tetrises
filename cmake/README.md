@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/cma
 
 Needs CMake (tested with 3.28) and bash 4+.
 
+Install: Debian/Ubuntu `apt install cmake` · Fedora `dnf install cmake` · macOS `brew install cmake`.
+
 ## How it works
 
 Next to make, CMake is a luxury: `while()`, `foreach()`, `break()`, macros and

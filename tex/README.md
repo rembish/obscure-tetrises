@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/tex
 
 Needs `tex` (tested with TeX 3.141592653 from TeX Live 2023) and bash 4+.
 
+Install: Debian/Ubuntu `apt install texlive-base` · Fedora `dnf install texlive-tex` · macOS `brew install --cask basictex` (it puts `tex` in `/Library/TeX/texbin`; open a new terminal afterwards).
+
 ## How it works
 
 TeX is a typesetting language that happens to be Turing complete. textris never

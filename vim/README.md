@@ -12,6 +12,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/vim
 Needs Vim (tested with 9.1) and bash 4+. It doesn't need `+python`, `+channel`,
 a GUI or a terminal Vim can drive. It runs as `vim -Nu NONE -i NONE -es`.
 
+Install: Debian/Ubuntu `apt install vim` (`vim-tiny` has no Vim script) · Fedora `dnf install vim-enhanced` · macOS has it preinstalled.
+
 ## How it works
 
 The engine is plain legacy Vim script (`let`, `if`/`elseif`, `for`, `while`, `function!`),

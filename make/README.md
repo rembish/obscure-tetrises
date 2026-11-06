@@ -8,7 +8,9 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/mak
 ./make/maketris.sh
 ```
 
-Needs GNU make with `$(file <…)` (added in 4.2) and bash 4+. Tested with GNU make 4.3. macOS ships make 3.81, which is too old; `brew install make` gives you `gmake`.
+Needs GNU make with `$(file <…)` (added in 4.2) and bash 4+. Tested with GNU make 4.3. macOS ships make 3.81, which is too old.
+
+Install: Debian/Ubuntu `apt install make` · Fedora `dnf install make` · macOS `brew install make`, then put `$(brew --prefix make)/libexec/gnubin` first on your `PATH` so that `make` is GNU make.
 
 ## How it works
 

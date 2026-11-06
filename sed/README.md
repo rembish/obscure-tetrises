@@ -14,6 +14,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed
 Needs GNU sed (tested with 4.9) and bash 4+. The launcher runs
 `LC_ALL=C sed -n -E -u -f sedtris.sed`.
 
+Install: Debian/Ubuntu and Fedora have GNU sed preinstalled · macOS `brew install gnu-sed`, then put `$(brew --prefix gnu-sed)/libexec/gnubin` first on your `PATH`.
+
 ## How it works
 
 sed is built for streams. It reads a line, runs the script on it, and goes on to the next

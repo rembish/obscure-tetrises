@@ -139,6 +139,52 @@ listed here. No code was taken from any of them.
 - `curl` or `wget` for the run-from-the-web mode
 - Python 3 only for the tests
 
+### Installing the tools
+
+`./play.sh --list` shows which ones you already have. Package names:
+
+| Game | Command | Debian / Ubuntu (`apt install`) | Fedora (`dnf install`) | macOS (Homebrew) |
+|---|---|---|---|---|
+| awktris | `awk` | preinstalled (`mawk`) | preinstalled (`gawk`) | preinstalled |
+| bctris | `bc` | `bc` | `bc` | `brew install bc` ¹ |
+| cmaketris | `cmake` | `cmake` | `cmake` | `brew install cmake` |
+| cpptris | `g++` | `g++` | `gcc-c++` | `brew install gcc` ² |
+| dctris | `dc` | `dc` | `bc` (it includes `dc`) | `brew install bc` ¹ |
+| emacstris | `emacs` | `emacs-nox` | `emacs-nox` | `brew install emacs` |
+| gnuplottris | `gnuplot` | `gnuplot-nox` ³ | `gnuplot` | `brew install gnuplot` |
+| jqtris | `jq` | `jq` ³ | `jq` | preinstalled on macOS 15+, or `brew install jq` |
+| m4tris | `m4` | `m4` | `m4` | `brew install m4` ¹ |
+| maketris | `make` | `make` | `make` | `brew install make` ¹ |
+| postscripttris | `gs` | `ghostscript` | `ghostscript` | `brew install ghostscript` |
+| sedtris | `sed` | preinstalled | preinstalled | `brew install gnu-sed` ¹ |
+| sendmailtris | `sendmail` | `sendmail-bin` ⁴ | `sendmail` ⁴ | not available ⁵ |
+| sqlitetris | `sqlite3` | `sqlite3` ³ | `sqlite` | `brew install sqlite` ¹ |
+| textris | `tex` | `texlive-base` | `texlive-tex` | `brew install --cask basictex` ⁶ |
+| trofftris | `troff` | `groff-base` (usually preinstalled) | `groff-base` | `brew install groff` |
+| vimtris | `vim` | `vim` (`vim-tiny` has no Vim script) | `vim-enhanced` | preinstalled |
+
+1. Homebrew installs these next to the macOS versions instead of over them, so put
+   them first on your `PATH`:
+   ```sh
+   export PATH="$(brew --prefix bc)/bin:$PATH"                # bc, dc
+   export PATH="$(brew --prefix m4)/bin:$PATH"
+   export PATH="$(brew --prefix sqlite)/bin:$PATH"
+   export PATH="$(brew --prefix make)/libexec/gnubin:$PATH"   # gmake as make
+   export PATH="$(brew --prefix gnu-sed)/libexec/gnubin:$PATH" # gsed as sed
+   ```
+2. On macOS `g++` is Clang, which can't build cpptris. Homebrew's GCC is `g++-15` (or
+   whatever its version is); link it as `g++` in a directory that comes first on your `PATH`.
+3. Version minimums: gnuplot 6 (Debian 13, Ubuntu 24.04), sqlite3 3.44 (Debian 13,
+   Ubuntu 24.04), and jq 1.7 for the golfed jqtris (Debian 13, Ubuntu 24.04). Older
+   releases ship older versions.
+4. The game only runs `sendmail -bt` as your user and needs no mail server, but the
+   package replaces whatever mail server you have (Postfix, Exim) and may start a daemon.
+   Stop or disable it afterwards if you don't want it.
+5. macOS's `/usr/sbin/sendmail` is Postfix's compatibility wrapper, which has no `-bt`
+   address test mode, and Homebrew has no sendmail.
+6. BasicTeX puts `tex` in `/Library/TeX/texbin`; open a new terminal afterwards. The
+   full TeX Live (`brew install texlive` or the `mactex-no-gui` cask) works too.
+
 ## License
 
 [BSD 2-Clause](LICENSE).

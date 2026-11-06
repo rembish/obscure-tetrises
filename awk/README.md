@@ -13,6 +13,8 @@ Needs any POSIX awk and bash 4+. The launcher runs plain `awk`. Both files give 
 bytes under mawk 1.3.4, gawk 5.2 (also with `--posix` and with `LC_ALL=C`) and busybox
 awk; `tests/check.sh` passes with each of them put first on `PATH` as `awk`.
 
+Install: Debian/Ubuntu, Fedora and macOS all have an `awk` preinstalled.
+
 ## How it works
 
 awk is built for this: it reads stdin one record at a time and runs the rules against

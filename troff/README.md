@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/tro
 
 Needs GNU troff (groff, tested with 1.23.0) and bash 4+. If `man` works on your machine, you almost certainly have it.
 
+Install: Debian/Ubuntu `apt install groff-base` · Fedora `dnf install groff-base` · macOS `brew install groff` (recent macOS uses mandoc for `man`).
+
 ## How it works
 
 troff is a text formatter with a macro language bolted on: number registers

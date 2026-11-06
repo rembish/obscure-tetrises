@@ -12,6 +12,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/gnu
 Needs gnuplot 6 (for function blocks; tested with 6.0) and bash 4+. No display is
 needed: the launcher sets `GNUTERM=dumb`, and the game only prints text.
 
+Install: Debian/Ubuntu `apt install gnuplot-nox` (gnuplot 6 from Debian 13 and Ubuntu 24.04) · Fedora `dnf install gnuplot` · macOS `brew install gnuplot`.
+
 ## How it works
 
 gnuplot 6 grew a real scripting language. Function blocks

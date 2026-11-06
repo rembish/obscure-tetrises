@@ -11,6 +11,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/bc/
 
 Needs GNU bc, which provides `void` functions, `halt` and `read()`, and bash 4+. Tested with GNU bc 1.07.1.
 
+Install: Debian/Ubuntu `apt install bc` · Fedora `dnf install bc` · macOS `brew install bc`, then put `$(brew --prefix bc)/bin` first on your `PATH`.
+
 ## How it works
 
 bc is a calculator with a C-like language on top: functions, `if`, `while`, `for`,

@@ -10,6 +10,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/jq/
 
 Needs jq and bash 4+. Tested with jq 1.7.
 
+Install: Debian/Ubuntu `apt install jq` · Fedora `dnf install jq` · macOS 15+ has it preinstalled, or `brew install jq`.
+
 ## How it works
 
 jq looks like a pure filter, but `jq -n` with `foreach inputs` makes it a state

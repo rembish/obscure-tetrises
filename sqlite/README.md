@@ -13,6 +13,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sql
 Needs the sqlite3 shell 3.44 or newer (tested with 3.45) and bash 4+. It needs 3.44 for
 `group_concat(… ORDER BY …)`.
 
+Install: Debian/Ubuntu `apt install sqlite3` (3.44+ from Debian 13 and Ubuntu 24.04) · Fedora `dnf install sqlite` · macOS `brew install sqlite`, then put `$(brew --prefix sqlite)/bin` first on your `PATH`.
+
 ## How it works
 
 SQL has no loops, no variables and no `print`. It does have `UPDATE … FROM`, scalar

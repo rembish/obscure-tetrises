@@ -15,6 +15,8 @@ batch of events is one compile, so the screen updates in jumps of a few hundred
 milliseconds. Every event is still processed, and the frames are the same as
 everywhere else.
 
+Install: Debian/Ubuntu `apt install g++` · Fedora `dnf install gcc-c++` · macOS `brew install gcc`, then link its `g++-NN` as `g++` ahead of Apple's (which is Clang) on your `PATH`.
+
 ## How it works
 
 The engine is pure template metaprogramming. There are no `constexpr` functions, no

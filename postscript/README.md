@@ -13,6 +13,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/pos
 Needs Ghostscript (`gs`, tested with 10.02.1) and bash 4+. No display or printer is
 involved: the launcher runs `gs -q -dNODISPLAY -dBATCH`, so there is no output device.
 
+Install: Debian/Ubuntu `apt install ghostscript` · Fedora `dnf install ghostscript` · macOS `brew install ghostscript`.
+
 ## How it works
 
 PostScript is a printer language, but it's also a general-purpose language underneath. Procedures

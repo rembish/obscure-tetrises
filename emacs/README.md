@@ -15,6 +15,8 @@ curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/ema
 Needs GNU Emacs (tested with 29.3) and bash 4+. No display or terminal is needed for
 the engine itself. Frames are plain bytes on stdout.
 
+Install: Debian/Ubuntu `apt install emacs-nox` · Fedora `dnf install emacs-nox` · macOS `brew install emacs`.
+
 ## How it works
 
 The launcher runs `emacs --batch -Q -l emacstris.el` and pipes the seed and the event
