@@ -1,67 +1,79 @@
 #!/usr/bin/env bash
-# sedtris.sh - launcher for Sedtris, a Tetris game written in sed.
+# sedtris.sh - launcher for sedtris, a falling-block puzzle game written in GNU sed.
 #
-# Run it locally:      ./sedtris.sh
-# Or straight from the web:
+#   ./sedtris.sh
 #   curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed/sedtris.sh | bash
 #
-# The launcher reads the keyboard, sends a tick to sed once a second
-# (that is gravity), and adds a little hidden random input so the pieces
-# come out less predictable. All the game logic lives in sedtris.sed.
+#   ./sedtris.sh --pipe    events on stdin, frames on stdout (used by tests/check.sh)
 #
-# Based on playsed.sh by Aurelio Marinho Jargas
-# https://web.archive.org/web/20220823204008/http://sed.sourceforge.net/grabbag/scripts/playsed.sh.txt
+# The launcher turns keys into event numbers and sends a tick every 100 ms.
+# Gravity, randomness, scoring and drawing all happen in the engine (see ../SPEC.md).
 
-SEDTRIS_URL="${SEDTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed}"
+# ---- per-game settings ------------------------------------------------------
+GAME=sedtris
+ENGINE=sedtris.sed
+NEEDS=sed
+BASE_URL="${SEDTRIS_URL:-https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed}"
+# -----------------------------------------------------------------------------
 
-# --- POSIX part: when started by plain sh (e.g. `curl ... | sh`), hand over to bash.
+# POSIX part: under plain sh (e.g. `curl ... | sh`), hand over to bash.
 if [ -z "${BASH_VERSION:-}" ]; then
-  if ! command -v bash >/dev/null 2>&1; then
-    echo "sedtris: bash is required" >&2
-    exit 1
-  fi
-  case "$0" in
-    *sedtris*) [ -f "$0" ] && exec bash "$0" "$@" ;;
-  esac
+  command -v bash >/dev/null 2>&1 || { echo "$GAME: bash is required" >&2; exit 1; }
+  case "$0" in *"$GAME"*) [ -f "$0" ] && exec bash "$0" "$@" ;; esac
   if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$SEDTRIS_URL/sedtris.sh" | bash -s -- "$@"
+    curl -fsSL "$BASE_URL/$GAME.sh" | bash -s -- "$@"
   else
-    wget -qO- "$SEDTRIS_URL/sedtris.sh" | bash -s -- "$@"
+    wget -qO- "$BASE_URL/$GAME.sh" | bash -s -- "$@"
   fi
   exit $?
 fi
 
-# --- bash from here on. Everything is wrapped in main() so the whole script
-# is parsed before anything runs, which keeps `curl | bash` safe.
+# bash from here on; everything runs from main() so `curl | bash` parses it all first.
+
+# The engine reads one event number per line on stdin and prints a frame
+# after each one. It needs GNU sed (it uses GNU extensions such as \xHH and
+# \n in replacements). -u makes sed read its input line by line and flush
+# every frame at once; without it, frames would sit in a pipe buffer.
+# LC_ALL=C makes "." match bytes, not UTF-8 characters, which is also faster.
+run_engine() {
+  LC_ALL=C sed -n -E -u -f "$1"
+}
 
 fetch() {
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$1" -o "$2"
-  elif command -v wget >/dev/null 2>&1; then
-    wget -qO "$2" "$1"
-  else
-    echo "sedtris: need curl or wget to download sedtris.sed" >&2
-    return 1
+  if command -v curl >/dev/null 2>&1; then curl -fsSL "$1" -o "$2"
+  elif command -v wget >/dev/null 2>&1; then wget -qO "$2" "$1"
+  else echo "$GAME: need curl or wget to download $ENGINE" >&2; return 1
   fi
 }
 
-# Turn keypresses into lines for sed, plus one tick per second.
+# Keys -> event numbers (0 tick, 1 left, 2 right, 3 rotate, 4 soft drop, 5 hard drop, 9 quit).
 input_loop() {
-  local IFS= key rest last=$SECONDS
+  local IFS= key rest now t0="" code
+  echo "${SEED:-$(( (RANDOM << 15 | RANDOM) % 2147483646 + 1 ))}"
+  [[ -n ${EPOCHREALTIME:-} ]] && t0=${EPOCHREALTIME//[.,]/}
   while :; do
-    if read -rsn1 -t 1 key; then
-      if [[ $key == $'\e' ]]; then          # arrow keys: ESC [ A..D
-        read -rsn1 -t 1 rest; key+=$rest
-        if [[ $rest == '[' ]]; then
-          read -rsn1 -t 1 rest; key+=$rest
-        fi
+    code=""
+    if read -rsn1 -t 0.1 key; then
+      if [[ $key == $'\e' ]]; then
+        read -rsn1 -t 0.01 rest; key+=$rest
+        [[ $rest == '[' || $rest == O ]] && { read -rsn1 -t 0.01 rest; key+=$rest; }
       fi
-      printf '%s\n' "$key"
+      case $key in
+        a|A|$'\e[D'|$'\eOD') code=1 ;;
+        d|D|$'\e[C'|$'\eOC') code=2 ;;
+        w|W|$'\e[A'|$'\eOA') code=3 ;;
+        s|S|$'\e[B'|$'\eOB'|'') code=4 ;;
+        z|Z|' ') code=5 ;;
+        q|Q) echo 9; return 0 ;;
+      esac
+      [[ -n $code ]] && echo "$code"
+    elif [[ -z $t0 ]]; then
+      echo 0                                  # bash 4: tick on every timeout
     fi
-    if (( SECONDS != last )); then
-      last=$SECONDS
-      # A "1" now and then nudges the piece generator.
-      if (( (RANDOM / 10) % 7 == 1 )); then echo 1; else echo; fi
+    if [[ -n $t0 ]]; then                     # bash 5: steady 100 ms ticks
+      now=${EPOCHREALTIME//[.,]/}
+      (( now - t0 > 1000000 )) && t0=$now     # don't replay a long pause
+      while (( now - t0 >= 100000 )); do echo 0; (( t0 += 100000 )); done
     fi
   done
 }
@@ -69,34 +81,41 @@ input_loop() {
 tmp=""   # download dir, if any; global so the EXIT trap can clean it up
 
 main() {
-  local dir="" script sed_bin=sed
+  local dir="" engine
 
-  if [[ ! -r /dev/tty ]]; then
-    echo "sedtris: needs an interactive terminal" >&2
-    return 1
+  if (( BASH_VERSINFO[0] < 4 )); then
+    echo "$GAME: needs bash 4 or newer (this is $BASH_VERSION)" >&2; return 1
   fi
+  command -v "$NEEDS" >/dev/null 2>&1 || { echo "$GAME: '$NEEDS' is not installed" >&2; return 1; }
+  case $(sed --version 2>/dev/null) in
+    *"(GNU sed)"*) ;;
+    *) echo "$GAME: needs GNU sed (on macOS: brew install gnu-sed, then put gsed first as sed)" >&2; return 1 ;;
+  esac
+  [[ ${1:-} == --pipe || -r /dev/tty ]] || { echo "$GAME: needs an interactive terminal" >&2; return 1; }
 
-  # Use sedtris.sed next to this script, or download it (e.g. under curl | bash).
+  # Use the engine next to this script, or download it (e.g. under curl | bash).
   if [[ -n ${BASH_SOURCE[0]:-} && -f ${BASH_SOURCE[0]} ]]; then
     dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   fi
-  script="$dir/sedtris.sed"
-  [[ -n ${ENGINE_FILE:-} ]] && script=$ENGINE_FILE   # e.g. sedtris.min.sed
-  if [[ -z $dir || ! -f $script ]]; then
-    tmp=$(mktemp -d "${TMPDIR:-/tmp}/sedtris.XXXXXX") || return 1
-    script="$tmp/sedtris.sed"
-    fetch "$SEDTRIS_URL/sedtris.sed" "$script" || { rm -rf "$tmp"; return 1; }
+  engine="$dir/$ENGINE"
+  [[ -n ${ENGINE_FILE:-} ]] && engine=$ENGINE_FILE   # e.g. the .min version
+  if [[ -z $dir || ! -f $engine ]]; then
+    tmp=$(mktemp -d "${TMPDIR:-/tmp}/$GAME.XXXXXX") || return 1
+    engine="$tmp/$ENGINE"
+    fetch "$BASE_URL/$ENGINE" "$engine" || return 1
   fi
 
-  # GNU sed is what the game is tested with; prefer it on BSD/macOS.
-  command -v gsed >/dev/null 2>&1 && sed_bin=gsed
+  if [[ ${1:-} == --pipe ]]; then
+    trap '[[ -n $tmp ]] && rm -rf "$tmp"' EXIT
+    run_engine "$engine"
+    return
+  fi
 
-  # Clear the screen and hide the cursor; put the terminal back on exit.
   trap 'printf "\033[?25h\033[m\n" >/dev/tty; stty echo </dev/tty 2>/dev/null; [[ -n $tmp ]] && rm -rf "$tmp"' EXIT
   trap 'exit 130' INT TERM HUP
   printf '\033[2J\033[H\033[?25l' >/dev/tty
 
-  input_loop </dev/tty | LC_ALL=C "$sed_bin" -n -f "$script" >/dev/tty
+  input_loop </dev/tty | run_engine "$engine" >/dev/tty
 }
 
 main "$@"

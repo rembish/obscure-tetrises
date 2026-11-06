@@ -4,7 +4,6 @@
 #   tests/check.sh            all engines
 #   tests/check.sh jq dc      just these
 #   tests/check.sh --min ...  the same, with each engine's golfed .min file
-#                             (and sed/sedtris.min.sed against sed/sedtris.sed)
 #
 # Each engine gets the same event streams: a few line-clearing bot games and a
 # few random fuzz runs. The engine must print exactly what the reference prints.
@@ -30,6 +29,7 @@ ENGINES=(
   "m4|M 4 T R I S||m4/m4tris.m4|sed 's/.*/E(&)/' | m4 \"\$ENGINE\" -"
   "make|M A K E T R I S|nl|make/maketris.mk|ENGINE_FILE=\"\$ENGINE\" $root/make/maketris.sh --pipe"
   "postscript|P O S T S C R I P T T R I S||postscript/postscripttris.ps|ENGINE_FILE=\"\$ENGINE\" $root/postscript/postscripttris.sh --pipe"
+  "sed|S E D T R I S|nl|sed/sedtris.sed|ENGINE_FILE=\"\$ENGINE\" $root/sed/sedtris.sh --pipe"
   "sendmail|S E N D M A I L T R I S||sendmail/sendmailtris.cf|ENGINE_FILE=\"\$ENGINE\" $root/sendmail/sendmailtris.sh --pipe"
   "sqlite|S Q L I T E T R I S||sqlite/sqlitetris.sql|ENGINE_FILE=\"\$ENGINE\" $root/sqlite/sqlitetris.sh --pipe"
   "tex|T E X T R I S|nl|tex/textris.tex|ENGINE_FILE=\"\$ENGINE\" $root/tex/textris.sh --pipe"
@@ -73,23 +73,4 @@ for spec in "${ENGINES[@]}"; do
     fi
   done
 done
-# sedtris has its own rules, so its golfed version is checked against the original
-# sedtris.sed instead: the same random key streams must give the same bytes.
-if (( min )) && { (( ${#want[@]} == 0 )) || [[ " ${want[*]} " == *" sed "* ]]; }; then
-  for seed in 1 2 3 4 5; do
-    python3 -c "
-import random
-r = random.Random($seed)
-keys = ['w', 'a', 'd', 's', 'z', ' ', '', '', '', '1', '\x1b[A', '\x1b[D', '\x1b[C', '\x1b[B', 'x']
-print('\n'.join(r.choice(keys) for _ in range(3000)))" > "$work/sed$seed"
-    LC_ALL=C sed -nf "$root/sed/sedtris.sed" < "$work/sed$seed" > "$work/sedref$seed"
-    LC_ALL=C sed -nf "$root/sed/sedtris.min.sed" < "$work/sed$seed" > "$work/sedout$seed"
-    frames=$(grep -c $'\e\[H' "$work/sedref$seed")
-    if cmp -s "$work/sedref$seed" "$work/sedout$seed"; then
-      printf 'ok    %-12s %-16s %5d frames\n' sed.min "random $seed" "$frames"
-    else
-      fail=1; printf 'FAIL  %-12s %-16s\n' sed.min "random $seed"
-    fi
-  done
-fi
 exit $fail
