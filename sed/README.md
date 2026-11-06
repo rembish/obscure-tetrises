@@ -61,12 +61,8 @@ pattern space into the frame.
 
 ### Traps
 
-- **`p` always adds a newline.** The frame has to end with `ESC[J` and no newline. So
-  every frame after the first starts with the previous frame's `ESC[J`, and the newline
-  from `p` ends the last row. On quit, game over or end of input, the last `ESC[J` is
-  printed on its own. That one comes with a newline, the same single extra byte as
-  maketris, gnuplottris and textris: the `NL` list in `_tests/check.sh`. sed only leaves
-  out the newline when the input line it read had none, and it can't make that happen.
+- **`p` always adds a newline.** That fits the frame format: every frame is whole lines,
+  so the pattern space holds the frame without its last newline and `p` supplies it.
 - **No subroutines.** The shape substitutions are needed after every kind of move, and
   sed can only branch, not return. So the caller puts a one-character return code in
   front of the state (`M` for a move, `1`–`5` for the kick attempts, `D`, `H` or `S`
@@ -107,7 +103,7 @@ printf '42\n5\n9\n' | LC_ALL=C sed -n -E -u -f sedtris.sed
 
 ## Golfed version
 
-[`sedtris.min.sed`](sedtris.min.sed) is the golfed twin of the engine: 2,985 bytes instead of 14,601 (80% smaller), with exactly the same output. `_tests/check.sh --min sed` replays it against the reference. A mechanical pass (comments, whitespace, one-letter labels) got it to 7,268 bytes, and the rest came from restructuring by hand. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to sed:
+[`sedtris.min.sed`](sedtris.min.sed) is the golfed twin of the engine: 2,941 bytes instead of 14,298 (79% smaller), with exactly the same output. `_tests/check.sh --min sed` replays it against the reference. A mechanical pass (comments, whitespace, one-letter labels) got it to 7,268 bytes, and the rest came from restructuring by hand. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to sed:
 
 - **Piece code next to the marker:** the falling piece's letter and rotation sit right before the `@` (`Ta@`). So each shape substitution finds its own piece with no address in front: `s/(Ta@.)-(.{14})---/\1t\2ttt/`.
   - **Shared shapes:** I, S and Z in rotations 2 and 3 are rotations 0 and 1 shifted by one row or one column, so they share a line through alternation: `s/(I(a@|c@.{16}).{16})----/\1iiii/`.
@@ -139,7 +135,6 @@ printf '42\n5\n9\n' | LC_ALL=C sed -n -E -u -f sedtris.sed
     - **Slow:** glibc fills in `\1` for a match that spans the whole frame very slowly.
     - **The template loop:** it takes about half of the golfed version's frame time, which makes it about twice as slow as the readable one (0.75 ms instead of 0.4 ms per event). Twenty literal `s/#/…/` substitutions would be fast, but roughly 75 bytes longer.
   - **A tenth group:** only `\1` to `\9` exist. That rules out filling the whole template with a fixed-width regex in one go.
-  - **A newline-free `p`:** sed won't print without a trailing newline, hence its place on the `NL` list.
   - **A `y` on part of the pattern space:** it always applies to all of it. The seed halving still needs five `s/o0/5/g` substitutions where a positional `y` would do.
 
 This sedtris replaced the 2008 original this collection was forked from; see [Prior art](../PRIOR-ART.md).

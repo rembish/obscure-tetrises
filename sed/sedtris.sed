@@ -44,11 +44,8 @@
 
 # ---- dispatch -----------------------------------------------------------------
 1b init
-/^9$/b fin
-/^[0-5]$/!{
-  $b fin
-  d
-}
+/^9$/q
+/^[0-5]$/!d
 # Fetch the game: "event\nstate\nboard". Hold keeps the old state, so a
 # move that does not fit is undone with "g".
 G
@@ -442,23 +439,11 @@ s/L/\x1b[38;5;208m██\x1b[m/g
 s/_/  /g
 s/%{10}/\x1b[1;7m     GAME  OVER     \x1b[m/
 s/^/\x1b[H  \x1b[1;38;5;75mS E D T R I S\x1b[m\x1b[K\n \x1b[38;5;60m╔════════════════════╗\x1b[m\x1b[K\n \x1b[38;5;60m║\x1b[m/
-# The frame ends with ESC[J but p always adds a newline, so ESC[J is held
-# back and printed in front of the next frame instead.
-1!s/^/\x1b[J/
 p
-/GAME  OVER/b fin
-$b fin
+/GAME  OVER/q
 d
 
 # A tick that moved nothing: keep the new countdown, print nothing.
 :noframe
 h
-$b fin
 d
-
-# Quit, game over or end of input: the last ESC[J. sed can't print it
-# without a newline after it.
-:fin
-s/.*/\x1b[J/
-p
-q
