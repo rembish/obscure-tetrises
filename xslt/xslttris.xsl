@@ -458,7 +458,7 @@
       <xsl:with-param name="st" select="$st"/>
       <xsl:with-param name="grid" select="$grid"/>
     </xsl:call-template>
-    <xsl:value-of select="concat(' ', $BC, '╚════════════════════╝', $R, $EOL, $E, '[J')"/>
+    <xsl:value-of select="concat(' ', $BC, '╚════════════════════╝', $R, $EOL)"/>
   </xsl:template>
 
   <!-- Board rows $y..19, each followed by its side-panel text. -->
