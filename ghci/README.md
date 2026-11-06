@@ -86,3 +86,16 @@ ghci> type S = 'Game 1126542223 0 2 7 0 0 0 0 0 0 Shown
 ghci> :m + GHC.TypeLits Data.Proxy
 ghci> putStr (symbolVal (Proxy @(Frame (Step S 5))))
 ```
+
+## Golfed version
+
+[`ghcitris.min.hs`](ghcitris.min.hs) is the golfed twin of the engine: 5,554 bytes instead of 15,816 (65% smaller), with exactly the same output, and just as fast. `_tests/check.sh --min ghci` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to type families:
+
+- **Equations on one line:** `type family Z n where{Z 0='True;Z n='False}`. All kind signatures are left to inference.
+- **Only what the launcher sees keeps its name:** the kind `Game`, `Start`, `Step`, `Frame` and the mode `Ended`. The constructor is `K`, and the other modes are `Q` and `W`. No type family may share a name with a constructor, since GHC 9.10 prints constructors without the tick and the launcher reads them back.
+- **Tables are numbers:** the 28 masks are one 448-bit constant, and `Ms p r` takes 16 bits out of it. The points for 0–4 rows are the base-10000 digits of `12000300010000400000`.
+- **Gravity is one comparison:** `max(1, 11 - level) <= t` is `10 <= t + lines / 10` for every level.
+- **No imports but `GHC.TypeLits`:** `&&` and `==` became three Bools in one equation (`E 'True 'True 'True … = …`) and a family that matches 0.
+- **Shared families:** soft and hard drop are one family with a flag, and left and right are one move with an offset.
+- **The cells stay equations:** working the colour out from a table would be shorter, but it would cost every one of the 200 cells a `ShowNat`.
+
