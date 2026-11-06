@@ -13,24 +13,24 @@ _tests/check.sh --min           # verify all of them
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |
 |---|---:|---:|---:|
-| awk | 6,966 | 1,717 | 75% |
-| bc | 5,561 | 2,262 | 59% |
-| CMake | 8,562 | 3,660 | 57% |
-| C++ templates | 21,530 | 3,980 | 82% |
-| dc | 5,365 | 2,138 | 60% |
-| Emacs Lisp | 11,797 | 2,112 | 82% |
-| gnuplot | 6,887 | 2,122 | 69% |
-| jq | 5,321 | 1,863 | 65% |
-| m4 | 8,838 | 2,083 | 76% |
-| make | 12,757 | 4,196 | 67% |
-| PostScript | 7,753 | 1,501 | 80% |
-| sed | 14,601 | 2,985 | 80% |
-| sendmail | 13,395 | 2,291 | 82% |
-| SQLite | 11,993 | 2,616 | 78% |
-| TeX | 9,600 | 2,597 | 72% |
-| troff | 7,382 | 2,887 | 60% |
-| Vim script | 7,806 | 1,851 | 76% |
-| XSLT | 24,802 | 5,466 | 78% |
+| awk | 6,957 | 1,709 | 75% |
+| bc | 5,558 | 2,259 | 59% |
+| CMake | 8,554 | 3,654 | 57% |
+| C++ templates | 21,519 | 3,977 | 82% |
+| dc | 5,357 | 2,131 | 60% |
+| Emacs Lisp | 11,778 | 2,109 | 82% |
+| gnuplot | 6,659 | 2,094 | 69% |
+| jq | 5,310 | 1,860 | 65% |
+| m4 | 8,826 | 2,080 | 76% |
+| make | 12,485 | 4,159 | 67% |
+| PostScript | 7,736 | 1,498 | 81% |
+| sed | 14,298 | 2,941 | 79% |
+| sendmail | 13,392 | 2,288 | 83% |
+| SQLite | 11,971 | 2,613 | 78% |
+| TeX | 9,467 | 2,563 | 73% |
+| troff | 7,370 | 2,876 | 61% |
+| Vim script | 7,771 | 1,847 | 76% |
+| XSLT | 24,792 | 5,463 | 78% |
 
 The golfing came in two passes:
 
@@ -78,8 +78,8 @@ to golf its `.min` file again by hand.
   advances for rows that stay. m4 and jq delete full rows with one regex or `select` and
   pad the board back to 20 rows.
 - **Stored instead of recomputed.** Level, the first-frame flag and the game-over flag are
-  kept in a form the output can use directly. In gnuplot the "already drew a frame" flag
-  *is* the `ESC[J` string to print.
+  kept in a form the output can use directly. xslttris keeps the current piece's cell
+  offsets in its state, and an empty offset list doubles as the game-over flag.
 
 ## Per language
 

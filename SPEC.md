@@ -86,7 +86,8 @@ game-over frame and exits.
 `ESC[38;5;244m` + `s` + `ESC[m` (dim). The frame is `ESC[H`, then 23 lines each
 followed by `ESC[K\n`. Every frame ends with a complete line, so tools that can only
 print whole lines (make's `$(info)`, gnuplot's `print`, TeX's `\write`, sed) print
-exactly this. The launcher clears the screen once at start-up and every frame has the
+exactly this. TeX adds a banner line at start-up and one empty line when it exits; frame
+lines are never empty, so textris's launcher drops both. The launcher clears the screen once at start-up and every frame has the
 same size, so nothing below the frame needs clearing. sendmail can't print ESC or UTF-8 at all, so
 sendmailtris returns the frame as glyph tokens and its launcher decodes them with a
 fixed table; the decoded bytes follow this format exactly. troff can only print printable ASCII,

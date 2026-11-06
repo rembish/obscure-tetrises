@@ -68,7 +68,7 @@ Each game's README explains how its engine works and what the tool made hard.
 
 Every engine plays exactly the same game, described in [`SPEC.md`](SPEC.md), down to the
 byte, and [`_tests/check.sh`](_tests/) checks each of them frame by frame against a
-reference implementation. Every engine also comes golfed as `<name>.min.<ext>`, 57–82%
+reference implementation. Every engine also comes golfed as `<name>.min.<ext>`, 57–83%
 smaller with the same output; [`GOLFING.md`](GOLFING.md) has the sizes and the tricks.
 
 ## More
