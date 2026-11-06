@@ -46,7 +46,7 @@ To run the engine on its own, use the launcher's pipe mode:
 
 ## Golfed version
 
-[`cmaketris.min.cmake`](cmaketris.min.cmake) is the golfed twin of the engine: 3,660 bytes instead of 8,562 (57% smaller), with exactly the same output. `_tests/check.sh --min cmake` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to CMake:
+[`cmaketris.min.cmake`](cmaketris.min.cmake) is the golfed twin of the engine: 3,654 bytes instead of 8,554 (57% smaller), with exactly the same output. `_tests/check.sh --min cmake` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to CMake:
 
 - **Cell names:** the board cells are `b<row><col>` instead of `b<row*10+col>`. Columns are always one digit, so names never clash and no `math()` is needed for an index.
 - **Off-board test:** one expression, `math(EXPR q "(${E}+10)/10-1|${G}/20")`, is non-zero off the board, then `if(q OR b${G}${E})`. That also replaces `if(NOT b… EQUAL 0)`.
