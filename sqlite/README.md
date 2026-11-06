@@ -29,7 +29,7 @@ Every piece of control flow becomes a `WHERE` clause.
   `VALUES()` is a syntax error.
 - **Output.** `.separator "" ""` empties both the column and the row separator. `.mode`
   resets the separators, so it comes first. Then a one-column row is printed as exactly
-  its bytes, with no newline after it, so there's no `nl` allowance. `char(27)` gives ESC.
+  its bytes, with no newline of its own after it. `char(27)` gives ESC.
   The whole frame is one row of the view `frame`, built with `group_concat(… ORDER BY …)`.
   When the event doesn't draw, the aggregate prints NULL, which shows as nothing. The
   shell flushes stdout after each statement, even into a pipe, so interactive play needs
@@ -78,7 +78,7 @@ To run the engine on its own:
 
 ## Golfed version
 
-[`sqlitetris.min.sql`](sqlitetris.min.sql) is the golfed twin of the engine: 2,616 bytes instead of 11,993 (78% smaller), with exactly the same output. The mechanical pass alone gave 4,821 bytes. `_tests/check.sh --min sqlite` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to SQL:
+[`sqlitetris.min.sql`](sqlitetris.min.sql) is the golfed twin of the engine: 2,613 bytes instead of 11,971 (78% smaller), with exactly the same output. The mechanical pass alone gave 4,821 bytes. `_tests/check.sh --min sqlite` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to SQL:
 
 - **Shell defaults:** `-batch` already means list mode with no header, so only `.sep '' ''` and `.bai 1` remain. Dot-commands accept prefixes.
 - **The board is a string:** `g.b` holds 200 digits, followed by 60 `8`s. A cell is `substr(b,i+1,1)`, and that text is already a truth value: `'0'` is false. The `8` rows below the board are the floor sentinel. They also hold the next-piece preview, where `8` means "two spaces". The walls are `(a+u+10)/10-1`, which is non-zero off the board.

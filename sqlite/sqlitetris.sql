@@ -252,7 +252,6 @@ CREATE VIEW screen AS
 -- abs(-2^63), an "integer overflow" error that makes the shell (.bail on) exit.
 CREATE VIEW frame AS
   SELECT E || '[H' || group_concat(screen.s || E || '[K' || char(10), '' ORDER BY screen.l)
-         || E || '[J'
   FROM screen, k, g WHERE g.draw
   UNION ALL
   SELECT abs(-9223372036854775807 - over - quit) FROM g WHERE over OR quit;
