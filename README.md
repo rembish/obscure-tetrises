@@ -39,7 +39,7 @@ collection; see [Prior art](#prior-art).
 | [**m4tris**](m4/) | `m4`, the macro processor | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/m4/m4tris.sh \| bash` |
 | [**maketris**](make/) | GNU `make` | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/make/maketris.sh \| bash` |
 | [**postscripttris**](postscript/) | PostScript, run by Ghostscript | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/postscript/postscripttris.sh \| bash` |
-| [**sedtris**](sed/) | `sed`, the stream editor (the original, 2008) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed/sedtris.sh \| bash` |
+| [**sedtris**](sed/) | GNU `sed`, the stream editor | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sed/sedtris.sh \| bash` |
 | [**sendmailtris**](sendmail/) | `sendmail.cf` rewriting rules (with a glyph-table decoder; see its README) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sendmail/sendmailtris.sh \| bash` |
 | [**sqlitetris**](sqlite/) | SQL: SQLite triggers, views and recursive CTEs | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/sqlite/sqlitetris.sh \| bash` |
 | [**textris**](tex/) | plain TeX (Knuth's `tex`, no packages) | `curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/tex/textris.sh \| bash` |
@@ -65,8 +65,7 @@ cd obscure-tetrises
 
 ## One game, many engines
 
-sedtris came first and has its own rules. Every engine added after it plays exactly the
-same game, described in [`SPEC.md`](SPEC.md): the same event protocol, random
+Every engine plays exactly the same game, described in [`SPEC.md`](SPEC.md): the same event protocol, random
 number generator, rules and output, down to the byte. [`tests/reference.py`](tests/reference.py) is
 the executable version of the spec. [`tests/check.sh`](tests/check.sh) replays bot games and
 fuzzed key streams through every engine and compares each frame byte for byte with
@@ -80,9 +79,8 @@ tests/check.sh jq       # just one
 ## Golfed versions
 
 Every engine also comes golfed as `<name>.min.<ext>`, next to the readable
-source. It is 49–82% smaller and produces exactly the same bytes.
-`tests/check.sh --min` runs every `.min` file through the same comparison. The
-golfed sedtris is compared against the original `sedtris.sed`. Play one with
+source. It is 57–82% smaller and produces exactly the same bytes.
+`tests/check.sh --min` runs every `.min` file through the same comparison. Play one with
 `./play.sh --min <game>`, or with any launcher's `ENGINE_FILE`:
 
 ```sh
@@ -103,7 +101,7 @@ tests/check.sh --min           # verify all of them
 | m4 | 8,838 | 2,083 | 76% |
 | make | 12,757 | 4,196 | 67% |
 | PostScript | 7,753 | 1,501 | 80% |
-| sed | 8,357 | 4,250 | 49% |
+| sed | 14,601 | 2,985 | 80% |
 | sendmail | 13,395 | 2,291 | 82% |
 | SQLite | 11,993 | 2,616 | 78% |
 | TeX | 9,600 | 2,597 | 72% |
@@ -116,10 +114,11 @@ cell iterator, merged moves, free bounds checks) and what each language allowed 
 
 ## Prior art
 
-sedtris is the one game here that was not written for this collection: it is Julia
-Jomantaite's original from 2008, kept as it was. Every other engine was written from
-scratch to [`SPEC.md`](SPEC.md). Where the same tool had a Tetris before, that earlier
-project is listed here. No code was taken from any of them.
+This collection started as a fork of Julia Jomantaite's
+[sedtris](https://github.com/uuner/sedtris) (2008), the game that gave the repo its
+idea. Every engine here, sedtris included, was written from scratch to
+[`SPEC.md`](SPEC.md). Where the same tool had a Tetris before, that earlier project is
+listed here. No code was taken from any of them.
 
 | Game | Earlier work | How it differs from ours |
 |---|---|---|
@@ -127,13 +126,13 @@ project is listed here. No code was taken from any of them.
 | [cpptris](cpp/) | [Super Template Tetris](https://github.com/mattbierner/Super-Template-Tetris) by Matt Bierner, 2015 ([blog post](https://blog.mattbierner.com/stupid-template-tricks-super-template-tetris/)) | Advances one move per compile, with the move passed as a `-D` flag. cpptris compiles a whole batch of key presses at a time, so it plays in real time. |
 | [emacstris](emacs/) | `M-x tetris`, shipped with Emacs (`lisp/play/tetris.el`) | Draws in an Emacs buffer through Emacs's own UI. emacstris runs in `emacs --batch -Q` and prints terminal frames. |
 | [postscripttris](postscript/) | [PSTris](https://github.com/nst/PSTris) by Nicolas Seriot | Draws real graphics on a Ghostscript page and reads keys from a file that another terminal writes; it has levels, a 7-piece bag and high scores. postscripttris prints ANSI text frames. |
-| [sedtris](sed/) | [uuner/sedtris](https://github.com/uuner/sedtris) by Julia Jomantaite, 2008 | This is that game, not a rewrite. It keeps its own rules; the other engines follow `SPEC.md`. Its launcher is based on [`playsed.sh`](https://web.archive.org/web/20220823204008/http://sed.sourceforge.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas. The golfed `sedtris.min.sed` was added in 2026. |
+| [sedtris](sed/) | [uuner/sedtris](https://github.com/uuner/sedtris) by Julia Jomantaite, 2008 | The game this collection was forked from. It has its own rules, and its launcher is based on [`playsed.sh`](https://web.archive.org/web/20220823204008/http://sed.sourceforge.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas. Our sedtris replaced it with a rewrite that plays `SPEC.md`, does the Park–Miller arithmetic in sed itself and reads one event per cycle; it was written without looking at the original. |
 | [sqlitetris](sqlite/) | [tetris-sql](https://github.com/nuno-faria/tetris-sql) by Nuno Faria ([HN thread](https://news.ycombinator.com/item?id=41444855)) | One PostgreSQL query: a recursive CTE is the game loop, a Python helper supplies the input, and frames come out through `RAISE NOTICE`. sqlitetris uses triggers and views, with one long-running `sqlite3` reading a statement per event. |
 | [vimtris](vim/) | [TeTrIs.vim](https://github.com/pihentagy/TeTrIs.vim) by Gergely Kontra (vim.org script #172, around 2002) | Plays inside a Vim buffer with Vim's own UI. vimtris uses Vim only as an interpreter, in silent Ex mode with no screen. |
 
 ## Requirements
 
-- bash 4+ for the launchers (sedtris works with older bash too)
+- bash 4+ for the launchers
 - GNU versions of the tools. Everything is tested on Linux only; stock macOS has a non-GNU `dc` and a `make` too old for maketris
 - the tool itself: `sed`, `jq`, …
 - a UTF-8 terminal with 256 colours
@@ -142,5 +141,4 @@ project is listed here. No code was taken from any of them.
 
 ## License
 
-[BSD 2-Clause](LICENSE), except the `sed/` directory: sedtris is Julia Jomantaite's 2008
-game (see [Prior art](#prior-art)), and its original repository states no license.
+[BSD 2-Clause](LICENSE).

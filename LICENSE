@@ -22,11 +22,3 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
----
-
-This license does not cover the sed/ directory. sed/sedtris.sed and
-sed/sedtris.sh are Julia Jomantaite's sedtris (2008, github.com/uuner/sedtris),
-whose launcher is based on playsed.sh by Aurelio Marinho Jargas; the original
-repository states no license. sed/sedtris.min.sed is derived from
-sedtris.sed. These files remain under their authors' terms.

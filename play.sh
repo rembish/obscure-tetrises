@@ -41,7 +41,7 @@ GAMES=(
   "m4|m4tris|m4tris.m4|m4|m4, the macro processor"
   "make|maketris|maketris.mk|make|GNU make"
   "postscript|postscripttris|postscripttris.ps|gs|PostScript, run by Ghostscript"
-  "sed|sedtris|sedtris.sed|sed|sed, the stream editor (the original, 2008)"
+  "sed|sedtris|sedtris.sed|sed|GNU sed, the stream editor"
   "sendmail|sendmailtris|sendmailtris.cf|sendmail|sendmail.cf rewriting rules"
   "sqlite|sqlitetris|sqlitetris.sql|sqlite3|SQL: SQLite triggers and views"
   "tex|textris|textris.tex|tex|plain TeX"

@@ -3,8 +3,7 @@
 Every engine has a golfed twin, `<name>.min.<ext>`, next to its readable source. The
 rule: the golfed file must produce **exactly the same bytes** as the readable one.
 `tests/check.sh --min` holds them to it. Each one is replayed against the reference on
-bot games and fuzzed key streams. sedtris is compared against the original
-`sedtris.sed` instead.
+bot games and fuzzed key streams.
 
 | Engine | Source (bytes) | Golfed (bytes) | Saved |
 |---|---:|---:|---:|
@@ -19,7 +18,7 @@ bot games and fuzzed key streams. sedtris is compared against the original
 | m4 | 8,838 | 2,083 | 76% |
 | make | 12,757 | 4,196 | 67% |
 | PostScript | 7,753 | 1,501 | 80% |
-| sed | 8,357 | 4,250 | 49% |
+| sed | 14,601 | 2,985 | 80% |
 | sendmail | 13,395 | 2,291 | 82% |
 | SQLite | 11,993 | 2,616 | 78% |
 | TeX | 9,600 | 2,597 | 72% |

@@ -1,6 +1,6 @@
 # The shared game spec
 
-Every engine in this collection except the original `sedtris.sed` plays exactly
+Every engine in this collection plays exactly
 the same game. Given the same seed and the same events, each one prints the
 same bytes. [`tests/reference.py`](tests/reference.py) is the executable version of this
 document, and [`tests/check.sh`](tests/check.sh) diffs every engine against it.
