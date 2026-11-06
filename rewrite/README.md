@@ -96,3 +96,16 @@ curl -s -b jar -c jar http://localhost:PORT/5               # hard drop
 ```
 
 The cookie's domain is `localhost`, so use that name rather than `127.0.0.1`.
+
+## Golfed version
+
+[`rewritetris.min.conf`](rewritetris.min.conf) is the golfed twin of the engine: 8,815 bytes instead of 23,715 (63% smaller), with exactly the same output. `_tests/check.sh --min rewrite` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to mod_rewrite:
+
+- **The URL is the program counter.** A rule's substitution can be any path, and the rules after it see the new one. So the step to run next is the URL itself (`/P`, `/K`, `/e3`), and each rule's own pattern is its guard: `RewriteRule ^/P - […]`. There are no `[S=n]` skips and no `J`, and a "return" is `RewriteRule ^/P %{ENV:U} [N]`. The event codes become `/e0`…`/e5`, so that a later round can't take a label for the number of the first request.
+- **Raw bytes:** the ESC bytes are written into the file as they are. Only the newline still comes from `int:unescape`.
+- **Cheaper empty cells:** an empty cell is `-`, not `.`, so the shape regexes need no backslashes. The prefix up to the first cell is one group: `(.*@.)-(.{14})---`.
+- **Moves are kicks:** left and right are the kick codes `u` and `v`. A rotation walks `uvvuuuvvvv` from where it stands, the same walk as in [sedtris](../sed/README.md#golfed-version), so the five kick rules become two.
+- **One carry loop:** score and lines are carried as one string `S~L`, and the frame runs the same rules on `S~L~-V`. A return label picks what happens afterwards.
+- **The panel is a list:** the 20 side-panel texts are one `|`-separated string, with the preview and the numbers already in it. One looping rule takes a board row and a panel entry per round, instead of 20 rules.
+- **Shorter tables:** the preview rows are written with two spaces per empty cell, and all colours share one prefix, so painting needs no case for the preview's empty cells.
+

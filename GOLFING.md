@@ -25,6 +25,7 @@ _tests/check.sh --min           # verify all of them
 | make | 12,485 | 4,159 | 67% |
 | PostScript | 7,736 | 1,498 | 81% |
 | C preprocessor | 24,717 | 12,393 | 50% |
+| mod_rewrite | 23,715 | 8,815 | 63% |
 | sed | 14,298 | 2,941 | 79% |
 | sendmail | 13,392 | 2,288 | 83% |
 | SQLite | 11,971 | 2,613 | 78% |
@@ -99,6 +100,7 @@ engine's README, under "Golfed version":
 - [make](make/README.md#golfed-version)
 - [PostScript](postscript/README.md#golfed-version)
 - [C preprocessor](preprocessor/README.md#golfed-version)
+- [mod_rewrite](rewrite/README.md#golfed-version)
 - [sed](sed/README.md#golfed-version)
 - [sendmail](sendmail/README.md#golfed-version)
 - [SQLite](sqlite/README.md#golfed-version)
