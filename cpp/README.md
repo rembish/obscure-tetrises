@@ -134,10 +134,4 @@ or use the launcher's pipe mode: `(echo 42; echo 0; echo 1; echo 5) | ./cpptris.
   - **Shadowing:** member templates can't reuse the enclosing state's parameter names.
   - **Ambiguous specialisations:** `Cs<-1, P>` is ambiguous against `Cs<v, I<j...>>`, so the banner keeps the full pattern.
 
-## Prior art
-
-[Super Template Tetris](https://github.com/mattbierner/Super-Template-Tetris) by Matt
-Bierner (2015, with a [blog post](https://blog.mattbierner.com/stupid-template-tricks-super-template-tetris/))
-was the first Tetris computed by C++ templates. It advances one step per compile and takes
-the move as a `-D` flag. cpptris was written from scratch to this repo's spec, and it
-compiles a whole batch of events at a time.
+Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.

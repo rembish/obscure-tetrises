@@ -23,9 +23,8 @@ Pass arguments through `curl | bash` with `bash -s -- --min m4`.
 
 ## The games
 
-Each game also has its own launcher. awk, C++ templates, Emacs Lisp, PostScript, SQL and Vim script
-had a Tetris before this collection. Their engines here were written from scratch to the
-shared spec, and each README links the earlier project under "Prior art".
+Each game also has its own launcher. Some of these tools had a Tetris before this
+collection; see [Prior art](#prior-art).
 
 | Game | Written in | Play |
 |---|---|---|
@@ -115,6 +114,23 @@ tests/check.sh --min           # verify all of them
 cell iterator, merged moves, free bounds checks) and what each language allowed or refused.
 `jqtris.min.jq` needs jq 1.7 or newer.
 
+## Prior art
+
+sedtris is the one game here that was not written for this collection: it is Julia
+Jomantaite's original from 2008, kept as it was. Every other engine was written from
+scratch to [`SPEC.md`](SPEC.md). Where the same tool had a Tetris before, that earlier
+project is listed here. No code was taken from any of them.
+
+| Game | Earlier work | How it differs from ours |
+|---|---|---|
+| [awktris](awk/) | [AWKTC](https://github.com/mikkun/AWKTC) by mikkun ([slides](https://speakerdeck.com/mikkun/tetris-clone-in-awk)) | Runs on gawk, nawk and goawk, with an adjustable board width. awktris sticks to POSIX awk, so it also runs on mawk and busybox. |
+| [cpptris](cpp/) | [Super Template Tetris](https://github.com/mattbierner/Super-Template-Tetris) by Matt Bierner, 2015 ([blog post](https://blog.mattbierner.com/stupid-template-tricks-super-template-tetris/)) | Advances one move per compile, with the move passed as a `-D` flag. cpptris compiles a whole batch of key presses at a time, so it plays in real time. |
+| [emacstris](emacs/) | `M-x tetris`, shipped with Emacs (`lisp/play/tetris.el`) | Draws in an Emacs buffer through Emacs's own UI. emacstris runs in `emacs --batch -Q` and prints terminal frames. |
+| [postscripttris](postscript/) | [PSTris](https://github.com/nst/PSTris) by Nicolas Seriot | Draws real graphics on a Ghostscript page and reads keys from a file that another terminal writes; it has levels, a 7-piece bag and high scores. postscripttris prints ANSI text frames. |
+| [sedtris](sed/) | [uuner/sedtris](https://github.com/uuner/sedtris) by Julia Jomantaite, 2008 | This is that game, not a rewrite. It keeps its own rules; the other engines follow `SPEC.md`. Its launcher is based on [`playsed.sh`](http://sed.sf.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas. The golfed `sedtris.min.sed` was added in 2026. |
+| [sqlitetris](sqlite/) | [tetris-sql](https://github.com/nuno-faria/tetris-sql) by Nuno Faria ([HN thread](https://news.ycombinator.com/item?id=41444855)) | One PostgreSQL query: a recursive CTE is the game loop, a Python helper supplies the input, and frames come out through `RAISE NOTICE`. sqlitetris uses triggers and views, with one long-running `sqlite3` reading a statement per event. |
+| [vimtris](vim/) | [TeTrIs.vim](https://github.com/pihentagy/TeTrIs.vim) by Gergely Kontra (vim.org script #172, around 2002) | Plays inside a Vim buffer with Vim's own UI. vimtris uses Vim only as an interpreter, in silent Ex mode with no screen. |
+
 ## Requirements
 
 - bash 4+ for the launchers (sedtris works with older bash too)
@@ -128,4 +144,5 @@ cell iterator, merged moves, free bounds checks) and what each language allowed 
 
 - sedtris: Julia Jomantaite (2008), [uuner/sedtris](https://github.com/uuner/sedtris).
   The original launcher is based on [`playsed.sh`](http://sed.sf.net/grabbag/scripts/playsed.sh.txt) by Aurelio Marinho Jargas.
-- The other engines and the shared spec were added in 2026.
+- The other engines and the shared spec were added in 2026. Earlier games in the same
+  tools are credited under [Prior art](#prior-art).

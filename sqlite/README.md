@@ -102,13 +102,4 @@ To run the engine on its own:
   - **Case:** names ignore case, so one-letter names run out fast (`g`/`G`, `r`/`R`, `c`/`C`).
   - **Speed:** `CREATE INDEX I ON C(p,q)` stays, at 24 bytes. Without it the overlay scans the cell table 260 times per frame, and the golfed engine runs 2.5× slower. With it, it takes about 6 ms per event on the 300-piece bot game, against 3 ms for the readable version.
 
-## Prior art
-
-Tetris in SQL had been done before this one. sqlitetris was written from scratch to
-`../SPEC.md` without looking at it:
-
-- [tetris-sql](https://github.com/nuno-faria/tetris-sql) by Nuno Faria: the whole game as a single PostgreSQL query. A recursive
-  CTE is the game loop, input comes from a Python helper, and frames are printed with
-  `RAISE NOTICE`. See also its [Hacker News thread](https://news.ycombinator.com/item?id=41444855).
-  sqlitetris takes a different route: it uses triggers and views, and one long-running `sqlite3` reads a
-  statement per event.
+Earlier games in the same tool are listed under [Prior art](../README.md#prior-art) in the main README.
