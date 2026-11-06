@@ -140,7 +140,7 @@ class Game:
                                for c in grid[y])
             lines.append(" " + B("║") + body + B("║") + panel.get(y, ""))
         lines.append(" " + B("╚" + "═" * 20 + "╝"))
-        return E + "[H" + "".join(l + E + "[K\n" for l in lines) + E + "[J"
+        return E + "[H" + "".join(l + E + "[K\n" for l in lines)
 
 
 def main():

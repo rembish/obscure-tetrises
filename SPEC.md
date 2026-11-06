@@ -84,10 +84,10 @@ game-over frame and exits.
 
 `B(s)` below is `ESC[38;5;60m` + `s` + `ESC[m` (border colour), and `D(s)` is
 `ESC[38;5;244m` + `s` + `ESC[m` (dim). The frame is `ESC[H`, then 23 lines each
-followed by `ESC[K\n`, then `ESC[J`. (GNU make's `$(info)` and gnuplot's `print` can't
-print without a trailing newline, and TeX prints one when it exits, so maketris,
-gnuplottris and textris print one extra `\n` after their very last `ESC[J`. That is
-the only byte-level deviation.) sendmail can't print ESC or UTF-8 at all, so
+followed by `ESC[K\n`. Every frame ends with a complete line, so tools that can only
+print whole lines (make's `$(info)`, gnuplot's `print`, TeX's `\write`, sed) print
+exactly this. The launcher clears the screen once at start-up and every frame has the
+same size, so nothing below the frame needs clearing. sendmail can't print ESC or UTF-8 at all, so
 sendmailtris returns the frame as glyph tokens and its launcher decodes them with a
 fixed table; the decoded bytes follow this format exactly. troff can only print printable ASCII,
 so trofftris writes the frame with C-style escapes (`\033`, `\u2588`) and its launcher

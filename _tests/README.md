@@ -18,7 +18,5 @@ _tests/check.sh --min    # the golfed .min engines
   lines, and random key and tick streams that include unknown codes.
 - Each engine runs through its own launcher with `--pipe`. The list of games comes from
   `play.sh`'s `GAMES` table, so a new game only has to be added there.
-- A few engines can't avoid one extra newline at the very end; the `NL` list in
-  `check.sh` names them, and that byte is dropped before comparing.
 - The `ms` column is wall time. With runs in parallel it is noisy, so use `-j 1` when
   comparing speeds.

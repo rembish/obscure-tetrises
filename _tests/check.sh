@@ -24,9 +24,6 @@ trap 'exit 130' INT TERM
 # Each engine runs through its launcher, <dir>/<game>.sh --pipe, with the
 # engine file in ENGINE_FILE. Engines whose tool isn't installed are skipped.
 eval "$(sed -n '/^GAMES=(/,/^)/p' "$root/play.sh")"
-# These can't avoid one extra newline at the very end (make's $(info), TeX's
-# newline on exit, gnuplot's print, sed's last line); it is dropped before comparing.
-NL=" gnuplot make sed tex "
 
 STREAMS=("bot 12345 300" "bot 777 150" "fuzz 7 4000" "fuzz 2024 4000" "fuzz 1 1500")
 
@@ -51,18 +48,15 @@ for i in "${!STREAMS[@]}"; do
   python3 "$here/gen_events.py" ${STREAMS[$i]} > "$work/ev$i"
 done
 
-# run_one KEY LABEL TITLE OPTS FILE LAUNCHER STREAM: one engine on one stream;
+# run_one KEY LABEL TITLE FILE LAUNCHER STREAM: one engine on one stream;
 # the result line(s) go to $work/res.KEY, which appears only when the run is done.
 run_one() {
-  local key=$1 label=$2 title=$3 opts=$4 file=$5 launcher=$6 i=$7 d=$work/$1 start ms frames
+  local key=$1 label=$2 title=$3 file=$4 launcher=$5 i=$6 d=$work/$1 start ms frames
   mkdir "$d"
   python3 "$here/reference.py" "$title" < "$work/ev$i" > "$d/ref"
   start=$(date +%s%N)
   ENGINE_FILE=$file "$launcher" --pipe < "$work/ev$i" > "$d/out" 2> "$d/err"
   ms=$(( ($(date +%s%N) - start) / 1000000 ))
-  if [[ $opts == nl && $(tail -c1 "$d/out" | od -An -c | tr -d ' ') == '\n' ]]; then
-    truncate -s -1 "$d/out"
-  fi
   frames=$(grep -c $'\e\[H' "$d/ref")
   {
     if cmp -s "$d/ref" "$d/out"; then
@@ -86,7 +80,6 @@ keys=() args=() n=0
 for spec in "${GAMES[@]}"; do
   IFS='|' read -r name game file tool _ <<<"$spec"
   title=$(sed 's/./& /g; s/ $//' <<<"${game^^}")    # jqtris -> J Q T R I S
-  opts=""; [[ $NL == *" $name "* ]] && opts=nl
   launcher=$name/$game.sh file=$name/$file
   if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $name "* ]]; then continue; fi
   file=$root/$file
@@ -99,7 +92,7 @@ for spec in "${GAMES[@]}"; do
     printf 'skip  %-12s (%s is not installed)\n' "$label" "$tool" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
   fi
   for i in "${!STREAMS[@]}"; do
-    keys+=("$n"); args+=("$n|$label|$title|$opts|$file|$i|$root/$launcher"); (( n++ ))
+    keys+=("$n"); args+=("$n|$label|$title|$file|$i|$root/$launcher"); (( n++ ))
   done
 done
 
@@ -107,9 +100,9 @@ done
 (
   trap 'kill $(jobs -p) 2>/dev/null; exit 1' TERM
   for a in "${args[@]}"; do
-    IFS='|' read -r key label title opts file i launcher <<<"$a"
+    IFS="|" read -r key label title file i launcher <<<"$a"
     while (( $(jobs -rp | wc -l) >= jobs )); do wait -n; done
-    run_one "$key" "$label" "$title" "$opts" "$file" "$launcher" "$i" &
+    run_one "$key" "$label" "$title" "$file" "$launcher" "$i" &
   done
   wait
 ) & sched=$!
