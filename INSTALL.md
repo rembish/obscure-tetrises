@@ -23,6 +23,7 @@
 | ghcitris | `ghci` | `ghc` | `ghc` | `brew install ghc` ⁹ |
 | gnuplottris | `gnuplot` | `gnuplot-nox` ³ | `gnuplot` | `brew install gnuplot` |
 | jqtris | `jq` | `jq` ³ | `jq` | preinstalled on macOS 15+, or `brew install jq` |
+| jsonnettris | `jsonnet` | `jsonnet` | `jsonnet` | `brew install jsonnet` |
 | m4tris | `m4` | `m4` | `m4` | `brew install m4` ¹ |
 | maketris | `make` | `make` | `make` | `brew install make` ¹ |
 | postscripttris | `gs` | `ghostscript` | `ghostscript` | `brew install ghostscript` |

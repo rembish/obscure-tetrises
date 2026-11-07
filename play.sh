@@ -44,6 +44,7 @@ GAMES=(
   "ghci|ghcitris|ghcitris.hs|ghci|Haskell type families, reduced by ghci"
   "gnuplot|gnuplottris|gnuplottris.gp|gnuplot|gnuplot 6's command language"
   "jq|jqtris|jqtris.jq|jq|jq, the JSON processor"
+  "jsonnet|jsonnettris|jsonnettris.jsonnet|jsonnet|Jsonnet, run once per event"
   "m4|m4tris|m4tris.m4|m4|m4, the macro processor"
   "make|maketris|maketris.mk|make|GNU make"
   "postscript|postscripttris|postscripttris.ps|gs|PostScript, run by Ghostscript"

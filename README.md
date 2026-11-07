@@ -74,6 +74,7 @@ for each game on Debian/Ubuntu, Fedora and macOS.
 | [**ghcitris**](ghci/) | Haskell type families: GHC's type checker plays, ghci prints |
 | [**gnuplottris**](gnuplot/) | gnuplot 6's command language |
 | [**jqtris**](jq/) | `jq`, the JSON processor |
+| [**jsonnettris**](jsonnet/) | Jsonnet, the configuration language, run once per event |
 | [**m4tris**](m4/) | `m4`, the macro processor |
 | [**maketris**](make/) | GNU `make` |
 | [**postscripttris**](postscript/) | PostScript, run by Ghostscript |
