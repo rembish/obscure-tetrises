@@ -23,6 +23,7 @@ git clone https://github.com/rembish/obscure-tetrises.git && cd obscure-tetrises
 ./play.sh              # menu
 ./play.sh jq           # straight into jqtris
 ./play.sh --min tex    # the golfed textris
+./play.sh --native vim # vimtris played by Vim itself (vim and emacs only)
 ./play.sh --list       # what's there and what's installed
 ```
 
@@ -37,7 +38,8 @@ through `curl | bash` with `bash -s -- --min m4`.
 
 Two games can also run without bash, as a single command, with the tool reading the keys
 and keeping the time itself: `vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim` and
-`emacs -Q -nw -l emacs/emacstris.native.el`. See [vimtris](vim/README.md#native-mode)
+`emacs -Q -nw -l emacs/emacstris.native.el`. `play.sh --native` (or `n` in the menu)
+starts them that way. See [vimtris](vim/README.md#native-mode)
 and [emacstris](emacs/README.md#native-mode).
 
 **Controls:** `a`/← left · `d`/→ right · `w`/↑ rotate · `s`/↓ soft drop · `z`/Space hard drop · `q` quit
