@@ -34,7 +34,9 @@ rules and the frames are the same, and does the launcher's job itself:
   terminal sends, so the driver decodes `ESC [ D` into left itself.
 - **Ticks:** `float-time` keeps the time, and the loop sends a tick every 100 ms.
 - **Frames:** `emacstris-draw` is redefined to write with `send-string-to-terminal`, past
-  Emacs's own display. `inhibit-redisplay` keeps Emacs from drawing over the frames.
+  Emacs's own display, with `\r\n` at the ends of the lines. Raw mode also turns off the
+  terminal's output processing, so a bare newline only moves the cursor down, and the
+  frame would come out as a staircase. `inhibit-redisplay` keeps Emacs from drawing over the frames.
 - **Hooks:** `emacstris.el` checks for `emacstris-native`. When it's set, the file doesn't
   run its stdin loop. Its functions are global, so the driver calls `emacstris-start` and
   `emacstris-event` directly.

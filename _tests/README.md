@@ -26,7 +26,7 @@ the hand-over from `sh` to bash, the download path of `curl | bash` (with `TRIS_
 pointing at the clone through `file://`), and a real session on a pseudo-terminal
 under `script`. For vimtris and emacstris it also plays the native modes, where the tool
 reads the keys itself: a few keys typed within the first second, compared frame by frame
-with the reference. It also checks that no run leaves temporary files behind.
+with the reference, with every line ending in `\r\n` (the terminal is raw). It also checks that no run leaves temporary files behind.
 
 ```sh
 _tests/launchers.sh           # all games, about a minute

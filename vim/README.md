@@ -31,7 +31,10 @@ rules and the frames are the same, and does the launcher's job itself:
   `"\<Left>"` and so on.
 - **Ticks:** `reltime()` keeps the time, and the loop sends a tick every 100 ms, sleeping
   10 ms between looks at the keyboard.
-- **Frames:** the engine still writes them to `/dev/stdout`, which is now the terminal.
+- **Frames:** the engine still writes them to `/dev/stdout`, which is now the terminal,
+  but ends each line with `\r\n`. Raw mode also turns off the terminal's output
+  processing, so a bare newline only moves the cursor down, and the frame would come out
+  as a staircase.
   Vim draws nothing meanwhile: it only redraws when a script is done or asks for it, and
   this script runs until the game ends.
 - **Hooks:** `vimtris.vim` checks for `g:vimtris_native`. When it's set, the file hands its

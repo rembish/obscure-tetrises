@@ -32,6 +32,8 @@ let s:points = [0, 40, 100, 300, 1200]
 " ---- escape sequences ------------------------------------------------------------
 let s:E = "\e"
 let s:R = s:E . '[m'
+" Before each newline: nothing, or "\r" in the native mode (see the end).
+let s:cr = ''
 
 function! s:B(s) abort
   return s:E . '[38;5;60m' . a:s . s:R
@@ -222,7 +224,7 @@ function! s:Render() abort
   call add(rows, ' ' . s:B('╚' . repeat('═', 20) . '╝'))
   " Without the 'b' flag writefile() ends every list item with a newline,
   " so each item is one frame line ending with ESC[K.
-  let lines = map(rows, {_, l -> l . s:E . '[K'})
+  let lines = map(rows, {_, l -> l . s:E . '[K' . s:cr})
   let lines[0] = s:E . '[H' . lines[0]
   call writefile(lines, '/dev/stdout', 'aS')
 endfunction
@@ -238,7 +240,10 @@ endfunction
 
 " vimtris.native.vim sources this file for the game and reads the keys itself:
 " it gets the functions it needs here, and the stdin loop below doesn't run.
+" Its terminal is in raw mode, where a newline only moves down a line, so
+" every line ends in "\r\n" there.
 if exists('g:vimtris_native')
+  let s:cr = "\r"
   let g:vimtris = {'start': function('s:Start'), 'event': function('s:Event'),
         \ 'render': function('s:Render'), 'over': {-> s:over}}
   finish

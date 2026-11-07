@@ -19,9 +19,11 @@
   "Tells emacstris.el not to run its stdin loop.")
 (load (expand-file-name "emacstris.el" (file-name-directory load-file-name)) nil t)
 
-;; In batch mode emacstris.el prints to stdout; here the terminal is stdout.
+;; In batch mode emacstris.el prints to stdout; here it goes to the terminal.
+;; Raw mode also turns off the terminal's output processing, so a bare newline
+;; only moves the cursor down: every line ends in "\r\n".
 (defun emacstris-draw ()
-  (send-string-to-terminal (emacstris-frame)))
+  (send-string-to-terminal (string-replace "\n" "\r\n" (emacstris-frame))))
 
 (defun emacstris-native-key ()
   "The next key as a character or an arrow symbol, or nil if none is waiting.

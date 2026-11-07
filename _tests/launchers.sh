@@ -85,6 +85,10 @@ import sys
 ref = open(sys.argv[1], 'rb').read()
 out = open(sys.argv[2], 'rb').read()
 out = out[out.rfind(b'\x1b[2J\x1b[H\x1b[?25l'):]
+# The terminal is raw: a bare newline would leave each line where the last ended.
+if b'\x1b[K\n' in out:
+    sys.exit(1)
+out = out.replace(b'\x1b[K\r\n', b'\x1b[K\n')
 frames = lambda b: [f[:f.rfind(b'\x1b[K\n') + 4] for f in b.split(b'\x1b[H') if b'\x1b[K\n' in f]
 sys.exit(frames(out) != frames(ref))
 PY

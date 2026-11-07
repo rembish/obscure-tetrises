@@ -9,7 +9,9 @@
 " pressed, or 0 if there is none; reltime() keeps the time. The game is
 " vimtris.vim's, sourced from next to this file: same rules, same frames.
 "
-" The frames go to /dev/stdout, the terminal, as vimtris.vim writes them.
+" The frames go to /dev/stdout, the terminal, as vimtris.vim writes them, but
+" with "\r\n" at the ends of the lines: raw mode also turns off the terminal's
+" output processing, and a bare newline only moves the cursor down.
 " Vim itself draws nothing meanwhile: it only redraws when a script is done or
 " asks for it, and this script runs until the game ends.
 
