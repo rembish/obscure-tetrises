@@ -23,6 +23,7 @@ _tests/check.sh --min           # verify all of them
 | GHC type families | 15,816 | 5,554 | 65% |
 | gnuplot | 6,659 | 2,094 | 69% |
 | jq | 5,310 | 1,860 | 65% |
+| Jsonnet | 8,292 | 3,370 | 59% |
 | m4 | 8,826 | 2,080 | 76% |
 | make | 12,485 | 4,159 | 67% |
 | PostScript | 7,736 | 1,498 | 81% |
@@ -101,6 +102,7 @@ engine's README, under "Golfed version":
 - [GHC type families](ghci/README.md#golfed-version)
 - [gnuplot](gnuplot/README.md#golfed-version)
 - [jq](jq/README.md#golfed-version)
+- [Jsonnet](jsonnet/README.md#golfed-version)
 - [m4](m4/README.md#golfed-version)
 - [make](make/README.md#golfed-version)
 - [PostScript](postscript/README.md#golfed-version)

@@ -60,3 +60,14 @@ jsonnet -S -m . --ext-str input=42 --ext-code state=null jsonnettris.jsonnet
 cat frame
 jsonnet -S -m . --ext-str input=5 --ext-code state="$(<state.json)" jsonnettris.jsonnet
 ```
+
+## Golfed version
+
+[`jsonnettris.min.jsonnet`](jsonnettris.min.jsonnet) is the golfed twin of the engine: 3,370 bytes instead of 8,292 (59% smaller), with exactly the same output. `_tests/check.sh --min jsonnet` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to Jsonnet:
+
+- **One `local` with every binding:** functions and values, separated by commas, and the result after the `;`.
+- **Shorter standard library:** `std.pow`, `std.floor`, `std.range` and `std.join` are bound to one letter each.
+- **The preview from the cell table:** a preview cell is on if `[x, y]` is in the piece's cells (`std.member`), so the masks aren't needed at all.
+- **Gravity in one comparison:** `g.t+F(g.lines/10)>8`.
+- **"show" as a hidden field:** `w`, added with `+{w:1}` and dropped from the state by `g{w::0}`.
+
