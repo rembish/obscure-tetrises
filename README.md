@@ -83,7 +83,7 @@ for each game on Debian/Ubuntu, Fedora and macOS.
 | [**sqlitetris**](sqlite/) | SQL: SQLite triggers, views and recursive CTEs |
 | [**textris**](tex/) | plain TeX (Knuth's `tex`, no packages) |
 | [**trofftris**](troff/) | `troff`, the typesetter behind `man` |
-| [**vimtris**](vim/) | Vim script, in headless `vim -es`, or on its own in full-screen Vim |
+| [**vimtris**](vim/) | Vim script, in headless `vim -es`, or on its own in full-screen Vim; and [once more](vim/README.md#normal-mode-variant) in normal-mode keystrokes only |
 | [**xslttris**](xslt/) | XSLT 1.0, run by `xsltproc` |
 
 Each game's README explains how its engine works and what the tool made hard.

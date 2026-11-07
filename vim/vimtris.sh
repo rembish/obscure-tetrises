@@ -27,9 +27,33 @@ GAME=vimtris DIR=vim ENGINE=vimtris.vim NEEDS=vim
 # explicitly) and a SIGINT here kills it outright.
 run_engine() {
   local pid
+  if [[ $1 == *.keys ]]; then
+    normal_mode "$1"
+    return
+  fi
   vim -Nu NONE -i NONE -es -S "$1" <&0 & pid=$!
   trap 'kill -9 "$pid" 2>/dev/null' INT
   wait "$pid"
+}
+
+# vimtris.normal.keys is the game in normal-mode keystrokes, not Vim script.
+# Vim edits that file as a buffer; for each input line this types the input
+# into line 1, runs the keys on line 2, writes the frame (the lines between
+# F and E) to stdout and runs register q, which is ZQ once the game is over.
+# A tick that moved nothing leaves one empty line there, which is dropped.
+# The file writes its control keys as <Esc>, <CR> and so on; sed makes them
+# the bytes first. 'fileformats' is unix only, because a code line that ends
+# in <CR> would otherwise make Vim read the file as DOS.
+normal_mode() {
+  sed -e 's/<Esc>/\x1b/g; s/<CR>/\r/g; s/<C-A>/\x01/g; s/<C-X>/\x18/g' \
+      -e 's/<C-R>/\x12/g; s/<C-V>/\x16/g' "$1" > "$work/buffer"
+  local seen=0
+  while IFS= read -r line; do
+    line=${line//[!0-9]/}
+    [[ -z $line ]] && continue
+    (( seen++ )) && [[ $line == 9 ]] && break         # quit (the seed may be 9)
+    printf 'norm! ggS%s\nnorm! 2G"ay$@a\n/^F$/+1,/^E$/-1w >>/dev/stdout\nnorm! @q\n' "$line"
+  done | vim -Nu NONE -i NONE --cmd 'set ffs=unix' -es "$work/buffer" | grep --line-buffered -av '^$'
 }
 
 # Load the shared part from the clone, or download it; then play. (In braces, so

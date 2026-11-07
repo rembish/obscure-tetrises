@@ -16,7 +16,10 @@ _tests/check.sh --min    # the golfed .min engines
 
 - [`gen_events.py`](gen_events.py) writes the event streams: a greedy bot that clears
   lines, and random key and tick streams that include unknown codes.
-- Each engine runs through its own launcher with `--pipe`. The list of games comes from
+- Each engine runs through its own launcher with `--pipe`. A variant, an engine file with
+  a middle part like `vim/vimtris.normal.keys`, runs through its game's launcher and is
+  labelled `vim.normal`; `check.sh vim` runs both of vim's engines, `check.sh vim.normal`
+  just the variant. The list of games comes from
   `play.sh`'s `GAMES` table, so a new game only has to be added there.
 - The `ms` column is wall time. With runs in parallel it is noisy, so use `-j 1` when
   comparing speeds.

@@ -42,10 +42,14 @@ clean() {    # the run left nothing behind in its TMPDIR
 }
 
 for spec in "${GAMES[@]}"; do
-  IFS='|' read -r dir game _ tool _ <<<"$spec"
-  if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $dir "* ]]; then continue; fi
+  IFS='|' read -r dir game file tool _ <<<"$spec"
+  # A variant (vimtris.normal.keys) runs through its game's launcher with ENGINE_FILE.
+  base=${file%.*} engine_file="" label=$dir
+  if [[ $base != "$game" ]]; then engine_file=$root/$dir/$file label=$dir.${base#"$game".}; fi
+  if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $dir "* && " ${want[*]} " != *" $label "* ]]; then continue; fi
+  export ENGINE_FILE=$engine_file
   if ! have "$tool"; then
-    if (( strict )); then result "$dir" 0 "($tool is not installed)"; else printf 'skip  %-20s (%s is not installed)\n' "$dir" "$tool"; fi
+    if (( strict )); then result "$label" 0 "($tool is not installed)"; else printf 'skip  %-20s (%s is not installed)\n' "$label" "$tool"; fi
     continue
   fi
   launcher=$root/$dir/$game.sh
@@ -55,21 +59,21 @@ for spec in "${GAMES[@]}"; do
   export TMPDIR=$work/tmp
 
   sh "$launcher" --pipe < "$work/ev" > "$work/out" 2>/dev/null
-  cmp -s "$work/ref" "$work/out" && clean; result "$dir sh" $(( ! $? )) "sh hand-over"
+  cmp -s "$work/ref" "$work/out" && clean; result "$label sh" $(( ! $? )) "sh hand-over"
 
   (cd "$work/empty" && TRIS_URL=file://$root bash -c "$(cat "$launcher")" "$game.sh" --pipe) \
     < "$work/ev" > "$work/out" 2>/dev/null
-  cmp -s "$work/ref" "$work/out" && clean; result "$dir download" $(( ! $? )) "_lib and engine from TRIS_URL"
+  cmp -s "$work/ref" "$work/out" && clean; result "$label download" $(( ! $? )) "_lib and engine from TRIS_URL"
 
   (sleep 3; printf q) | timeout 60 script -qec "SEED=42 $launcher" /dev/null > "$work/tty" 2>&1
   rc=$? frames=$(grep -c $'\e\[H' "$work/tty")
-  (( rc == 0 && frames > 0 )) && clean; result "$dir terminal" $(( ! $? )) "exit $rc, $frames frame lines"
+  (( rc == 0 && frames > 0 )) && clean; result "$label terminal" $(( ! $? )) "exit $rc, $frames frame lines"
 
   # A native mode (the tool reads the keys itself): type z, left, w, z and q
   # within the first second, before gravity moves anything, and compare the
   # frames after the game's first clear screen with the reference.
   native=""
-  case $dir in
+  [[ $label == "$dir" ]] && case $dir in
     vim) native="vim -Nu NONE -i NONE -n -S $root/vim/vimtris.native.vim" ;;
     emacs) native="emacs -Q -nw -l $root/emacs/emacstris.native.el" ;;
   esac
@@ -92,7 +96,7 @@ out = out.replace(b'\x1b[K\r\n', b'\x1b[K\n')
 frames = lambda b: [f[:f.rfind(b'\x1b[K\n') + 4] for f in b.split(b'\x1b[H') if b'\x1b[K\n' in f]
 sys.exit(frames(out) != frames(ref))
 PY
-    (( rc == 0 && ! $? )) && clean; result "$dir native" $(( ! $? )) "${native%% *} reads the keys itself (exit $rc)"
+    (( rc == 0 && ! $? )) && clean; result "$label native" $(( ! $? )) "${native%% *} reads the keys itself (exit $rc)"
   fi
   unset TMPDIR
 done

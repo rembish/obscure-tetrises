@@ -1,0 +1,436 @@
+0
+/^:s <CR>f l"sy$/^:f <CR>f l"fy$/^F$<CR>jd/^E$<CR>O<Esc>/^:main <CR>f l"ay$@a
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+####..........####|@s
+##################|@s
+##################|@s
+##################|@s
+" vimtris.normal.keys - vimtris played by Vim's normal mode: keystrokes, no Vim script.
+"
+" This file is a buffer, and the game is the editing of it. Lines 1 and 2 and
+" the 23 lines of board below them have fixed places; everything else is
+" found by searching for it. The launcher (vimtris.sh) loads the file into
+" vim -es and, for every input line (the seed, then one event per line),
+" types four commands:
+"
+"   :norm! ggS<input>                 the input goes into line 1
+"   :norm! 2G"ay$@a                   yank line 2 into register a and run it
+"   :/^F$/+1,/^E$/-1w >>/dev/stdout   the frame, between the lines F and E
+"   :norm! @q                         register q is ZQ once the game is over
+"
+" Everything else is normal mode: motions, searches, yanks, edits, and @ to
+" run a register. The keys are written <Esc>, <CR>, <C-A>, <C-X>, <C-R> and
+" <C-V>; the launcher turns them into the bytes before Vim reads the file.
+"
+" Control flow:
+"
+" - A failing command (a search that finds nothing, a motion off the line)
+"   aborts every key still waiting, all the way out to the :norm. So no
+"   command here may fail, and a failure can't be used as an if.
+" - Code lives on lines ":name keys". A call is /^:name <CR>f l"ay$@a: find
+"   the line, yank the keys after the name, run them. When they are done,
+"   the keys after the call run on: @ puts a register in front of the keys
+"   still waiting, so this is a real call that returns.
+" - An if is a search that can't fail: gg/<pattern>\|^ELSE|<CR>. Every line
+"   it can land on ends in |@s (the pattern matched) or |@f (it landed on
+"   the ELSE line), and $h"ay$@a runs that ending. @s and @f are trampolines:
+"   they call the code named on the "then" and "else" lines, which the code
+"   sets just before the search.
+" - A search finds the first match in the buffer, so every fallback (ELSE,
+"   :evx, PAINTED) comes after what it stands in for.
+" - Loops are calls of themselves from a branch, at the end of the code, so
+"   the waiting keys don't pile up.
+"
+" Numbers are decimal text, changed with <C-A> and <C-X> and a count. Vim
+" caps a count at 999999999, so 2^31 - 1 is three counts, and the seed is
+" multiplied by 7 digit by digit, from a table. A count can't start with 0
+" either (0 is a motion), which is why the row is kept as y + 3 (its line
+" number) and the column as x + 5. A command that needs a number from the
+" buffer as its count is typed into the "cmd" line with <C-R> and yanked
+" into register b to run.
+"
+" The board is lines 3 to 22: four walls, ten cells, four walls, and |@s.
+" Three lines of floor follow. A piece fits if a search like
+" \%3l\%8c\.\_.\{20}\.\.\. finds its four empty cells at its line and column:
+" \_. crosses the ends of lines, and a board line is 22 bytes with its
+" newline. The F lines hold that regex for each piece and rotation, the S
+" lines the motions and r<letter> that write the piece into the board.
+"
+" ---- the state: "name value", found with /^name <CR>w
+mode new|@s
+seed 0|@s
+row 3|@s
+col 8|@s
+rot 0|@s
+cur I
+nxt I
+drawn I
+tick 0|@s
+level 1|@s
+lines 0|@s
+tolevel 10|@s
+score 0|@s
+w 0|@s
+chk 0|@s
+k 0
+dig |@s
+rem 0
+mul |@s
+prod |@s
+carry 0|@s
+cmd x
+then nop
+else nop
+:s /^then <CR>w"nyiw/^:<C-R>n <CR>f l"ay$@a
+:f /^else <CR>w"nyiw/^:<C-R>n <CR>f l"ay$@a
+" ---- the code: ":name keys". :s and :f are the trampolines of an if.
+" Every input: the seed while "mode" is new, else an event.
+:main /^then <CR>wcwboot<Esc>/^else <CR>wcwevent<Esc>gg/^mode new\|^ELSE|<CR>ml$h"ay$@a
+" The seed: draw the next piece, then spawn (which draws the one after).
+:boot /^mode <CR>wcwplay<Esc>gg"ny$/^seed <CR>wcw<C-R>n<Esc>/^:q0 <CR>f l"qy$/^:draw <CR>f l"ay$@a/^drawn <CR>w"nyl/^nxt <CR>ws<C-R>n<Esc>/^:spawn <CR>f l"ay$@a
+" Run :ev<input>, or :evx (nothing) for an unknown code.
+:event gg"ny$/\V\^:ev<C-R>n \|\^:evx <CR>f l"ay$@a
+:nop gg
+" Tick: chk = tick + level - 11; at 0 or more the piece falls (every max(1, 11 - level) ticks).
+:ev0 /^tick <CR>w<C-A>/^tick <CR>w"nyiw/^chk <CR>wC<C-R>n|@s<Esc>/^level <CR>w"nyiw/^cmd <CR>wC<C-R>n<C-V><C-A><Esc>04l"by$/^chk <CR>w@b11<C-X>/^then <CR>wcwfall<Esc>/^else <CR>wcwnop<Esc>gg/^chk \d\|^ELSE|<CR>ml$h"ay$@a
+:fall /^tick <CR>wcw0<Esc>/^:ev4 <CR>f l"ay$@a
+" Left: one column left; if it does not fit, back.
+:ev1 /^col <CR>w<C-X>/^then <CR>wcwframe<Esc>/^else <CR>wcwundol<Esc>/^:fit <CR>f l"ay$@a
+:undol /^col <CR>w<C-A>/^:frame <CR>f l"ay$@a
+:ev2 /^col <CR>w<C-A>/^then <CR>wcwframe<Esc>/^else <CR>wcwundor<Esc>/^:fit <CR>f l"ay$@a
+:undor /^col <CR>w<C-X>/^:frame <CR>f l"ay$@a
+" Rotate: the next rotation at the kicks 0, -1, +1, -2, +2 (k1 ... k5), or back.
+:ev3 /^rot <CR>w<C-A>/^then <CR>wcwrot0<Esc>/^else <CR>wcwnop<Esc>gg/^rot 4\|^ELSE|<CR>ml$h"ay$@a/^then <CR>wcwframe<Esc>/^else <CR>wcwk1<Esc>/^:fit <CR>f l"ay$@a
+:rot0 /^rot <CR>wr0
+:k1 /^col <CR>w<C-X>/^then <CR>wcwframe<Esc>/^else <CR>wcwk2<Esc>/^:fit <CR>f l"ay$@a
+:k2 /^col <CR>w2<C-A>/^then <CR>wcwframe<Esc>/^else <CR>wcwk3<Esc>/^:fit <CR>f l"ay$@a
+:k3 /^col <CR>w3<C-X>/^then <CR>wcwframe<Esc>/^else <CR>wcwk4<Esc>/^:fit <CR>f l"ay$@a
+:k4 /^col <CR>w4<C-A>/^then <CR>wcwframe<Esc>/^else <CR>wcwk5<Esc>/^:fit <CR>f l"ay$@a
+:k5 /^col <CR>w2<C-X>/^rot <CR>w<C-X>/^then <CR>wcwrot3<Esc>/^else <CR>wcwnop<Esc>gg/^rot -\|^ELSE|<CR>ml$h"ay$@a/^:frame <CR>f l"ay$@a
+:rot3 /^rot <CR>w2s3<Esc>
+" Soft drop, and a fall: one row down, or back up and lock.
+:ev4 /^row <CR>w<C-A>/^then <CR>wcwframe<Esc>/^else <CR>wcwundod<Esc>/^:fit <CR>f l"ay$@a
+:undod /^row <CR>w<C-X>/^:lock <CR>f l"ay$@a
+" Hard drop: down until it does not fit, then back up and lock.
+:ev5 /^row <CR>w<C-A>/^then <CR>wcwev5<Esc>/^else <CR>wcwundod<Esc>/^:fit <CR>f l"ay$@a
+" The fit regex at the line and column of the piece, as an if.
+:fit /^cur <CR>w"pyl/^rot <CR>w"oyl/^row <CR>w"ryiw/^col <CR>w"cyiw/^F<C-R>p<C-R>o:<CR>f:l"xy$/^cmd <CR>wC\%<C-R>rl\%<C-R>cc<C-R>x<Esc>04l"by$gg/<C-R>b\|^ELSE|<CR>ml$h"ay$@a
+" Write the piece into the board, then clear the full rows (k counts them).
+:lock /^:stampb <CR>f l"ay$@a/^k <CR>wcw0<Esc>/^:clear <CR>f l"ay$@a
+:stampb /^row <CR>w"ryiw/^col <CR>w"cyiw/^cmd <CR>wC<C-R>rG<C-R>c|<Esc>04l"by$/^cur <CR>w"pyl/^rot <CR>w"oyl/^S<C-R>p<C-R>o:<CR>f:l"xy$@b@x
+" A full row is four walls, ten letters, four walls: delete it, add an empty one on top.
+:clear /^then <CR>wcwrmrow<Esc>/^else <CR>wcwscore<Esc>gg/^####[A-Z]\{10}####|\|^ELSE|<CR>ml$h"ay$@a
+:rmrow 'l"_dd/^EMPTYROW<CR>j"eyy3G"eP/^k <CR>w<C-A>/^:clear <CR>f l"ay$@a
+" Points for k rows (times the level), the lines, and a level every ten lines.
+:score /^k <CR>w"nyl/^:pts<C-R>n <CR>f l"ay$@a/^:spawn <CR>f l"ay$@a
+:pts0 gg
+:pts1 /^:c40 <CR>f l"xy$/^level <CR>w"nyiw/^cmd <CR>wC<C-R>n@x<Esc>04l"by$/^score <CR>w@b/^lines <CR>w1<C-A>/^tolevel <CR>w1<C-X>/^:lvl <CR>f l"ay$@a
+:c40 40<C-A>
+:pts2 /^:c100 <CR>f l"xy$/^level <CR>w"nyiw/^cmd <CR>wC<C-R>n@x<Esc>04l"by$/^score <CR>w@b/^lines <CR>w2<C-A>/^tolevel <CR>w2<C-X>/^:lvl <CR>f l"ay$@a
+:c100 100<C-A>
+:pts3 /^:c300 <CR>f l"xy$/^level <CR>w"nyiw/^cmd <CR>wC<C-R>n@x<Esc>04l"by$/^score <CR>w@b/^lines <CR>w3<C-A>/^tolevel <CR>w3<C-X>/^:lvl <CR>f l"ay$@a
+:c300 300<C-A>
+:pts4 /^:c1200 <CR>f l"xy$/^level <CR>w"nyiw/^cmd <CR>wC<C-R>n@x<Esc>04l"by$/^score <CR>w@b/^lines <CR>w4<C-A>/^tolevel <CR>w4<C-X>/^:lvl <CR>f l"ay$@a
+:c1200 1200<C-A>
+:lvl /^then <CR>wcwlvlup<Esc>/^else <CR>wcwnop<Esc>gg/^tolevel \(-\|0|\)\|^ELSE|<CR>ml$h"ay$@a
+:lvlup /^level <CR>w<C-A>/^tolevel <CR>w10<C-A>
+" The next piece falls from row 0, column 3; the game is over if it does not fit.
+:spawn /^nxt <CR>w"nyl/^cur <CR>ws<C-R>n<Esc>/^:draw <CR>f l"ay$@a/^drawn <CR>w"nyl/^nxt <CR>ws<C-R>n<Esc>/^row <CR>wcw3<Esc>/^col <CR>wcw8<Esc>/^rot <CR>wr0/^tick <CR>wcw0<Esc>/^then <CR>wcwframe<Esc>/^else <CR>wcwover<Esc>/^:fit <CR>f l"ay$@a
+:over /^:q1 <CR>f l"qy$/^:frameo <CR>f l"ay$@a
+:q0 gg
+:q1 ZQ
+" Park-Miller: seed * 16807 mod (2^31 - 1), as five times 7; the piece is seed mod 7.
+:draw /^:t7 <CR>f l"ay$@a/^:t7 <CR>f l"ay$@a/^:t7 <CR>f l"ay$@a/^:t7 <CR>f l"ay$@a/^:t7 <CR>f l"ay$@a/^seed <CR>w"nyiw/^dig <CR>wi<C-R>n<Esc>/^rem <CR>wr0/^:dloop <CR>f l"ay$@a/^rem <CR>w"nyl/^P<C-R>n:<CR>f:l"nyl/^drawn <CR>ws<C-R>n<Esc>
+" seed * 7: long multiplication into "prod", then mod 2^31 - 1 in m7.
+:t7 /^seed <CR>w"nyiw/^mul <CR>wi<C-R>n<Esc>/^prod <CR>wC|@s<Esc>/^carry <CR>wr0/^:mloop <CR>f l"ay$@a/^then <CR>wcwmcarry<Esc>/^else <CR>wcwnop<Esc>gg/^carry [1-9]\|^ELSE|<CR>ml$h"ay$@a/^prod <CR>w"nyiw/^w <CR>wcw<C-R>n<Esc>/^:m7 <CR>f l"ay$@a
+:mloop /^then <CR>wcwmstep<Esc>/^else <CR>wcwnop<Esc>gg/^mul \d\|^ELSE|<CR>ml$h"ay$@a
+:mstep 'lf|h"nylx/^carry <CR>w"myl/^x<C-R>m<C-R>n:<CR>f:l"nyll"myl/^prod <CR>wi<C-R>n<Esc>/^carry <CR>ws<C-R>m<Esc>/^:mloop <CR>f l"ay$@a
+:mcarry /^carry <CR>w"nyl/^prod <CR>wi<C-R>n<Esc>
+:m7 /^w <CR>w999999999<C-X>999999999<C-X>147483649<C-X>/^then <CR>wcwm7end<Esc>/^else <CR>wcwm7<Esc>gg/^w -\|^ELSE|<CR>ml$h"ay$@a
+:m7end /^w <CR>w999999999<C-A>999999999<C-A>147483649<C-A>/^w <CR>w"nyiw/^seed <CR>wcw<C-R>n<Esc>
+" seed mod 7, one decimal digit at a time from the left, from the "m" table.
+:dloop /^then <CR>wcwdstep<Esc>/^else <CR>wcwnop<Esc>gg/^dig \d\|^ELSE|<CR>ml$h"ay$@a
+:dstep 'lw"nylx/^rem <CR>w"myl/^m<C-R>m<C-R>n:<CR>f:l"nyl/^rem <CR>ws<C-R>n<Esc>/^:dloop <CR>f l"ay$@a
+" The frame: the board, the piece, the decoration.
+:frame /^:fbase <CR>f l"ay$@a/^:stampf <CR>f l"ay$@a/^:fdecor <CR>f l"ay$@a
+:frameo /^:fbase <CR>f l"ay$@a/^F$<CR>12j5|10r!/^:fdecor <CR>f l"ay$@a/^:banner <CR>f l"ay$@a
+" Copy the 20 board lines between F and E, with two lines above them for the title.
+:fbase 3G"r20yy/^E$<CR>"rP/^F$<CR>o<Esc>/^F$<CR>mg/^E$<CR>me
+:stampf /^row <CR>w"ryiw/^col <CR>w"cyiw/^cmd <CR>wC'g<C-R>rj<C-R>c|<Esc>04l"by$/^cur <CR>w"pyl/^rot <CR>w"oyl/^S<C-R>p<C-R>o:<CR>f:l"xy$@b@x
+" Walls off, borders and side panel on (block inserts and a block paste), paint, title.
+:fdecor 'g3j0<C-V>19j3ld'g3j11|<C-V>19j$d'g3j0<C-V>19jI <C-V><Esc>[38;5;60m║<C-V><Esc>[m<Esc>'g3j$<C-V>19j$A<C-V><Esc>[38;5;60m║<C-V><Esc>[m<Esc>/^:panel <CR>f l"ay$@a'g3j$<C-V>19j$A<C-V><Esc>[K<Esc>'g22jo <C-V><Esc>[38;5;60m╚════════════════════╝<C-V><Esc>[m<C-V><Esc>[K<Esc>/^:paint <CR>f l"ky$@k'gjS<C-V><Esc>[H  <C-V><Esc>[1;38;5;75mV I M T R I S<C-V><Esc>[m<C-V><Esc>[K<Esc>'g2jS <C-V><Esc>[38;5;60m╔════════════════════╗<C-V><Esc>[m<C-V><Esc>[K<Esc>
+:banner /\%>'g!\{10}<CR>10s<C-V><Esc>[1;7m     GAME  OVER     <C-V><Esc>[m<Esc>
+" Copy the side panel below E, fill in the numbers and the preview, yank it as a block.
+:panel /^PANEL{<CR>j"t20yy/^E$<CR>"tp/^E$<CR>mw/^score <CR>w"nyiw/\%>'w@S<CR>2s<C-R>n<Esc>/^level <CR>w"nyiw/\%>'w@V<CR>2s<C-R>n<Esc>/^lines <CR>w"nyiw/\%>'w@L<CR>2s<C-R>n<Esc>/^nxt <CR>w"pyl/^N<C-R>p:<CR>f:l"uyt|f|l"vy$/\%>'w@0<CR>2s<C-R>u<Esc>/\%>'w@1<CR>2s<C-R>v<Esc>'wj0<C-V>19j$"py'wj20"_dd'g3j$"pp
+" Paint the next cell from the C table, until the search falls through to PAINTED.
+:paint 'g/\%<'e[.IOTSZJL]\|^PAINTED|<CR>mx"nyl?\V\^C<C-R>n:<CR>f:l"ay$@a
+:evx gg
+" ---- tables: F fit regex and S stamp per piece and rotation, N preview rows,
+" P piece for a remainder, m remainder of 10r + d by 7, x 7d + c as digit and carry,
+" C the colour of a cell, PANEL the side panel, F to E the frame, then the fallbacks.
+FI0:\_.\{22}\.\.\.\.
+SI0:jrIlrIlrIlrI
+FI1:\_.\{2}\.\_.\{21}\.\_.\{21}\.\_.\{21}\.
+SI1:2lrIjrIjrIjrI
+FI2:\_.\{44}\.\.\.\.
+SI2:2jrIlrIlrIlrI
+FI3:\_.\{1}\.\_.\{21}\.\_.\{21}\.\_.\{21}\.
+SI3:lrIjrIjrIjrI
+NI:        |IIII
+FO0:\_.\{1}\.\.\_.\{20}\.\.
+SO0:lrOlrOjhrOlrO
+FO1:\_.\{1}\.\.\_.\{20}\.\.
+SO1:lrOlrOjhrOlrO
+FO2:\_.\{1}\.\.\_.\{20}\.\.
+SO2:lrOlrOjhrOlrO
+FO3:\_.\{1}\.\.\_.\{20}\.\.
+SO3:lrOlrOjhrOlrO
+NO:  OO  |  OO  
+FT0:\_.\{1}\.\_.\{20}\.\.\.
+ST0:lrTjhrTlrTlrT
+FT1:\_.\{1}\.\_.\{21}\.\.\_.\{20}\.
+ST1:lrTjrTlrTjhrT
+FT2:\_.\{22}\.\.\.\_.\{20}\.
+ST2:jrTlrTlrTjhrT
+FT3:\_.\{1}\.\_.\{20}\.\.\_.\{21}\.
+ST3:lrTjhrTlrTjrT
+NT:  T    |TTT  
+FS0:\_.\{1}\.\.\_.\{19}\.\.
+SS0:lrSlrSj2hrSlrS
+FS1:\_.\{1}\.\_.\{21}\.\.\_.\{21}\.
+SS1:lrSjrSlrSjrS
+FS2:\_.\{23}\.\.\_.\{19}\.\.
+SS2:jlrSlrSj2hrSlrS
+FS3:\.\_.\{21}\.\.\_.\{21}\.
+SS3:rSjrSlrSjrS
+NS:  SS  |SS    
+FZ0:\.\.\_.\{21}\.\.
+SZ0:rZlrZjrZlrZ
+FZ1:\_.\{2}\.\_.\{20}\.\.\_.\{20}\.
+SZ1:2lrZjhrZlrZjhrZ
+FZ2:\_.\{22}\.\.\_.\{21}\.\.
+SZ2:jrZlrZjrZlrZ
+FZ3:\_.\{1}\.\_.\{20}\.\.\_.\{20}\.
+SZ3:lrZjhrZlrZjhrZ
+NZ:ZZ    |  ZZ  
+FJ0:\.\_.\{21}\.\.\.
+SJ0:rJjrJlrJlrJ
+FJ1:\_.\{1}\.\.\_.\{20}\.\_.\{21}\.
+SJ1:lrJlrJjhrJjrJ
+FJ2:\_.\{22}\.\.\.\_.\{21}\.
+SJ2:jrJlrJlrJjrJ
+FJ3:\_.\{1}\.\_.\{21}\.\_.\{20}\.\.
+SJ3:lrJjrJjhrJlrJ
+NJ:J      |JJJ  
+FL0:\_.\{2}\.\_.\{19}\.\.\.
+SL0:2lrLj2hrLlrLlrL
+FL1:\_.\{1}\.\_.\{21}\.\_.\{21}\.\.
+SL1:lrLjrLjrLlrL
+FL2:\_.\{22}\.\.\.\_.\{19}\.
+SL2:jrLlrLlrLj2hrL
+FL3:\.\.\_.\{21}\.\_.\{21}\.
+SL3:rLlrLjrLjrL
+NL:    L  |LLL  
+P0:I
+P1:O
+P2:T
+P3:S
+P4:Z
+P5:J
+P6:L
+m00:0
+m01:1
+m02:2
+m03:3
+m04:4
+m05:5
+m06:6
+m07:0
+m08:1
+m09:2
+m10:3
+m11:4
+m12:5
+m13:6
+m14:0
+m15:1
+m16:2
+m17:3
+m18:4
+m19:5
+m20:6
+m21:0
+m22:1
+m23:2
+m24:3
+m25:4
+m26:5
+m27:6
+m28:0
+m29:1
+m30:2
+m31:3
+m32:4
+m33:5
+m34:6
+m35:0
+m36:1
+m37:2
+m38:3
+m39:4
+m40:5
+m41:6
+m42:0
+m43:1
+m44:2
+m45:3
+m46:4
+m47:5
+m48:6
+m49:0
+m50:1
+m51:2
+m52:3
+m53:4
+m54:5
+m55:6
+m56:0
+m57:1
+m58:2
+m59:3
+m60:4
+m61:5
+m62:6
+m63:0
+m64:1
+m65:2
+m66:3
+m67:4
+m68:5
+m69:6
+x00:00
+x01:70
+x02:41
+x03:12
+x04:82
+x05:53
+x06:24
+x07:94
+x08:65
+x09:36
+x10:10
+x11:80
+x12:51
+x13:22
+x14:92
+x15:63
+x16:34
+x17:05
+x18:75
+x19:46
+x20:20
+x21:90
+x22:61
+x23:32
+x24:03
+x25:73
+x26:44
+x27:15
+x28:85
+x29:56
+x30:30
+x31:01
+x32:71
+x33:42
+x34:13
+x35:83
+x36:54
+x37:25
+x38:95
+x39:66
+x40:40
+x41:11
+x42:81
+x43:52
+x44:23
+x45:93
+x46:64
+x47:35
+x48:06
+x49:76
+x50:50
+x51:21
+x52:91
+x53:62
+x54:33
+x55:04
+x56:74
+x57:45
+x58:16
+x59:86
+x60:60
+x61:31
+x62:02
+x63:72
+x64:43
+x65:14
+x66:84
+x67:55
+x68:26
+x69:96
+EMPTYROW
+####..........####|@s
+PANEL{
+   <Esc>[38;5;60m╭──<Esc>[m <Esc>[38;5;244mnext<Esc>[m <Esc>[38;5;60m──────╮<Esc>[m
+   <Esc>[38;5;60m│<Esc>[m              <Esc>[38;5;60m│<Esc>[m
+   <Esc>[38;5;60m│<Esc>[m   @0   <Esc>[38;5;60m│<Esc>[m
+   <Esc>[38;5;60m│<Esc>[m   @1   <Esc>[38;5;60m│<Esc>[m
+   <Esc>[38;5;60m│<Esc>[m              <Esc>[38;5;60m│<Esc>[m
+   <Esc>[38;5;60m│<Esc>[m              <Esc>[38;5;60m│<Esc>[m
+   <Esc>[38;5;60m│<Esc>[m              <Esc>[38;5;60m│<Esc>[m
+   <Esc>[38;5;60m╰──────────────╯<Esc>[m
+
+   <Esc>[38;5;244mscore<Esc>[m
+   <Esc>[1m@S<Esc>[m
+   <Esc>[38;5;244mlevel<Esc>[m <Esc>[1m@V<Esc>[m  <Esc>[38;5;244mlines<Esc>[m <Esc>[1m@L<Esc>[m
+
+   <Esc>[38;5;244mcontrols<Esc>[m
+   <Esc>[1m← a<Esc>[m  <Esc>[38;5;244mmove left<Esc>[m
+   <Esc>[1m→ d<Esc>[m  <Esc>[38;5;244mmove right<Esc>[m
+   <Esc>[1m↑ w<Esc>[m  <Esc>[38;5;244mrotate<Esc>[m
+   <Esc>[1m↓ s<Esc>[m  <Esc>[38;5;244msoft drop<Esc>[m
+   <Esc>[1m␣ z<Esc>[m  <Esc>[38;5;244mhard drop<Esc>[m
+   <Esc>[1m  q<Esc>[m  <Esc>[38;5;244mquit<Esc>[m
+PANEL}
+C.:`xs<C-V><Esc>[38;5;237m ·<C-V><Esc>[m<Esc>@k
+CI:`xs<C-V><Esc>[38;5;51m██<C-V><Esc>[m<Esc>@k
+CO:`xs<C-V><Esc>[38;5;226m██<C-V><Esc>[m<Esc>@k
+CT:`xs<C-V><Esc>[38;5;135m██<C-V><Esc>[m<Esc>@k
+CS:`xs<C-V><Esc>[38;5;46m██<C-V><Esc>[m<Esc>@k
+CZ:`xs<C-V><Esc>[38;5;196m██<C-V><Esc>[m<Esc>@k
+CJ:`xs<C-V><Esc>[38;5;33m██<C-V><Esc>[m<Esc>@k
+CL:`xs<C-V><Esc>[38;5;208m██<C-V><Esc>[m<Esc>@k
+CP:gg
+F
+
+E
+ELSE|@f
+PAINTED|

@@ -77,7 +77,7 @@ tris_main() {
 
   # Use the engine next to the launcher, or download it (e.g. under curl | bash).
   engine=${ENGINE_FILE:-$HERE/$ENGINE}               # ENGINE_FILE: e.g. the .min version
-  if [[ -z $HERE || ! -f $engine ]]; then
+  if [[ ! -f $engine ]]; then                         # (under curl | bash, HERE is empty)
     tmp=$(mktemp -d "${TMPDIR:-/tmp}/$GAME.XXXXXX") || return 1
     engine="$tmp/$ENGINE"
     fetch "$TRIS_URL/$DIR/$ENGINE" "$engine" || return 1

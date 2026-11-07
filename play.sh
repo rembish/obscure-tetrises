@@ -30,7 +30,9 @@ fi
 
 # bash from here on; everything runs from main() so `curl | bash` parses it all first.
 
-# dir|game|engine file|tool to look for|written in (_tests/check.sh reads this table too)
+# dir|game|engine file|tool to look for|written in (_tests/check.sh reads this table too).
+# An engine file with a middle part (vimtris.normal.keys) is a variant: another
+# engine for the same launcher, listed as vimtris.normal.
 GAMES=(
   "awk|awktris|awktris.awk|awk|POSIX awk (mawk, gawk, busybox)"
   "bc|bctris|bctris.bc|bc|bc, the arbitrary-precision calculator"
@@ -52,6 +54,7 @@ GAMES=(
   "tex|textris|textris.tex|tex|plain TeX"
   "troff|trofftris|trofftris.tr|troff|troff, the typesetter behind man"
   "vim|vimtris|vimtris.vim|vim|Vim script, in headless vim -es"
+  "vim|vimtris|vimtris.normal.keys|vim|Vim normal-mode keystrokes, no Vim script"
   "xslt|xslttris|xslttris.xsl|xsltproc|XSLT 1.0 stylesheet, run by xsltproc"
 )
 
@@ -85,19 +88,25 @@ list() {   # list [native]: in native mode, the games without one are marked
   local i=0 spec d game file tool what mark
   for spec in "${GAMES[@]}"; do
     IFS='|' read -r d game file tool what <<<"$spec"
-    if [[ ${1:-} == native ]] && ! native_of "$d" >/dev/null; then mark=$'\e[2m– no native mode\e[m'
+    game=${file%.*}                                   # vimtris, or vimtris.normal
+    if [[ ${1:-} == native ]] && { [[ $game == *.* ]] || ! native_of "$d" >/dev/null; }; then mark=$'\e[2m– no native mode\e[m'
     elif have "$tool"; then mark=$'\e[32m✓\e[m'; else mark=$'\e[31m✗ no '"$tool"$'\e[m'; fi
     printf '  \e[1m%2d\e[m  %-15s %-44s %s\n' $((++i)) "$game" "$what" "$mark"
   done
 }
 
-# find a game by number, dir name or game name; prints its spec
+# find a game by number, dir name or game name (vim.normal, vimtris.normal for a variant)
 lookup() {
-  local i=0 spec d game
+  local i=0 spec d game file name
   for spec in "${GAMES[@]}"; do
-    IFS='|' read -r d game _ <<<"$spec"
+    IFS='|' read -r d game file _ <<<"$spec"
     (( ++i ))
-    if [[ $1 == "$i" || $1 == "$d" || $1 == "$game" ]]; then echo "$spec"; return 0; fi
+    name=${file%.*}
+    if [[ $name == "$game" ]]; then
+      [[ $1 == "$i" || $1 == "$d" || $1 == "$game" ]] && { echo "$spec"; return 0; }
+    else
+      [[ $1 == "$i" || $1 == "$name" || $1 == "$d.${name#"$game".}" ]] && { echo "$spec"; return 0; }
+    fi
   done
   return 1
 }
@@ -111,7 +120,9 @@ launch() {   # launch <spec> <mode: readable, golfed or native>
     here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
   fi
   if [[ $2 == native ]]; then
-    native=$(native_of "$d") || { echo "play.sh: $game has no native mode (only ${NATIVE[*]%%|*})" >&2; return 1; }
+    if [[ ${file%.*} != "$game" ]] || ! native=$(native_of "$d"); then
+      echo "play.sh: ${file%.*} has no native mode (only ${NATIVE[*]%%|*})" >&2; return 1
+    fi
     IFS='|' read -r _ nfile ncmd <<<"$native"
     nfile="$here/$d/$nfile"
     if [[ -z $here || ! -f $nfile ]]; then
@@ -126,15 +137,19 @@ launch() {   # launch <spec> <mode: readable, golfed or native>
     return
   fi
   launcher="$here/$d/$game.sh"
-  [[ $2 == golfed ]] && engine_file="$here/$d/${file%.*}.min.${file##*.}"
+  # The launcher finds its own engine; a golfed one or a variant is passed on.
+  local efile=""
+  [[ ${file%.*} != "$game" ]] && efile=$file
+  [[ $2 == golfed ]] && efile=${file%.*}.min.${file##*.}
+  [[ -n $efile ]] && engine_file="$here/$d/$efile"
   if [[ -z $here || ! -f $launcher ]]; then
     tmp=$(mktemp -d "${TMPDIR:-/tmp}/play.XXXXXX") || return 1
     trap '[[ -n $tmp ]] && rm -rf "$tmp"' EXIT
     launcher="$tmp/$game.sh"
     fetch "$BASE_URL/$d/$game.sh" "$launcher" || return 1
-    if [[ $2 == golfed ]]; then
-      engine_file="$tmp/${file%.*}.min.${file##*.}"
-      fetch "$BASE_URL/$d/${engine_file##*/}" "$engine_file" || return 1
+    if [[ -n $efile ]]; then
+      engine_file="$tmp/$efile"
+      fetch "$BASE_URL/$d/$efile" "$engine_file" || return 1
     fi
   fi
   TRIS_URL=$BASE_URL ENGINE_FILE=$engine_file bash "$launcher"

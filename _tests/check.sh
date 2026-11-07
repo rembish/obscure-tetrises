@@ -76,7 +76,7 @@ run_one() {
 }
 
 for w in "${want[@]}"; do
-  [[ " ${GAMES[*]%%|*} " == *" $w "* ]] || { echo "check.sh: no engine '$w'" >&2; exit 2; }
+  [[ " ${GAMES[*]%%|*} " == *" ${w%%.*} "* ]] || { echo "check.sh: no engine '$w'" >&2; exit 2; }
 done
 
 # Build the job list in table order; skips are results right away.
@@ -85,10 +85,14 @@ for spec in "${GAMES[@]}"; do
   IFS='|' read -r name game file tool _ <<<"$spec"
   title=$(sed 's/./& /g; s/ $//' <<<"${game^^}")    # jqtris -> J Q T R I S
   launcher=$name/$game.sh file=$name/$file
-  if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $name "* ]]; then continue; fi
+  # A variant's engine file has a middle part: vim/vimtris.normal.keys is vim.normal.
+  # Selecting "vim" runs all of vim's engines, "vim.normal" just that one.
+  base=${file##*/} label=$name
+  base=${base%.*}
+  [[ $base != "$game" ]] && label=$name.${base#"$game".}
+  if (( ${#want[@]} )) && [[ " ${want[*]} " != *" $name "* && " ${want[*]} " != *" $label "* ]]; then continue; fi
   file=$root/$file
-  (( min )) && file=${file%.*}.min.${file##*.}
-  label=$name; (( min )) && label=$name.min
+  (( min )) && file=${file%.*}.min.${file##*.} label=$label.min
   if [[ ! -f $file ]]; then
     printf 'skip  %-12s (no %s)\n' "$label" "${file#"$root"/}" > "$work/res.$n"; keys+=("$n"); (( n++ )); continue
   fi

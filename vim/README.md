@@ -1,6 +1,7 @@
 # vimtris
 
-A falling-block puzzle game written in **Vim script**. It runs two ways:
+A falling-block puzzle game written in **Vim script**, and once more in Vim's **normal
+mode** alone ([below](#normal-mode-variant)). The Vim script engine runs two ways:
 
 - **With the launcher**, Vim is only the interpreter: it runs headless, no window is
   opened, no buffer is edited, and no key goes through Vim's normal mode. bash reads the
@@ -54,6 +55,73 @@ rules and the frames are the same, and does the launcher's job itself:
 When the game ends, the last frame stays up until a key is pressed, because Vim gives the
 terminal back as it found it when it quits. `_tests/launchers.sh` plays a few keys through
 it on a pseudo-terminal and compares the frames with the reference.
+
+## Normal-mode variant
+
+[`vimtris.normal.keys`](vimtris.normal.keys) is the same game with no Vim script at all:
+only normal-mode keys, the ones you type to edit text. The file is a buffer, and the game
+is the editing of it: the board is 20 lines of text, the state is lines like `score 120`,
+and the code is lines of keystrokes that run with `@`.
+
+```sh
+./play.sh vim.normal
+ENGINE_FILE=vim/vimtris.normal.keys ./vim/vimtris.sh
+```
+
+The launcher loads the file into `vim -es` and types four commands per input line: put
+the input into line 1 (`:norm! ggS3`), run the keys on line 2 (`:norm! 2G"ay$@a`),
+write the frame lines to stdout, and run register q, which holds `ZQ` once the game is
+over. Everything the game does happens in those keys:
+
+- **Calls.** Code lives on lines `:name keys`. `/^:name <CR>f l"ay$@a` finds the line,
+  yanks its keys into register a and runs them. Running a register puts its keys in
+  front of the keys still waiting, so when it ends, the caller's keys run on: a call
+  that returns.
+- **No failure allowed.** A command that fails, like a search that finds nothing, aborts
+  every key still waiting, all the way out to the `:norm`. So a failure can't be an `if`.
+- **Ifs are searches that can't fail.** `gg/<pattern>\|^ELSE|<CR>` finds the pattern or
+  the `ELSE|` line near the end of the file, and every line it can land on ends in `|@s`
+  or `|@f`. `$h"ay$@a` runs that ending: `@s` and `@f` are trampolines that call the code
+  named on the `then` and `else` lines, which the code sets just before the search.
+  Searches find the first match in the buffer, so each fallback comes after what it
+  stands in for. Loops are a branch that calls its own code again.
+- **Fit tests are regexes over the board,** as in [sedtris](../sed/), but across lines:
+  `\%3l\%8c\.\_.\{20}\.\.\.` is T at line 3, column 8: `\%l` and `\%c` pin the search
+  to the piece's place, and `\_.` crosses line ends. A board line is four walls, ten
+  cells, four walls and `|@s`, 22 bytes with its newline, so a wall or the floor in the
+  way makes the search fall through to `ELSE`.
+- **Numbers** are decimal text, changed with `<C-A>` and `<C-X>` and a count. A count
+  that comes from the buffer is typed into a `cmd` line with insert-mode `<C-R>` and yanked
+  into a register to run. Lookup tables are lines found by a search built the same way:
+  `/^x<C-R>m<C-R>n:` finds the digit and carry of 7 × n + m.
+- **The frame** is the board's 20 lines copied between the lines `F` and `E`, with the
+  walls cut off and the borders put on by block-wise inserts (`<C-V>19jI`). The side panel,
+  20 template lines with the numbers filled in, goes on as one block-wise paste. The cells
+  are painted one at a time from a colour table, until the search falls through to
+  `PAINTED`.
+
+### Traps
+
+- **Vim caps a count at 999,999,999.** `2147483647<C-X>` subtracts 999,999,999, so 2^31 − 1
+  is three counts, and the seed (up to 2^31 − 2) can't be added with a count at all. So
+  `s × 7` is long multiplication, one digit at a time from a table, and `s mod 7` is long
+  division the same way.
+- **A count can't start with 0,** because `0` is a motion. So the row is kept as its line
+  number (y + 3) and the column as x + 5, and a value that can be 0 is never a count.
+- **`cw` on a negative number changes only the `-`.** Copying 2 over `-9` gave `29`; a
+  value that can be negative is replaced with `C`.
+- **`\V` makes `^` literal.** In a very-nomagic pattern it has to be `\^`.
+- **Every search costs a pass over the file,** and painting takes about 216 of them per
+  frame. Starting the search at the frame, keeping the colour table just above it (found
+  with a backward `?`), and holding the paint loop in a register instead of looking it up
+  each round cut a frame from 145 ms to about 50 ms.
+- **`'fileformats'`.** A code line ending in `<CR>` makes Vim take the file for a DOS
+  file. The launcher sets `ffs=unix`.
+
+The keys are written in the file as `<Esc>`, `<CR>`, `<C-A>`, `<C-X>`, `<C-R>` and
+`<C-V>`, and the launcher turns them into the bytes before Vim reads it. The file was
+generated once by a script that worked out the fit regexes, stamp paths and lookup
+tables from the piece masks; the result is what's here.
 
 ## How it works
 
