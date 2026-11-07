@@ -248,5 +248,5 @@ output. `_tests/check.sh --min vim.normal` replays it against the reference.
   pattern means the last substitute string.
 
 It was made from the readable file by a script that renames and packs. The 25 fit
-regexes and stamp paths, which are most of the rest, don't get shorter.
+regexes and stamp paths (about 1.4 KB) don't get shorter.
 
