@@ -43,8 +43,8 @@ jsonnet -S -m DIR --ext-str input=3 --ext-code state="$(<DIR/state.json)" jsonne
 
 - **`-m` adds a newline** after each file's string, so the launcher reads the frame with
   `$(<…)`, which drops it, and prints it with one newline of its own.
-- **A run costs about 25 ms before it does anything.** The C++ `jsonnet` parses its standard
-  library, which is written in Jsonnet, on every start. An event takes about 40 ms in all,
+- **A run costs about 25 ms before it does anything:** `jsonnet -e 1` alone takes that
+  long with the C++ `jsonnet`. An event takes about 40 ms in all,
   which keeps up with 10 ticks a second, but the bot game in the tests (1,955 frames) takes
   over three minutes. Working the piece cells out from the masks on every run, and a
   board of 200 numbers to parse and write, both made it slower still; the cells are now a
