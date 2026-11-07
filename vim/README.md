@@ -1,16 +1,22 @@
 # vimtris
 
-A falling-block puzzle game written in **Vim script**. Vim is only the interpreter:
-no window is opened, no buffer is edited, and no key goes through Vim's normal mode.
+A falling-block puzzle game written in **Vim script**. It runs two ways:
+
+- **With the launcher**, Vim is only the interpreter: it runs headless, no window is
+  opened, no buffer is edited, and no key goes through Vim's normal mode. bash reads the
+  keys and passes them on as numbers, like every other game here.
+- **On its own** ([native mode](#native-mode)), full-screen Vim reads the keys and keeps
+  the time itself. One command, no bash.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/vim/vimtris.sh | bash
 # or, from a clone:
 ./vim/vimtris.sh
+./play.sh --native vim                              # or: vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim
 ```
 
-Needs Vim (tested with 9.1) and bash 4+. It doesn't need `+python`, `+channel`,
-a GUI or a terminal Vim can drive. It runs as `vim -Nu NONE -i NONE -es`.
+Needs Vim (tested with 9.1), and bash 4+ for the launcher. It doesn't need `+python`,
+`+channel` or a GUI. The launcher runs it as `vim -Nu NONE -i NONE -es`.
 
 Install: Debian/Ubuntu `apt install vim` (`vim-tiny` has no Vim script) · Fedora `dnf install vim-enhanced` · macOS has it preinstalled.
 
@@ -21,7 +27,11 @@ Vim can also play on its own, with no launcher: one command, Vim and a source fi
 ```sh
 vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim
 SEED=42 vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim     # a fixed game
+./play.sh --native vim                                        # the same, from the menu's launcher
 ```
+
+It needs Vim in a terminal; `getchar(0)` and `reltime()` are in every Vim 8 and 9. Without
+`SEED`, the seed comes from `rand()` (Vim 8.2 and newer) or from the clock.
 
 [`vimtris.native.vim`](vimtris.native.vim) sources `vimtris.vim` for the game, so the
 rules and the frames are the same, and does the launcher's job itself:
@@ -34,11 +44,12 @@ rules and the frames are the same, and does the launcher's job itself:
 - **Frames:** the engine still writes them to `/dev/stdout`, which is now the terminal,
   but ends each line with `\r\n`. Raw mode also turns off the terminal's output
   processing, so a bare newline only moves the cursor down, and the frame would come out
-  as a staircase.
-  Vim draws nothing meanwhile: it only redraws when a script is done or asks for it, and
-  this script runs until the game ends.
+  as a staircase. Vim draws nothing meanwhile: it only redraws when a script is done or
+  asks for it, and this script runs until the game ends.
 - **Hooks:** `vimtris.vim` checks for `g:vimtris_native`. When it's set, the file hands its
   start, event and render functions to the driver as funcrefs, and skips its own stdin loop.
+
+- **Quitting:** `q`, or Ctrl-C (caught as `Vim:Interrupt`).
 
 When the game ends, the last frame stays up until a key is pressed, because Vim gives the
 terminal back as it found it when it quits. `_tests/launchers.sh` plays a few keys through

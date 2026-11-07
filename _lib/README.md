@@ -21,7 +21,9 @@ which has to run before any bash syntax, and a few lines that load `_lib/launche
 Under `curl | bash` a launcher has no files next to it, so it downloads two: this
 `launcher.sh`, which it runs with `eval`, and its own engine, which goes to a temporary
 directory that is deleted on exit. `play.sh` downloads only the launcher you pick (and
-its `.min` engine, if asked) the same way. `TRIS_URL` changes where all of them download
+its `.min` engine, if asked) the same way. In the native mode it downloads the game's
+`.native` file and the engine that file loads, and runs the tool on them directly; no
+launcher, and so nothing from this directory, is involved. `TRIS_URL` changes where all of them download
 from; by default it is this repository's `master` branch on GitHub.
 
 ## Writing a launcher

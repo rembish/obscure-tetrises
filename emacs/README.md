@@ -1,19 +1,26 @@
 # emacstris
 
-A falling-block puzzle game written in **Emacs Lisp**. It runs headless, with
-`emacs --batch`. No buffer, window, keymap or timer is involved; Emacs is used only as a
-Lisp interpreter that reads lines on stdin and prints to stdout. The game is written from
-scratch. It doesn't load, call or copy the `tetris.el` that ships with Emacs, and `-Q` keeps
-it from loading anything else either.
+A falling-block puzzle game written in **Emacs Lisp**. It runs two ways:
+
+- **With the launcher**, headless, with `emacs --batch`. No buffer, window, keymap or
+  timer is involved; Emacs is only a Lisp interpreter that reads event numbers on stdin
+  and prints frames to stdout. bash reads the keys, like for every other game here.
+- **On its own** ([native mode](#native-mode)), in a terminal frame (`emacs -nw`), Emacs
+  reads the keys and keeps the time itself. One command, no bash.
+
+The game is written from scratch. It doesn't load, call or copy the `tetris.el` that ships
+with Emacs, and `-Q` keeps it from loading anything else either.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/emacs/emacstris.sh | bash
 # or, from a clone:
 ./emacs/emacstris.sh
+./play.sh --native emacs                            # or: emacs -Q -nw -l emacs/emacstris.native.el
 ```
 
-Needs GNU Emacs (tested with 29.3) and bash 4+. No display or terminal is needed for
-the engine itself. Frames are plain bytes on stdout.
+Needs GNU Emacs (tested with 29.3; the native mode with 30.2), and bash 4+ for the
+launcher. The batch engine needs no display or terminal; its frames are plain bytes on
+stdout.
 
 Install: Debian/Ubuntu `apt install emacs-nox` · Fedora `dnf install emacs-nox` · macOS `brew install emacs`.
 
@@ -24,7 +31,10 @@ Emacs can also play on its own, with no launcher: one command, Emacs and a sourc
 ```sh
 emacs -Q -nw -l emacs/emacstris.native.el
 SEED=42 emacs -Q -nw -l emacs/emacstris.native.el      # a fixed game
+./play.sh --native emacs                               # the same, from the menu's launcher
 ```
+
+It needs Emacs 28 or newer in a terminal (`string-replace`); `emacs-nox` is enough.
 
 [`emacstris.native.el`](emacstris.native.el) loads `emacstris.el` for the game, so the
 rules and the frames are the same, and does the launcher's job itself:
@@ -40,6 +50,8 @@ rules and the frames are the same, and does the launcher's job itself:
 - **Hooks:** `emacstris.el` checks for `emacstris-native`. When it's set, the file doesn't
   run its stdin loop. Its functions are global, so the driver calls `emacstris-start` and
   `emacstris-event` directly.
+
+- **Quitting:** `q`, or C-g.
 
 When the game ends, the last frame stays up until a key is pressed, because Emacs gives
 the terminal back as it found it when it exits. Emacs's own `M-x tetris` is the precedent

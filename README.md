@@ -3,14 +3,16 @@
 [![check](https://github.com/rembish/obscure-tetrises/actions/workflows/check.yml/badge.svg)](https://github.com/rembish/obscure-tetrises/actions/workflows/check.yml)
 
 The same falling-block puzzle game, implemented in Unix tools that were never
-meant to run games. Each one reads key presses from a small bash launcher and
-draws the whole game itself: the board, gravity, rotation, line clears, scoring
-and the colour terminal frame.
+meant to run games. A small bash launcher reads the keys and passes them on as
+numbers; the tool plays the whole game itself: the board, gravity, rotation, line
+clears, scoring and the colour terminal frame. Vim and Emacs can also do without the
+launcher and read the keys themselves (the native mode, below).
 
 ## Play
 
 One launcher for all of them. It shows a menu, marks which tools are installed and
-toggles between the readable and the golfed engines:
+switches between three versions: the readable engines, the golfed ones, and the native
+mode:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/rembish/obscure-tetrises/master/play.sh | bash
@@ -36,17 +38,27 @@ through `curl | bash` with `bash -s -- --min m4`.
 > launchers are short; read them first if you like. Under `curl | bash` they download
 > only what they run, and the engine goes to a temporary directory deleted on exit.
 
-Two games can also run without bash, as a single command, with the tool reading the keys
-and keeping the time itself: `vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim` and
-`emacs -Q -nw -l emacs/emacstris.native.el`. `play.sh --native` (or `n` in the menu)
-starts them that way. See [vimtris](vim/README.md#native-mode)
-and [emacstris](emacs/README.md#native-mode).
+### Native mode
+
+Vim and Emacs can read the keys and keep the time themselves, so these two games also
+run without bash, as one command: the tool and a source file. Same rules, same frames.
+
+```sh
+vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim
+emacs -Q -nw -l emacs/emacstris.native.el
+```
+
+`./play.sh --native vim` (or `n` in the menu) starts them the same way. The other tools
+can't on their own: most only read whole lines, so every key would need Enter, and the
+ticks need a read that gives up after 100 ms. gawk has that read, but it would still
+have to run `stty` to stop the terminal waiting for Enter. See
+[vimtris](vim/README.md#native-mode) and [emacstris](emacs/README.md#native-mode).
 
 **Controls:** `a`/← left · `d`/→ right · `w`/↑ rotate · `s`/↓ soft drop · `z`/Space hard drop · `q` quit
 
-**Needs:** bash 4+, a UTF-8 terminal with 256 colours, and the game's own tool. Tested on
-Linux. [`INSTALL.md`](INSTALL.md) has the package to install for each game on
-Debian/Ubuntu, Fedora and macOS.
+**Needs:** bash 4+ (not for the native mode), a UTF-8 terminal with 256 colours, and the
+game's own tool. Tested on Linux. [`INSTALL.md`](INSTALL.md) has the package to install
+for each game on Debian/Ubuntu, Fedora and macOS.
 
 ## The games
 
@@ -57,7 +69,7 @@ Debian/Ubuntu, Fedora and macOS.
 | [**cmaketris**](cmake/) | CMake script (`cmake -P`) |
 | [**cpptris**](cpp/) | C++ templates, computed by `g++` at compile time |
 | [**dctris**](dc/) | `dc`, the reverse-Polish desk calculator |
-| [**emacstris**](emacs/) | Emacs Lisp, in `emacs --batch` |
+| [**emacstris**](emacs/) | Emacs Lisp, in `emacs --batch`, or on its own in `emacs -nw` |
 | [**ghcitris**](ghci/) | Haskell type families: GHC's type checker plays, ghci prints |
 | [**gnuplottris**](gnuplot/) | gnuplot 6's command language |
 | [**jqtris**](jq/) | `jq`, the JSON processor |
@@ -71,7 +83,7 @@ Debian/Ubuntu, Fedora and macOS.
 | [**sqlitetris**](sqlite/) | SQL: SQLite triggers, views and recursive CTEs |
 | [**textris**](tex/) | plain TeX (Knuth's `tex`, no packages) |
 | [**trofftris**](troff/) | `troff`, the typesetter behind `man` |
-| [**vimtris**](vim/) | Vim script, in headless `vim -es` |
+| [**vimtris**](vim/) | Vim script, in headless `vim -es`, or on its own in full-screen Vim |
 | [**xslttris**](xslt/) | XSLT 1.0, run by `xsltproc` |
 
 Each game's README explains how its engine works and what the tool made hard.

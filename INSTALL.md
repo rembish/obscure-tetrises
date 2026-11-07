@@ -1,6 +1,6 @@
 # Requirements and installation
 
-- bash 4+ for the launchers
+- bash 4+ for the launchers (the native modes of vimtris and emacstris run without it)
 - GNU versions of the tools. Everything is tested on Linux only; stock macOS has a non-GNU `dc` and a `make` too old for maketris
 - the tool itself: `sed`, `jq`, …
 - a UTF-8 terminal with 256 colours

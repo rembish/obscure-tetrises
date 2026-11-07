@@ -9,7 +9,9 @@ document, and [`_tests/check.sh`](_tests/check.sh) diffs every engine against it
 
 The launcher reads the keyboard and writes lines to the engine's stdin. Only
 numbers are sent, because some engines can't parse anything else (`dc` executes
-its input, for example, and `bc` reads it with `read()`).
+its input, for example, and `bc` reads it with `read()`). The native modes of
+vimtris and emacstris read the keyboard themselves, and hand the engine the same
+event numbers as function calls.
 
 - **First line:** the seed, an integer in `1 … 2147483646`.
 - **Every line after that** is one event:
@@ -87,7 +89,7 @@ game-over frame and exits.
 followed by `ESC[K\n`. Every frame ends with a complete line, so tools that can only
 print whole lines (make's `$(info)`, gnuplot's `print`, TeX's `\write`, sed) print
 exactly this. TeX adds a banner line at start-up and one empty line when it exits; frame
-lines are never empty, so textris's launcher drops both. The launcher clears the screen once at start-up and every frame has the
+lines are never empty, so textris's launcher drops both. The launcher (or a native mode) clears the screen once at start-up and every frame has the
 same size, so nothing below the frame needs clearing. sendmail can't print ESC or UTF-8 at all, so
 sendmailtris returns the frame as glyph tokens and its launcher decodes them with a
 fixed table; the decoded bytes follow this format exactly. troff can only print printable ASCII,
