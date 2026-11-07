@@ -8,5 +8,5 @@ $sudo apt-get update -q
 $sudo apt-get install -y -q --no-install-recommends \
   bash python3 util-linux curl ca-certificates \
   mawk gawk busybox \
-  bc dc cmake cpp g++ emacs-nox ghc gnuplot-nox jq m4 make ghostscript sed \
+  bc dc cmake cpp g++ emacs-nox gdb ghc gnuplot-nox jq m4 make ghostscript sed \
   apache2-bin sendmail-bin sqlite3 texlive-base groff-base vim xsltproc

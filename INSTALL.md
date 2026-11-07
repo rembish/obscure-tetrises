@@ -19,6 +19,7 @@
 | cpptris | `g++` | `g++` | `gcc-c++` | `brew install gcc` ² |
 | dctris | `dc` | `dc` | `bc` (it includes `dc`) | `brew install bc` ¹ |
 | emacstris | `emacs` | `emacs-nox` | `emacs-nox` | `brew install emacs` |
+| gdbtris | `gdb` | `gdb` | `gdb` | `brew install gdb` (Intel only) |
 | ghcitris | `ghci` | `ghc` | `ghc` | `brew install ghc` ⁹ |
 | gnuplottris | `gnuplot` | `gnuplot-nox` ³ | `gnuplot` | `brew install gnuplot` |
 | jqtris | `jq` | `jq` ³ | `jq` | preinstalled on macOS 15+, or `brew install jq` |
