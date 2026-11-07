@@ -158,7 +158,7 @@ end
 printf " [38;5;60m╚════════════════════╝[m[K\n"
 end
 define seed
-set $s=(long)$arg0
+set $s=(long long)$arg0
 set $b=$Z
 set $a=0
 set $l=0

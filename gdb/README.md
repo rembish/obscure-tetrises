@@ -26,8 +26,8 @@ Without a program, gdb still has its whole command language: convenience variabl
 - **Output** is `printf`. gdb's `printf` knows `\n` but not `\033` or `\e` in a format, so every
   escape sequence is `%c` with the argument 27. The box-drawing characters go through as
   bytes.
-- **State** is convenience variables. They hold 64-bit integers (`(long) $arg0` makes the
-  seed one, so `s * 16807` can't overflow) and arrays: `set $masks = {240, 17476, …}`. An
+- **State** is convenience variables. They hold integers of C's types (`(long long) $arg0`
+  makes the seed 64-bit, so `s * 16807` can't overflow) and arrays: `set $masks = {240, 17476, …}`. An
   element of an array in a convenience variable can be assigned (`set $board[$i] = 5`), and
   a whole array copied (`set $grid = $board`).
 - **Commands take words, not values.** A user-defined command gets its arguments as text,
@@ -43,7 +43,12 @@ Without a program, gdb still has its whole command language: convenience variabl
 - **No array of a given size.** gdb can only make an array from a literal, so the empty
   board is written out as 200 zeros, and a new game copies it.
 - **An array literal has type `int[]`.** That's fine for the board, but the seed has to be a
-  `long` from the start, or the multiplication would overflow in 32 bits.
+  `long long` from the start, or the multiplication would overflow in 32 bits. `long` was
+  not enough on x86-64 in CI, though it is 64 bits on ARM: most likely, with no program
+  loaded, x86 gdb starts in a 32-bit i386 architecture. `long long` is 64 bits in all.
+- **Some names are registers.** On x86, `$cx` is the CX register, and with no program
+  running, reading it fails with "No registers." So no variable is named like one: the
+  cell being tested is `$px`, `$py`.
 - **Speed.** A frame takes about 20 ms, printing 200 cells one `printf` at a time; the
   big bot game in the tests (1,955 frames) takes about 40 s.
 

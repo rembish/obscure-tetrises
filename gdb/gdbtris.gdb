@@ -46,7 +46,7 @@ set $board = $empty
 
 # ---- the rules ------------------------------------------------------------------------
 
-# Park-Miller: the seed is a long, so s * 16807 can't overflow.
+# Park-Miller: the seed is a long long, so s * 16807 can't overflow.
 define rand
   set $seed = $seed * 16807 % 2147483647
   set $drawn = $seed % 7
@@ -59,9 +59,9 @@ define fits
   set $i = 0
   while $i < 16 && $ok
     if ($mask >> $i) & 1
-      set $cx = $tx + $i % 4
-      set $cy = $ty + $i / 4
-      if $cx < 0 || $cx > 9 || $cy > 19 || $board[$cy * 10 + $cx]
+      set $px = $tx + $i % 4
+      set $py = $ty + $i / 4
+      if $px < 0 || $px > 9 || $py > 19 || $board[$py * 10 + $px]
         set $ok = 0
       end
     end
@@ -252,7 +252,7 @@ end
 
 # The first input line: a new game.
 define seed
-  set $seed = (long) $arg0
+  set $seed = (long long) $arg0
   set $board = $empty
   set $score = 0
   set $lines = 0
