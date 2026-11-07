@@ -35,6 +35,11 @@ through `curl | bash` with `bash -s -- --min m4`.
 > launchers are short; read them first if you like. Under `curl | bash` they download
 > only what they run, and the engine goes to a temporary directory deleted on exit.
 
+Two games can also run without bash, as a single command, with the tool reading the keys
+and keeping the time itself: `vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim` and
+`emacs -Q -nw -l emacs/emacstris.native.el`. See [vimtris](vim/README.md#native-mode)
+and [emacstris](emacs/README.md#native-mode).
+
 **Controls:** `a`/← left · `d`/→ right · `w`/↑ rotate · `s`/↓ soft drop · `z`/Space hard drop · `q` quit
 
 **Needs:** bash 4+, a UTF-8 terminal with 256 colours, and the game's own tool. Tested on

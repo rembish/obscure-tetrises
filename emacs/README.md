@@ -17,6 +17,36 @@ the engine itself. Frames are plain bytes on stdout.
 
 Install: Debian/Ubuntu `apt install emacs-nox` · Fedora `dnf install emacs-nox` · macOS `brew install emacs`.
 
+## Native mode
+
+Emacs can also play on its own, with no launcher: one command, Emacs and a source file.
+
+```sh
+emacs -Q -nw -l emacs/emacstris.native.el
+SEED=42 emacs -Q -nw -l emacs/emacstris.native.el      # a fixed game
+```
+
+[`emacstris.native.el`](emacstris.native.el) loads `emacstris.el` for the game, so the
+rules and the frames are the same, and does the launcher's job itself:
+
+- **Keys:** in a terminal frame (`-nw`) the terminal is in raw mode, and `read-event` with a
+  10 ms timeout returns each key as it is pressed, or nil. It returns the bytes the
+  terminal sends, so the driver decodes `ESC [ D` into left itself.
+- **Ticks:** `float-time` keeps the time, and the loop sends a tick every 100 ms.
+- **Frames:** `emacstris-draw` is redefined to write with `send-string-to-terminal`, past
+  Emacs's own display. `inhibit-redisplay` keeps Emacs from drawing over the frames.
+- **Hooks:** `emacstris.el` checks for `emacstris-native`. When it's set, the file doesn't
+  run its stdin loop. Its functions are global, so the driver calls `emacstris-start` and
+  `emacstris-event` directly.
+
+When the game ends, the last frame stays up until a key is pressed, because Emacs gives
+the terminal back as it found it when it exits. Emacs's own `M-x tetris` is the precedent
+for a game in an Emacs terminal; this one keeps emacstris's rules and frames.
+`_tests/launchers.sh` plays a few keys through it on a pseudo-terminal and compares the
+frames with the reference. It sets `TERM=vt100` there, because for an xterm Emacs first
+asks the terminal what it is and waits up to two seconds for an answer, and the test's
+pseudo-terminal never gives one. A real terminal answers at once.
+
 ## How it works
 
 The launcher runs `emacs --batch -Q -l emacstris.el` and pipes the seed and the event

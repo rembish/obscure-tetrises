@@ -14,6 +14,33 @@ a GUI or a terminal Vim can drive. It runs as `vim -Nu NONE -i NONE -es`.
 
 Install: Debian/Ubuntu `apt install vim` (`vim-tiny` has no Vim script) · Fedora `dnf install vim-enhanced` · macOS has it preinstalled.
 
+## Native mode
+
+Vim can also play on its own, with no launcher: one command, Vim and a source file.
+
+```sh
+vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim
+SEED=42 vim -Nu NONE -i NONE -n -S vim/vimtris.native.vim     # a fixed game
+```
+
+[`vimtris.native.vim`](vimtris.native.vim) sources `vimtris.vim` for the game, so the
+rules and the frames are the same, and does the launcher's job itself:
+
+- **Keys:** Vim starts full-screen, which puts the terminal in raw mode, so `getchar(0)`
+  returns each key as it is pressed, or 0 when there is none. Arrows come back as
+  `"\<Left>"` and so on.
+- **Ticks:** `reltime()` keeps the time, and the loop sends a tick every 100 ms, sleeping
+  10 ms between looks at the keyboard.
+- **Frames:** the engine still writes them to `/dev/stdout`, which is now the terminal.
+  Vim draws nothing meanwhile: it only redraws when a script is done or asks for it, and
+  this script runs until the game ends.
+- **Hooks:** `vimtris.vim` checks for `g:vimtris_native`. When it's set, the file hands its
+  start, event and render functions to the driver as funcrefs, and skips its own stdin loop.
+
+When the game ends, the last frame stays up until a key is pressed, because Vim gives the
+terminal back as it found it when it quits. `_tests/launchers.sh` plays a few keys through
+it on a pseudo-terminal and compares the frames with the reference.
+
 ## How it works
 
 The engine is plain legacy Vim script (`let`, `if`/`elseif`, `for`, `while`, `function!`),

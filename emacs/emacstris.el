@@ -263,13 +263,17 @@ In batch mode `read-from-minibuffer' reads stdin and signals an error at EOF."
       (read-from-minibuffer "")
     (error nil)))
 
-(defun emacstris-main ()
+(defun emacstris-start (seed)
+  "Start a game with SEED: draw the first two pieces, spawn, print the frame."
   (setq emacstris-board (make-vector (* emacstris-width emacstris-height) 0)
-        emacstris-seed (string-to-number (or (emacstris-read-line) "1")))
+        emacstris-seed seed)
   (setq emacstris-piece (emacstris-random)
         emacstris-next (emacstris-random))
   (emacstris-spawn)
-  (emacstris-draw)
+  (emacstris-draw))
+
+(defun emacstris-main ()
+  (emacstris-start (string-to-number (or (emacstris-read-line) "1")))
   (let (line e)
     (while (and (not emacstris-over)
                 (setq line (emacstris-read-line)))
@@ -281,6 +285,8 @@ In batch mode `read-from-minibuffer' reads stdin and signals an error at EOF."
           (when (emacstris-event e)
             (emacstris-draw)))))))
 
-(emacstris-main)
+;; emacstris.native.el loads this file for the game and reads the keys itself.
+(unless (bound-and-true-p emacstris-native)
+  (emacstris-main))
 
 ;;; emacstris.el ends here

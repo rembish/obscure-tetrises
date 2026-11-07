@@ -64,6 +64,32 @@ for spec in "${GAMES[@]}"; do
   (sleep 3; printf q) | timeout 60 script -qec "SEED=42 $launcher" /dev/null > "$work/tty" 2>&1
   rc=$? frames=$(grep -c $'\e\[H' "$work/tty")
   (( rc == 0 && frames > 0 )) && clean; result "$dir terminal" $(( ! $? )) "exit $rc, $frames frame lines"
+
+  # A native mode (the tool reads the keys itself): type z, left, w, z and q
+  # within the first second, before gravity moves anything, and compare the
+  # frames after the game's first clear screen with the reference.
+  native=""
+  case $dir in
+    vim) native="vim -Nu NONE -i NONE -n -S $root/vim/vimtris.native.vim" ;;
+    emacs) native="emacs -Q -nw -l $root/emacs/emacstris.native.el" ;;
+  esac
+  if [[ -n $native ]]; then
+    printf '42\n5\n1\n3\n5\n' | python3 "$here/reference.py" "$title" > "$work/ref"
+    # TERM=vt100: for an xterm, Emacs first asks the terminal what it is, and
+    # waits two seconds for an answer that script's terminal never gives.
+    (sleep 0.5; printf 'z\033[Dwz'; sleep 0.3; printf q) |
+      TERM=vt100 SEED=42 timeout 60 script -qec "$native" /dev/null > "$work/tty" 2>&1
+    rc=$?
+    python3 - "$work/ref" "$work/tty" <<'PY'
+import sys
+ref = open(sys.argv[1], 'rb').read()
+out = open(sys.argv[2], 'rb').read()
+out = out[out.rfind(b'\x1b[2J\x1b[H\x1b[?25l'):]
+frames = lambda b: [f[:f.rfind(b'\x1b[K\n') + 4] for f in b.split(b'\x1b[H') if b'\x1b[K\n' in f]
+sys.exit(frames(out) != frames(ref))
+PY
+    (( rc == 0 && ! $? )) && clean; result "$dir native" $(( ! $? )) "${native%% *} reads the keys itself (exit $rc)"
+  fi
   unset TMPDIR
 done
 exit $fail

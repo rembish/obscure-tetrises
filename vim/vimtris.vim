@@ -228,11 +228,23 @@ function! s:Render() abort
 endfunction
 
 " ---- main loop -------------------------------------------------------------------
-let s:seed = str2nr(input(''))
-let s:cur = s:Rand()
-let s:next = s:Rand()
-call s:Spawn()
-call s:Render()
+function! s:Start(seed) abort
+  let s:seed = a:seed
+  let s:cur = s:Rand()
+  let s:next = s:Rand()
+  call s:Spawn()
+  call s:Render()
+endfunction
+
+" vimtris.native.vim sources this file for the game and reads the keys itself:
+" it gets the functions it needs here, and the stdin loop below doesn't run.
+if exists('g:vimtris_native')
+  let g:vimtris = {'start': function('s:Start'), 'event': function('s:Event'),
+        \ 'render': function('s:Render'), 'over': {-> s:over}}
+  finish
+endif
+
+call s:Start(str2nr(input('')))
 while !s:over
   " input() returns '' at a blank line; at end of input Vim exits by itself.
   let s:line = trim(input(''))

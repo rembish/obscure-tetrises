@@ -24,7 +24,9 @@ _tests/check.sh --min    # the golfed .min engines
 [`launchers.sh`](launchers.sh) covers the ways into a game that `check.sh` doesn't:
 the hand-over from `sh` to bash, the download path of `curl | bash` (with `TRIS_URL`
 pointing at the clone through `file://`), and a real session on a pseudo-terminal
-under `script`. It also checks that no run leaves temporary files behind.
+under `script`. For vimtris and emacstris it also plays the native modes, where the tool
+reads the keys itself: a few keys typed within the first second, compared frame by frame
+with the reference. It also checks that no run leaves temporary files behind.
 
 ```sh
 _tests/launchers.sh           # all games, about a minute
