@@ -53,3 +53,15 @@ To play a few events by hand:
 ```sh
 printf 'seed 42\nevent 5\n' | gdb -q -nx -x gdbtris.gdb
 ```
+
+## Golfed version
+
+[`gdbtris.min.gdb`](gdbtris.min.gdb) is the golfed twin of the engine: 3,255 bytes instead of 8,993 (64% smaller), with exactly the same output. `_tests/check.sh --min gdb` replays it against the reference. [`../GOLFING.md`](../GOLFING.md) describes the techniques shared by all the engines. These are specific to gdb:
+
+- **Raw ESC in the formats:** `printf` can't spell ESC as an escape, but the byte itself in the format string goes through. That removes every `%c` and `27`.
+- **A row is one int:** ten 3-bit cells. The empty board is 20 zeros instead of 200, a cell is `$b[$y]>>3*$x&7`, and writing a piece is `|=`.
+- **C operators:** gdb's expressions have `|=`, `&=`, `+=` and post-increment, so `set $b[$j--]=$b[$f]` copies a row and moves on. The key names and actions of the panel come from one `?:` chain each.
+- **Gravity in one comparison:** a tick makes the piece fall when `$t+$l/10>9`.
+- **Watch the pasted arguments:** an argument is pasted into the command as text, so `$C[$arg0-1]` with the argument `$e[$j]>>3*$i&7` became `…&7-1`, which is `&6`. It needs `($arg0)`.
+- **`||` doesn't save the right side here:** with the board as shifts, the fit test warned about a negative shift count for cells left of the board, so the bounds and the cell are two `if`s.
+

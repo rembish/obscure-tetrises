@@ -19,6 +19,7 @@ _tests/check.sh --min           # verify all of them
 | C++ templates | 21,519 | 3,977 | 82% |
 | dc | 5,357 | 2,131 | 60% |
 | Emacs Lisp | 11,778 | 2,109 | 82% |
+| gdb | 8,993 | 3,255 | 64% |
 | GHC type families | 15,816 | 5,554 | 65% |
 | gnuplot | 6,659 | 2,094 | 69% |
 | jq | 5,310 | 1,860 | 65% |
@@ -96,6 +97,7 @@ engine's README, under "Golfed version":
 - [C++ templates](cpp/README.md#golfed-version)
 - [dc](dc/README.md#golfed-version)
 - [Emacs Lisp](emacs/README.md#golfed-version)
+- [gdb](gdb/README.md#golfed-version)
 - [GHC type families](ghci/README.md#golfed-version)
 - [gnuplot](gnuplot/README.md#golfed-version)
 - [jq](jq/README.md#golfed-version)
