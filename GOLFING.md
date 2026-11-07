@@ -33,6 +33,7 @@ _tests/check.sh --min           # verify all of them
 | TeX | 9,467 | 2,563 | 73% |
 | troff | 7,370 | 2,876 | 61% |
 | Vim script | 7,771 | 1,847 | 76% |
+| Vim normal mode | 15,809 | 7,374 | 53% |
 | XSLT | 24,792 | 5,463 | 78% |
 
 The golfing came in two passes:
@@ -109,6 +110,7 @@ engine's README, under "Golfed version":
 - [TeX](tex/README.md#golfed-version)
 - [troff](troff/README.md#golfed-version)
 - [Vim script](vim/README.md#golfed-version)
+- [Vim normal mode](vim/README.md#the-golfed-normal-mode-variant)
 - [XSLT](xslt/README.md#golfed-version)
 
 ## Caveats

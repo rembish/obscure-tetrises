@@ -227,3 +227,26 @@ printf '42\n5\n9\n' | vim -Nu NONE -i NONE -es -S vimtris.vim | head -3
   board. That is still far under the 100 ms tick.
 
 Earlier games in the same tool are listed under [Prior art](../PRIOR-ART.md).
+
+### The golfed normal-mode variant
+
+[`vimtris.normal.min.keys`](vimtris.normal.min.keys) is the golfed twin of the
+normal-mode variant: 7,374 bytes instead of 15,809 (53% smaller), with exactly the same
+output. `_tests/check.sh --min vim.normal` replays it against the reference.
+
+- **Raw keys:** the control keys are the bytes themselves, not `<Esc>` and so on, and
+  there are no comments.
+- **Fields through marks:** uppercase marks last the whole Vim session, and the field
+  lines are consecutive, so line 2 walks them once per input with `mAjmBjmC…`. After that
+  a field is `'Aw` instead of `/^score <CR>w`.
+- **One-letter names:** fields, code and markers (`ELSE|` is `!|`). A call to a
+  one-character name skips to its keys with `3l` instead of `f l`. The event and points
+  dispatch build a name from a digit, so those keep a letter: `:e3`, `:p2`.
+- **Packed tables:** the digit tables of the long multiplication and division are one
+  line each, `m00:0m01:1…`, since a search finds an entry anywhere in a line.
+- **Watch the regex:** the marker for the end of painting can't be `~`, which in a Vim
+  pattern means the last substitute string.
+
+It was made from the readable file by a script that renames and packs. The 25 fit
+regexes and stamp paths, which are most of the rest, don't get shorter.
+
